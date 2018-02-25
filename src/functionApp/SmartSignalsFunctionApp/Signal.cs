@@ -11,7 +11,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals.FunctionApp.Authorization;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
@@ -38,7 +37,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
             ThreadPool.SetMinThreads(100, 100);
 
             Container = DependenciesInjector.GetContainer()
-                .RegisterType<IAuthorizationManagementClient, AuthorizationManagementClient>()
                 .RegisterType<ISignalApi, SignalApi>()
                 .RegisterType<IAlertRuleApi, AlertRuleApi>()
                 .RegisterType<ISignalResultApi, SignalResultApi>();
@@ -54,21 +52,14 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
         [FunctionName("GetSignal")]
         public static async Task<HttpResponseMessage> GetAllSmartSignals([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "signal")] HttpRequestMessage req, TraceWriter log, CancellationToken cancellationToken)
         {
+            // TODO: Only allow calls from Smart-Alert rule engine
             using (IUnityContainer childContainer = Container.CreateChildContainer().WithTracer(log, true))
             {
                 ITracer tracer = childContainer.Resolve<ITracer>();
                 var signalApi = childContainer.Resolve<ISignalApi>();
-                var authorizationManagementClient = childContainer.Resolve<IAuthorizationManagementClient>();
 
                 try
                 {
-                    // Check authorization
-                    bool isAuthorized = await authorizationManagementClient.IsAuthorizedAsync(req, cancellationToken);
-                    if (!isAuthorized)
-                    {
-                        return req.CreateErrorResponse(HttpStatusCode.Forbidden, "The client is not authorized to perform this action");
-                    }
-
                     ListSmartSignalsResponse smartSignals = await signalApi.GetAllSmartSignalsAsync(cancellationToken);
 
                     return req.CreateResponse(smartSignals);
