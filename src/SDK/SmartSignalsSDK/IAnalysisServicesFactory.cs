@@ -33,5 +33,13 @@ namespace Microsoft.Azure.Monitoring.SmartSignals
         /// <exception cref="TelemetryDataClientCreationException">An application insights telemetry data client could not be created for the specified resources.</exception>
         /// <returns>The telemetry data client, that can be used to run queries on application insights.</returns>
         Task<ITelemetryDataClient> CreateApplicationInsightsTelemetryDataClientAsync(IReadOnlyList<ResourceIdentifier> resources, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Creates an instance of <see cref="IMdmClient"/>, used to fetch the resource metrics from MDM.
+        /// </summary>
+        /// <param name="resource">The resource to analyze.</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <returns>The MDM client, that can be used to fetch the resource metrics from MDM.</returns>
+        IMdmClient CreateMdmClientAsync(ResourceIdentifier resource, CancellationToken cancellationToken);
     }
 }

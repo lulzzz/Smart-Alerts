@@ -28,7 +28,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals
                     [ResourceType.VirtualMachine] = "Microsoft.Compute/virtualMachines",
                     [ResourceType.VirtualMachineScaleSet] = "Microsoft.Compute/virtualMachineScaleSets",
                     [ResourceType.ApplicationInsights] = "Microsoft.Insights/components",
-                    [ResourceType.LogAnalytics] = "Microsoft.OperationalInsights/workspaces"
+                    [ResourceType.LogAnalytics] = "Microsoft.OperationalInsights/workspaces",
+                    [ResourceType.AzureStorage] = "Microsoft.Storage/storageAccounts",
                 });
 
         private const string SubscriptionRegexPattern = "/subscriptions/(?<subscriptionId>[^/]*)";

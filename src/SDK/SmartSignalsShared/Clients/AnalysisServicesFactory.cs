@@ -90,6 +90,18 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
         }
 
         /// <summary>
+        /// Creates an instance of <see cref="IMdmClient"/>, used to fetch the resource metrics from MDM.
+        /// </summary>
+        /// <param name="resource">The resource to analyze.</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <returns>The MDM client, that can be used to fetch the resource metrics from MDM.</returns>
+        public IMdmClient CreateMdmClientAsync(ResourceIdentifier resource, CancellationToken cancellationToken)
+        {
+            // Create the client
+            return new MdmClient(this.tracer, this.credentialsFactory, resource);
+        }
+
+        /// <summary>
         /// Perform basic validations on the specified query run information.
         /// </summary>
         /// <param name="runInfo">The query run information</param>
