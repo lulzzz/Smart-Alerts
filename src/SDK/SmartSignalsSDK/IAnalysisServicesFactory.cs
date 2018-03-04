@@ -9,6 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartSignals.Mdm;
 
     /// <summary>
     /// An interface for exposing a factory that creates analysis services used for querying

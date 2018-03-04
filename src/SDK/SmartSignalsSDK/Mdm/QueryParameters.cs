@@ -1,18 +1,20 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="MdmQueryParameters.cs" company="Microsoft Corporation">
+// <copyright file="QueryParameters.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals
+namespace Microsoft.Azure.Monitoring.SmartSignals.Mdm
 {
     using System;
-    using Microsoft.Azure.Management.Monitor.Fluent.Models;
+    using System.Collections.Generic;
+    using Newtonsoft.Json;
 
     /// <summary>
-    /// MDM properties to be used when fetching data from MDM. All fields are optional
+    /// MDM properties to be used when fetching data from MDM. All fields are optional.
+    /// <see href="https://docs.microsoft.com/en-us/powershell/module/azurerm.insights/get-azurermmetricdefinition?view=azurermps-5.4.0">Use Get-AzureRmMetricDefinition, to fetch for available metric names, granularity, etc.</see>
     /// </summary>
-    public class MdmQueryParameters
+    public class QueryParameters
     {
         /// <summary>
         /// Gets or sets the start time of the time range
@@ -25,7 +27,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals
         public DateTime? EndTime { get; set; }
 
         /// <summary>
-        /// Gets a string representation of the timespan from which we want to fetch data
+        /// Gets a string representation of the timespan from which we want to fetch data.
         /// </summary>
         public string TimeRange
         {
@@ -49,15 +51,16 @@ namespace Microsoft.Azure.Monitoring.SmartSignals
         public TimeSpan? Interval { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the resource metric to be fetched. E.g. for azure storage queues: QueueMessageCount, QueueCapacity, QueueCount, QueueMessageCount, Transactions, Ingress, Egress.
-        /// Use the MDM client to fetch all metric definitions, including the metric names. 
+        /// Gets or sets the name of the resource metric to be fetched. E.g. those are the metrics for azure storage queues: QueueMessageCount, QueueCapacity, QueueCount, QueueMessageCount, Transactions, Ingress, Egress.
+        /// Use the MDM client to fetch all metric definitions, including the existing metric names. 
+        /// Fetch multiple metrics by using comma separated string. E.g: "QueueMessageCount, QueueCapacity"
         /// </summary>
         public string MetricName { get; set; }
 
         /// <summary>
-        /// Gets or sets the data aggregation type to perform on the fetched data
+        /// Gets or sets the data aggregation types to perform on the fetched data
         /// </summary>
-        public AggregationType? Aggregation { get; set; }
+        public List<AggregationType> Aggregations { get; set; }
 
         /// <summary>
         /// Gets or sets the field to order the fetched results by
@@ -70,12 +73,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals
         public int? Top { get; set; }
 
         /// <summary>
-        /// Gets or sets the result type: Data or meta data
-        /// </summary>
-        public ResultType? ResultType { get; set; }
-
-        /// <summary>
-        /// Gets or sets the filter to be used, based on the metric's dimensions. E.g. for Queues: <c>"ApiName eq 'GetMessage' or ApiName eq 'GetMessages'"</c>
+        /// Gets or sets the filter to be used, based on the metric's dimensions. 
+        /// E.g. for Queues: <c>"ApiName eq 'GetMessage' or ApiName eq 'GetMessages'"</c>
+        /// The result for each dimension will be returned in a different TimeSeries.
         /// </summary>
         public string Filter { get; set; }
 
@@ -85,8 +85,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals
         /// <returns>A string that represents the MDM query parameters</returns>
         public override string ToString()
         {
-            return $"StartTime - '{this.StartTime}', EndTime - '{this.EndTime}', Interval - '{this.Interval}', MetricName - '{this.MetricName}', " +
-                   $"Aggregation - '{this.Aggregation}' Top - '{this.Top}', Orderby - '{this.Orderby}', Filter - '{this.Filter}', ResultType - '{this.ResultType}'";
+            return JsonConvert.SerializeObject(this);
         }
     }
 }

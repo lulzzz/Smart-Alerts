@@ -1,10 +1,10 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="AzureResourceService.cs" company="Microsoft Corporation">
+// <copyright file="ServiceType.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals
+namespace Microsoft.Azure.Monitoring.SmartSignals.Mdm
 {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
@@ -13,7 +13,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals
     /// An enumeration of all resource services supported by Smart Signals.
     /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum AzureResourceService
+    public enum ServiceType
     {
         /// <summary>
         /// Blob service of AzureStorage
