@@ -10,6 +10,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Trace
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.Tools;
 
     /// <summary>

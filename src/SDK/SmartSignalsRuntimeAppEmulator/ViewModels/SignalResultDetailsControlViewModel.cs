@@ -14,6 +14,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
     using System.IO.Compression;
     using System.Linq;
     using System.Text;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models;
     using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
     using Unity.Attributes;
@@ -64,14 +65,14 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
 
             this.PropertiesSectionProperties = new ObservableCollection<SmartSignalResultItemPresentationProperty>(
                 this.SignalResult.ResultItemPresentation.Properties
-                    .Where(prop => prop.DisplayCategory == ResultItemPresentationSection.Property).ToList());
+                    .Where(prop => prop.DisplayCategory == AlertPresentationSection.Property).ToList());
 
             this.AnalysisSectionProperties = new ObservableCollection<SmartSignalResultItemPresentationProperty>(
                 this.SignalResult.ResultItemPresentation.Properties
-                    .Where(prop => prop.DisplayCategory == ResultItemPresentationSection.Analysis).ToList());
+                    .Where(prop => prop.DisplayCategory == AlertPresentationSection.Analysis).ToList());
 
             List<AnalyticsQuery> queries = this.SignalResult.ResultItemPresentation.Properties
-                    .Where(prop => prop.DisplayCategory == ResultItemPresentationSection.Chart)
+                    .Where(prop => prop.DisplayCategory == AlertPresentationSection.Chart)
                     .Select(chartItem => new AnalyticsQuery(chartItem.Name, chartItem.Value)).ToList();
 
             this.AnalyticsQuerys = new ObservableCollection<AnalyticsQuery>(queries);

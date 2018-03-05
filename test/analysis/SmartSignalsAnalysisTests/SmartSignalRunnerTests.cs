@@ -11,6 +11,7 @@ namespace SmartSignalsAnalysisTests
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals;
     using Microsoft.Azure.Monitoring.SmartSignals.Analysis;
     using Microsoft.Azure.Monitoring.SmartSignals.Clients;
@@ -51,7 +52,6 @@ namespace SmartSignalsAnalysisTests
             Assert.IsNotNull(resultItemPresentations, "Presentation list is null");
             Assert.AreEqual(1, resultItemPresentations.Count);
             Assert.AreEqual("Test title", resultItemPresentations.Single().Title);
-            Assert.AreEqual("Summary value", resultItemPresentations.Single().Summary.Value);
         }
 
         [TestMethod]
@@ -202,7 +202,7 @@ namespace SmartSignalsAnalysisTests
             this.queryRunInfoProviderMock = new Mock<IQueryRunInfoProvider>();
         }
 
-        private class TestSignal : ISmartSignal
+        private class TestSignal : ISmartDetector
         {
             public bool ShouldStuck { private get; set; }
 
@@ -216,7 +216,7 @@ namespace SmartSignalsAnalysisTests
 
             public ResourceType ExpectedResourceType { private get; set; }
 
-            public async Task<SmartSignalResult> AnalyzeResourcesAsync(AnalysisRequest analysisRequest, ITracer tracer, CancellationToken cancellationToken)
+            public async Task<List<Alert>> AnalyzeResourcesAsync(AnalysisRequest analysisRequest, ITracer tracer, CancellationToken cancellationToken)
             {
                 this.IsRunning = true;
 
@@ -247,9 +247,9 @@ namespace SmartSignalsAnalysisTests
                     throw new CustomException();
                 }
 
-                SmartSignalResult smartSignalResult = new SmartSignalResult();
-                smartSignalResult.ResultItems.Add(new TestSignalResultItem(analysisRequest.TargetResources.First()));
-                return await Task.FromResult(smartSignalResult);
+                List<Alert> alerts = new List<Alert>();
+                alerts.Add(new TestSignalResultItem(analysisRequest.TargetResources.First()));
+                return await Task.FromResult(alerts);
             }
 
             private class CustomException : Exception
@@ -257,13 +257,13 @@ namespace SmartSignalsAnalysisTests
             }
         }
 
-        private class TestSignalResultItem : SmartSignalResultItem
+        private class TestSignalResultItem : Alert
         {
             public TestSignalResultItem(ResourceIdentifier resourceIdentifier) : base("Test title", resourceIdentifier)
             {
             }
 
-            [ResultItemPresentation(ResultItemPresentationSection.Property, "Summary title", InfoBalloon = "Summary info", Component = ResultItemPresentationComponent.Summary)]
+            [AlertPresentationProperty(AlertPresentationSection.Property, "Summary title", InfoBalloon = "Summary info")]
             public string Summary { get; } = "Summary value";
         }
     }

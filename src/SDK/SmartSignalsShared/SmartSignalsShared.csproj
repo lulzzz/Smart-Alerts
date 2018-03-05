@@ -26,6 +26,6 @@
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartSignalsSDK\SmartSignalsSDK.csproj" />
+    <ProjectReference Include="..\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
   </ItemGroup>
 </Project>

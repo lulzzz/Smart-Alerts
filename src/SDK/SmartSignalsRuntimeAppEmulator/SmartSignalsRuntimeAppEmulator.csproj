@@ -75,7 +75,7 @@
     <Resource Include="Media\ic_close.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartSignalsSDK\SmartSignalsSDK.csproj" />
+    <ProjectReference Include="..\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
     <ProjectReference Include="..\SmartSignalsShared\SmartSignalsShared.csproj" />
   </ItemGroup>
   <ItemGroup>

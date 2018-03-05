@@ -15,6 +15,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.Extensions;
     using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
     using Microsoft.Azure.Monitoring.SmartSignals.Tools;

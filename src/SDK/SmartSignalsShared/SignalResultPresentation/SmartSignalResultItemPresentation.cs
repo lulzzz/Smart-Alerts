@@ -10,6 +10,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.Clients;
     using Microsoft.Azure.Monitoring.SmartSignals.Extensions;
     using Newtonsoft.Json;
@@ -26,7 +27,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
         /// </summary>
         /// <param name="id">The result item ID</param>
         /// <param name="title">The result item title</param>
-        /// <param name="summary">The result item summary</param>
         /// <param name="resourceId">The result item resource ID</param>
         /// <param name="correlationHash">The result item correlation hash</param>
         /// <param name="signalId">The signal ID</param>
@@ -39,7 +39,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
         public SmartSignalResultItemPresentation(
             string id, 
             string title, 
-            SmartSignalResultItemPresentationSummary summary, 
             string resourceId, 
             string correlationHash, 
             string signalId, 
@@ -52,7 +51,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
         {
             this.Id = id;
             this.Title = title;
-            this.Summary = summary;
             this.ResourceId = resourceId;
             this.CorrelationHash = correlationHash;
             this.SignalId = signalId;
@@ -75,13 +73,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
         /// </summary>
         [JsonProperty("title")]
         public string Title { get; }
-
-        /// <summary>
-        /// Gets the result item summary
-        /// </summary>
-        [JsonProperty("summary")]
-        public SmartSignalResultItemPresentationSummary Summary { get; }
-
+        
         /// <summary>
         /// Gets the result item resource ID
         /// </summary>
@@ -144,7 +136,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
         /// <param name="smartSignalResultItem">The result item</param>
         /// <param name="queryRunInfo">The query run information</param>
         /// <returns>The presentation</returns>
-        public static SmartSignalResultItemPresentation CreateFromResultItem(SmartSignalRequest request, string signalName, SmartSignalResultItem smartSignalResultItem, SmartSignalResultItemQueryRunInfo queryRunInfo)
+        public static SmartSignalResultItemPresentation CreateFromResultItem(SmartSignalRequest request, string signalName, Alert smartSignalResultItem, SmartSignalResultItemQueryRunInfo queryRunInfo)
         {
             // A null result item has null presentation
             if (smartSignalResultItem == null)
@@ -155,9 +147,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
             // Create presentation elements for each result item property
             Dictionary<string, string> predicates = new Dictionary<string, string>();
             List<SmartSignalResultItemPresentationProperty> presentationProperties = new List<SmartSignalResultItemPresentationProperty>();
-            SmartSignalResultItemPresentationProperty summaryChart = null;
-            string summaryValue = null;
-            string summaryDetails = null;
             Dictionary<string, string> rawProperties = new Dictionary<string, string>();
             foreach (PropertyInfo property in smartSignalResultItem.GetType().GetProperties())
             {
@@ -166,17 +155,17 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
                 rawProperties[property.Name] = propertyValue;
 
                 // Check if this property is a predicate
-                if (property.GetCustomAttribute<ResultItemPredicateAttribute>() != null)
+                if (property.GetCustomAttribute<AlertPredicatePropertyAttribute>() != null)
                 {
                     predicates[property.Name] = propertyValue;
                 }
 
                 // Get the presentation attribute
-                ResultItemPresentationAttribute attribute = property.GetCustomAttribute<ResultItemPresentationAttribute>();
+                AlertPresentationPropertyAttribute attribute = property.GetCustomAttribute<AlertPresentationPropertyAttribute>();
                 if (attribute != null)
                 {
                     // Verify that if the entity is a chart or query, then query run information was provided
-                    if (queryRunInfo == null && (attribute.Section == ResultItemPresentationSection.Chart || attribute.Section == ResultItemPresentationSection.AdditionalQuery))
+                    if (queryRunInfo == null && (attribute.Section == AlertPresentationSection.Chart || attribute.Section == AlertPresentationSection.AdditionalQuery))
                     {
                         throw new InvalidSmartSignalResultItemPresentationException($"The presentation contains an item for the {attribute.Section} section, but no telemetry data client was provided");
                     }
@@ -185,50 +174,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
                     string attributeTitle = Smart.Format(attribute.Title, smartSignalResultItem);
                     string attributeInfoBalloon = Smart.Format(attribute.InfoBalloon, smartSignalResultItem);
 
-                    // Add presentation to the summary component
-                    if (attribute.Component.HasFlag(ResultItemPresentationComponent.Summary))
-                    {
-                        if (attribute.Section == ResultItemPresentationSection.Chart)
-                        {
-                            // Verify there is at most one summary chart
-                            if (summaryChart != null)
-                            {
-                                throw new InvalidSmartSignalResultItemPresentationException("There can be at most one summary chart for each resultItem");
-                            }
-
-                            // Create the summary chart presentation property
-                            summaryChart = new SmartSignalResultItemPresentationProperty(attributeTitle, propertyValue, attribute.Section, attributeInfoBalloon);
-                        }
-                        else if (attribute.Section == ResultItemPresentationSection.Property)
-                        {
-                            // Verify there is at most one summary presentation property
-                            if (summaryValue != null)
-                            {
-                                throw new InvalidSmartSignalResultItemPresentationException("There must be exactly one summary property for each resultItem");
-                            }
-
-                            // Set summary presentation elements
-                            summaryValue = propertyValue;
-                            summaryDetails = attributeTitle;
-                        }
-                        else
-                        {
-                            throw new InvalidSmartSignalResultItemPresentationException($"Invalid section for summary property {property.Name}: {attribute.Section}");
-                        }
-                    }
-
-                    // Add presentation to the details component
-                    if (attribute.Component.HasFlag(ResultItemPresentationComponent.Details))
-                    {
-                        presentationProperties.Add(new SmartSignalResultItemPresentationProperty(attributeTitle, propertyValue, attribute.Section, attributeInfoBalloon));
-                    }
+                    // Add the presentation property
+                    presentationProperties.Add(new SmartSignalResultItemPresentationProperty(attributeTitle, propertyValue, attribute.Section, attributeInfoBalloon));
                 }
-            }
-
-            // Verify that a summary was provided
-            if (summaryValue == null)
-            {
-                throw new InvalidSmartSignalResultItemPresentationException("There must be exactly one summary property for each result item");
             }
 
             string id = string.Join("##", smartSignalResultItem.GetType().FullName, JsonConvert.SerializeObject(request), JsonConvert.SerializeObject(smartSignalResultItem)).Hash();
@@ -239,7 +187,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
             return new SmartSignalResultItemPresentation(
                 id,
                 smartSignalResultItem.Title,
-                new SmartSignalResultItemPresentationSummary(summaryValue, summaryDetails, summaryChart),
                 resourceId,
                 correlationHash,
                 request.SignalId,

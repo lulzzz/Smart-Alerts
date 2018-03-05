@@ -11,7 +11,7 @@ namespace SmartSignalSchedulerTests
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
@@ -60,7 +60,7 @@ namespace SmartSignalSchedulerTests
         {
             var resultItems = new List<SmartSignalResultItemPresentation>
             {
-                new SmartSignalResultItemPresentation("id", "title", null, "resource", null, "someSignalId", string.Empty, DateTime.UtcNow, 0, null, null, null)
+                new SmartSignalResultItemPresentation("id", "title", "resource", null, "someSignalId", string.Empty, DateTime.UtcNow, 0, null, null, null)
             };
 
             this.signalExecutionInfo.AlertRule.EmailRecipients = new List<string>();
@@ -103,8 +103,8 @@ namespace SmartSignalSchedulerTests
                 .ReturnsAsync(new Response(HttpStatusCode.Accepted, null, null));
 
             var resultItems = this.CreateSignalResultList();
-            resultItems.Add(new SmartSignalResultItemPresentation("id2", "title2", null, "/subscriptions/2", null, "someSignalId2", string.Empty, DateTime.UtcNow, 0, null, null, null));
-            resultItems.Add(new SmartSignalResultItemPresentation("id3", "title3", null, "/subscriptions/3", null, "someSignalId3", string.Empty, DateTime.UtcNow, 0, null, null, null));
+            resultItems.Add(new SmartSignalResultItemPresentation("id2", "title2", "/subscriptions/2", null, "someSignalId2", string.Empty, DateTime.UtcNow, 0, null, null, null));
+            resultItems.Add(new SmartSignalResultItemPresentation("id3", "title3", "/subscriptions/3", null, "someSignalId3", string.Empty, DateTime.UtcNow, 0, null, null, null));
 
             await this.emailSender.SendSignalResultEmailAsync(this.signalExecutionInfo, resultItems);
 
@@ -115,7 +115,7 @@ namespace SmartSignalSchedulerTests
         {
             return new List<SmartSignalResultItemPresentation>
             {
-                new SmartSignalResultItemPresentation("id", "title", null, "/subscriptions/1", null, "someSignalId", string.Empty, DateTime.UtcNow, 0, null, null, null)
+                new SmartSignalResultItemPresentation("id", "title", "/subscriptions/1", null, "someSignalId", string.Empty, DateTime.UtcNow, 0, null, null, null)
             };
         }
     }

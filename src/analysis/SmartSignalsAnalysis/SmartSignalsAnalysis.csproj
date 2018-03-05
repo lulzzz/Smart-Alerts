@@ -22,7 +22,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SDK\SmartSignalsSDK\SmartSignalsSDK.csproj" />
+    <ProjectReference Include="..\..\SDK\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
     <ProjectReference Include="..\..\SmartSignalsRuntimeShared\SmartSignalsRuntimeShared.csproj" />
   </ItemGroup>
 </Project>

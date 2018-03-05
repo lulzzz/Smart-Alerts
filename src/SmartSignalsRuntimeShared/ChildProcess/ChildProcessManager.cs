@@ -16,6 +16,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.ChildProcess
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Trace;
     using Microsoft.Azure.Monitoring.SmartSignals.Tools;
     using Newtonsoft.Json;

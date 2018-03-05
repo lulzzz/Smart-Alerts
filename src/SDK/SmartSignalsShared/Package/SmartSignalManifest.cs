@@ -9,6 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Package
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 

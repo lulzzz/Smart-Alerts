@@ -12,6 +12,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
 
     /// <summary>
@@ -47,7 +48,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
                 throw new QueryClientInfoProviderException("No resources provided");
             }
 
-            // Verify that there are no application insights resources
+            // Verify that there are no Application Insights resources
             if (resources.All(resource => resource.ResourceType != ResourceType.ApplicationInsights))
             {
                 IReadOnlyList<ResourceIdentifier> workspaces;
@@ -94,7 +95,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
                 // Verify that all resources are of type ApplicationInsights
                 if (resources.Any(resource => resource.ResourceType != ResourceType.ApplicationInsights))
                 {
-                    throw new QueryClientInfoProviderException("An application insights telemetry data client can only be created for resources of type ApplicationInsights");
+                    throw new QueryClientInfoProviderException("An Application Insights telemetry data client can only be created for resources of type ApplicationInsights");
                 }
 
                 // Verify there are not too many resources

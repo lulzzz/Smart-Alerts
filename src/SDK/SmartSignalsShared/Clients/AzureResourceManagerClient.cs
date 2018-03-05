@@ -16,6 +16,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
     using System.Threading.Tasks;
     using Microsoft.Azure.Management.ResourceManager.Fluent;
     using Microsoft.Azure.Management.ResourceManager.Fluent.Models;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.Extensions;
     using Microsoft.Azure.Monitoring.SmartSignals.Tools;
     using Microsoft.Rest;
@@ -164,10 +165,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
         }
 
         /// <summary>
-        /// Returns the application insights app ID.
+        /// Returns the Application Insights app ID.
         /// </summary>
         /// <param name="resourceIdentifier">
-        /// The application insights resource identifier.
+        /// The Application Insights resource identifier.
         /// The value of the <see cref="ResourceType"/> property must be equal to <see cref="ResourceType.ApplicationInsights"/>
         /// </param>
         /// <param name="cancellationToken">The cancellation token.</param>

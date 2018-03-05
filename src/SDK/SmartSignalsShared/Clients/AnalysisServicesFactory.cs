@@ -11,6 +11,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
     using Microsoft.Azure.Monitoring.SmartSignals.Tools;
 
@@ -69,12 +70,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="ITelemetryDataClient"/>, used for running queries against data in application insights.
+        /// Creates an instance of <see cref="ITelemetryDataClient"/>, used for running queries against data in Application Insights.
         /// </summary>
         /// <param name="resources">The list of resources to analyze.</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <exception cref="TelemetryDataClientCreationException">An application insights telemetry data client could not be created for the specified resources.</exception>
-        /// <returns>The telemetry data client, that can be used to run queries on application insights.</returns>
+        /// <exception cref="TelemetryDataClientCreationException">An Application Insights telemetry data client could not be created for the specified resources.</exception>
+        /// <returns>The telemetry data client, that can be used to run queries on Application Insights.</returns>
         public async Task<ITelemetryDataClient> CreateApplicationInsightsTelemetryDataClientAsync(IReadOnlyList<ResourceIdentifier> resources, CancellationToken cancellationToken)
         {
             // Get the query run info, and verify it

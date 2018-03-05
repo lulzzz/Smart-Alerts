@@ -11,7 +11,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.Clients;
     using Microsoft.Azure.Monitoring.SmartSignals.Package;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
@@ -73,8 +73,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
             SmartSignalManifest signalManifest = signalPackage.Manifest;
             this.tracer.TraceInformation($"Read signal package, ID {signalManifest.Id}, Version {signalManifest.Version}");
 
-            // Load the signal
-            ISmartSignal signal = this.smartSignalLoader.LoadSignal(signalPackage);
+            // Load the detector
+            ISmartDetector detector = this.smartSignalLoader.LoadSignal(signalPackage);
             this.tracer.TraceInformation($"Signal instance loaded successfully, ID {signalManifest.Id}");
 
             // Get the resources on which to run the signal
@@ -82,12 +82,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
 
             // Run the signal
             this.tracer.TraceInformation($"Started running signal ID {signalManifest.Id}, Name {signalManifest.Name}");
-            SmartSignalResult signalResult;
+            List<Alert> alerts;
             try
             {
                 var analysisRequest = new AnalysisRequest(resources, request.LastExecutionTime, request.Cadence, this.analysisServicesFactory);
-                signalResult = await signal.AnalyzeResourcesAsync(analysisRequest, this.tracer, cancellationToken);
-                this.tracer.TraceInformation($"Completed running signal ID {signalManifest.Id}, Name {signalManifest.Name}, returning {signalResult.ResultItems.Count} result items");
+                alerts = await detector.AnalyzeResourcesAsync(analysisRequest, this.tracer, cancellationToken);
+                this.tracer.TraceInformation($"Completed running signal ID {signalManifest.Id}, Name {signalManifest.Name}, returning {alerts.Count} result items");
             }
             catch (Exception e)
             {
@@ -96,27 +96,27 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
             }
 
             // Verify that each result item belongs to one of the types declared in the signal manifest
-            foreach (SmartSignalResultItem resultItem in signalResult.ResultItems)
+            foreach (Alert alert in alerts)
             {
-                if (!signalManifest.SupportedResourceTypes.Contains(resultItem.ResourceIdentifier.ResourceType))
+                if (!signalManifest.SupportedResourceTypes.Contains(alert.ResourceIdentifier.ResourceType))
                 {
-                    throw new UnidentifiedResultItemResourceTypeException(resultItem.ResourceIdentifier);
+                    throw new UnidentifiedResultItemResourceTypeException(alert.ResourceIdentifier);
                 }
             }
 
             // Trace the number of result items of each type
-            foreach (var resultItemType in signalResult.ResultItems.GroupBy(x => x.GetType().Name))
+            foreach (var alertType in alerts.GroupBy(x => x.GetType().Name))
             {
-                this.tracer.TraceInformation($"Got {resultItemType.Count()} Smart Signal result items of type '{resultItemType.Key}'");
-                this.tracer.ReportMetric("SignalResultItemType", resultItemType.Count(), new Dictionary<string, string>() { { "ResultItemType", resultItemType.Key } });
+                this.tracer.TraceInformation($"Got {alertType.Count()} Smart Signal result items of type '{alertType.Key}'");
+                this.tracer.ReportMetric("SignalResultItemType", alertType.Count(), new Dictionary<string, string>() { { "ResultItemType", alertType.Key } });
             }
 
             // Create results
             List<SmartSignalResultItemPresentation> results = new List<SmartSignalResultItemPresentation>();
-            foreach (var resultItem in signalResult.ResultItems)
+            foreach (var alert in alerts)
             {
-                SmartSignalResultItemQueryRunInfo queryRunInfo = await this.queryRunInfoProvider.GetQueryRunInfoAsync(new List<ResourceIdentifier>() { resultItem.ResourceIdentifier }, cancellationToken);
-                results.Add(SmartSignalResultItemPresentation.CreateFromResultItem(request, signalManifest.Name, resultItem, queryRunInfo));
+                SmartSignalResultItemQueryRunInfo queryRunInfo = await this.queryRunInfoProvider.GetQueryRunInfoAsync(new List<ResourceIdentifier>() { alert.ResourceIdentifier }, cancellationToken);
+                results.Add(SmartSignalResultItemPresentation.CreateFromResultItem(request, signalManifest.Name, alert, queryRunInfo));
             }
 
             this.tracer.TraceInformation($"Returning {results.Count} results");

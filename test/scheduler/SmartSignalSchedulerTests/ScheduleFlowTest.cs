@@ -10,7 +10,7 @@ namespace SmartSignalSchedulerTests
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
@@ -137,7 +137,7 @@ namespace SmartSignalSchedulerTests
 
         private class TestResultItem : SmartSignalResultItemPresentation
         {
-            public TestResultItem(string title) : base(title, title, null, null, null, null, null, DateTime.UtcNow, 0, null, null, null)
+            public TestResultItem(string title) : base(title, title, null, null, null, null, DateTime.UtcNow, 0, null, null, null)
             {
             }
         }

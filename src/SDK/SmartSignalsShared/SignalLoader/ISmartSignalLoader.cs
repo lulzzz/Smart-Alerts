@@ -6,6 +6,7 @@
 
 namespace Microsoft.Azure.Monitoring.SmartSignals.SignalLoader
 {
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.Package;
 
     /// <summary>
@@ -18,6 +19,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalLoader
         /// </summary>
         /// <param name="signalPackage">The signal package.</param>
         /// <returns>The signal instance.</returns>
-        ISmartSignal LoadSignal(SmartSignalPackage signalPackage);
+        ISmartDetector LoadSignal(SmartSignalPackage signalPackage);
     }
 }

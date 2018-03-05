@@ -37,7 +37,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         /// Initializes a new instance of the <see cref="SignalResultApi"/> class.
         /// </summary>
         /// <param name="storageProviderFactory">The storage provider factory.</param>
-        /// <param name="applicationInsightsClientFactory">The application insights client factory.</param>
+        /// <param name="applicationInsightsClientFactory">The Application Insights client factory.</param>
         public SignalResultApi(ICloudStorageProviderFactory storageProviderFactory, IApplicationInsightsClientFactory applicationInsightsClientFactory)
         {
             this.signalResultStorageContainer = storageProviderFactory.GetSmartSignalResultStorageContainer();

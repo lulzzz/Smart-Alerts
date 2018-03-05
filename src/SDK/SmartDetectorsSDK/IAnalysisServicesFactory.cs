@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals
+namespace Microsoft.Azure.Monitoring.SmartDetectors
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -12,7 +12,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals
 
     /// <summary>
     /// An interface for exposing a factory that creates analysis services used for querying
-    /// telemetry data by the signal.
+    /// telemetry data by the Smart Detector.
     /// </summary>
     public interface IAnalysisServicesFactory
     {
@@ -26,12 +26,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals
         Task<ITelemetryDataClient> CreateLogAnalyticsTelemetryDataClientAsync(IReadOnlyList<ResourceIdentifier> resources, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Creates an instance of <see cref="ITelemetryDataClient"/>, used for running queries against data in application insights.
+        /// Creates an instance of <see cref="ITelemetryDataClient"/>, used for running queries against data in Application Insights.
         /// </summary>
         /// <param name="resources">The list of resources to analyze.</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <exception cref="TelemetryDataClientCreationException">An application insights telemetry data client could not be created for the specified resources.</exception>
-        /// <returns>The telemetry data client, that can be used to run queries on application insights.</returns>
+        /// <exception cref="TelemetryDataClientCreationException">An Application Insights telemetry data client could not be created for the specified resources.</exception>
+        /// <returns>The telemetry data client, that can be used to run queries on Application Insights.</returns>
         Task<ITelemetryDataClient> CreateApplicationInsightsTelemetryDataClientAsync(IReadOnlyList<ResourceIdentifier> resources, CancellationToken cancellationToken);
     }
 }

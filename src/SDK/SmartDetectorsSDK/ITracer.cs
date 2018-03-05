@@ -4,14 +4,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals
+namespace Microsoft.Azure.Monitoring.SmartDetectors
 {
     using System;
     using System.Collections.Generic;
 
     /// <summary>
-    /// Interface providing tracing capabilities. Smart Signals can use this to emit telemetry for troubleshooting and monitoring
-    /// of the signal's executions.
+    /// Interface providing tracing capabilities. Smart Detectors can use this to emit telemetry for troubleshooting and monitoring
+    /// of the Smart Detector's executions.
     /// </summary>
     public interface ITracer
     {

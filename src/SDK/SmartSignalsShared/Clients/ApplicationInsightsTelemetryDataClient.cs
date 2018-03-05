@@ -8,11 +8,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
 {
     using System;
     using System.Collections.Generic;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
     using Newtonsoft.Json.Linq;
 
     /// <summary>
-    /// An implementation of <see cref="ITelemetryDataClient"/> to access application insights resources.
+    /// An implementation of <see cref="ITelemetryDataClient"/> to access Application Insights resources.
     /// </summary>
     public class ApplicationInsightsTelemetryDataClient : TelemetryDataClientBase
     {

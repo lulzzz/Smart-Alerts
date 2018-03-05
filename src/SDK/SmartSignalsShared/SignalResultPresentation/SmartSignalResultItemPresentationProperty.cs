@@ -6,6 +6,7 @@
 
 namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
 {
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -20,7 +21,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
         /// <param name="value">The property value</param>
         /// <param name="displayCategory">The property display category</param>
         /// <param name="infoBalloon">The property information balloon</param>
-        public SmartSignalResultItemPresentationProperty(string name, string value, ResultItemPresentationSection displayCategory, string infoBalloon)
+        public SmartSignalResultItemPresentationProperty(string name, string value, AlertPresentationSection displayCategory, string infoBalloon)
         {
             this.Name = name;
             this.Value = value;
@@ -44,7 +45,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
         /// Gets the property display category
         /// </summary>
         [JsonProperty("displayCategory")]
-        public ResultItemPresentationSection DisplayCategory { get; }
+        public AlertPresentationSection DisplayCategory { get; }
 
         /// <summary>
         /// Gets the property information balloon

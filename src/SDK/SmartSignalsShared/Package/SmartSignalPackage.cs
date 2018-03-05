@@ -11,7 +11,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Package
     using System.IO;
     using System.IO.Compression;
     using System.Linq;
-    using System.Text;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Newtonsoft.Json;
 
     /// <summary>

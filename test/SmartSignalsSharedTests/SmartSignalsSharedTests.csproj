@@ -16,7 +16,7 @@
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SDK\SmartSignalsSDK\SmartSignalsSDK.csproj" />
+    <ProjectReference Include="..\..\src\SDK\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
     <ProjectReference Include="..\..\src\SDK\SmartSignalsShared\SmartSignalsShared.csproj" />
     <ProjectReference Include="..\testSignal\TestSignalLibrary\TestSignalLibrary.csproj" />
   </ItemGroup>

@@ -13,6 +13,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.Clients;
     using Microsoft.Azure.Monitoring.SmartSignals.Emulator.Controls;
     using Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models;

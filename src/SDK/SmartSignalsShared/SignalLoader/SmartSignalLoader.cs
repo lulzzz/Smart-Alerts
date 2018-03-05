@@ -9,6 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalLoader
     using System;
     using System.Collections.Generic;
     using System.Reflection;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.Package;
     using Microsoft.Azure.Monitoring.SmartSignals.Tools;
 
@@ -41,7 +42,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalLoader
         /// Thrown if an error occurred during the signal load (either due to assembly load
         /// error or failure to create the signal object).
         /// </exception>
-        public ISmartSignal LoadSignal(SmartSignalPackage signalPackage)
+        public ISmartDetector LoadSignal(SmartSignalPackage signalPackage)
         {
             SmartSignalManifest signalManifest = signalPackage.Manifest;
             IReadOnlyDictionary<string, byte[]> signalAssemblies = signalPackage.Content;
@@ -85,7 +86,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalLoader
                 }
 
                 // Check if the type inherits from ISmartSignal
-                if (!typeof(ISmartSignal).IsAssignableFrom(signalType))
+                if (!typeof(ISmartDetector).IsAssignableFrom(signalType))
                 {
                     throw new SmartSignalLoadException($"Signal type {signalType.Name} does not extend ISmartSignal");
                 }
@@ -108,15 +109,15 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalLoader
                     throw new SmartSignalLoadException($"Signal type {signalType.Name} does not have a public, parameter-less constructor");
                 }
 
-                // Create the signal object
-                ISmartSignal signal = Activator.CreateInstance(signalType) as ISmartSignal;
-                if (signal == null)
+                // Create the detector object
+                ISmartDetector detector = Activator.CreateInstance(signalType) as ISmartDetector;
+                if (detector == null)
                 {
                     throw new SmartSignalLoadException($"Signal {signalType.Name} failed to be created - instance is null");
                 }
 
                 this.tracer.TraceInformation($"Successfully created signal of type {signalType.Name}");
-                return signal;
+                return detector;
             }
             catch (Exception e)
             {

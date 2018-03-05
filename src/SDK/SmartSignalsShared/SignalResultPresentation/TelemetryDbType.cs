@@ -17,7 +17,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
         LogAnalytics,
 
         /// <summary>
-        /// The query should run on am application insights app
+        /// The query should run on am Application Insights app
         /// </summary>
         ApplicationInsights
     }

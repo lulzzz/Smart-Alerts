@@ -4,7 +4,7 @@
   "description": "Signal description",
   "version": "1.0",
   "assemblyName": "$safeprojectname$.dll",
-  "className": "$safeprojectname$.MySmartSignal",
+  "className": "$safeprojectname$.MySmartDetector",
   "supportedResourceTypes": [ "VirtualMachine" ],
   "supportedCadencesInMinutes": [ 5 ]
 }

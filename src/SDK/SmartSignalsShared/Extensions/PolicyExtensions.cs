@@ -9,6 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Extensions
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Polly;
 
     /// <summary>

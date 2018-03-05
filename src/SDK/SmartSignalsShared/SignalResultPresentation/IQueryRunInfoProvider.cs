@@ -9,6 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
 
     /// <summary>
     /// An interface for a provider of <see cref="SmartSignalResultItemQueryRunInfo"/> instances.

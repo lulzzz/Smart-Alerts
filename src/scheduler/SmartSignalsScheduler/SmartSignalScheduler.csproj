@@ -14,7 +14,7 @@
     <PackageReference Include="StyleCop.MSBuild" Version="5.0.0" />    
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SDK\SmartSignalsSDK\SmartSignalsSDK.csproj" />
+    <ProjectReference Include="..\..\SDK\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
     <ProjectReference Include="..\..\SmartSignalsRuntimeShared\SmartSignalsRuntimeShared.csproj" />
   </ItemGroup>
   <ItemGroup>

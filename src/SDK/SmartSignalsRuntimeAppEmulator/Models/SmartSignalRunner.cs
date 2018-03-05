@@ -13,6 +13,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartSignals.Package;
     using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
 
@@ -21,7 +22,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
     /// </summary>
     public class SmartSignalRunner : ObservableObject
     {
-        private readonly ISmartSignal smartSignal;
+        private readonly ISmartDetector smartDetector;
 
         private readonly IAnalysisServicesFactory analysisServicesFactory;
 
@@ -40,19 +41,19 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="SmartSignalRunner"/> class.
         /// </summary>
-        /// <param name="smartSignal">The smart signal.</param>
+        /// <param name="smartDetector">The Smart Detector.</param>
         /// <param name="analysisServicesFactory">The analysis services factory.</param>
         /// <param name="queryRunInfoProvider">The query run information provider.</param>
         /// <param name="smartSignalManifest">The smart signal manifest.</param>
         /// <param name="tracer">The tracer.</param>
         public SmartSignalRunner(
-            ISmartSignal smartSignal, 
+            ISmartDetector smartDetector, 
             IAnalysisServicesFactory analysisServicesFactory,
             IQueryRunInfoProvider queryRunInfoProvider,
             SmartSignalManifest smartSignalManifest,
             ITracer tracer)
         {
-            this.smartSignal = smartSignal;
+            this.smartDetector = smartDetector;
             this.analysisServicesFactory = analysisServicesFactory;
             this.queryRunInfoProvider = queryRunInfoProvider;
             this.smartSignalManifes = smartSignalManifest;
@@ -128,22 +129,22 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
                 // Run Signal
                 this.IsSignalRunning = true;
 
-                SmartSignalResult signalResults = await this.smartSignal.AnalyzeResourcesAsync(
+                List<Alert> alerts = await this.smartDetector.AnalyzeResourcesAsync(
                     analysisRequest,
                     this.Tracer,
                     this.cancellationTokenSource.Token);
 
                 // Create signal result items
                 List<SignalResultItem> signalResultItems = new List<SignalResultItem>();
-                foreach (var resultItem in signalResults.ResultItems)
+                foreach (var alert in alerts)
                 {
                     // Create result item presentation 
                     var resourceIds = resources.Select(resource => resource.ResourceName).ToList();
                     var smartSignalsSettings = new SmartSignalSettings();
                     var smartSignalRequest = new SmartSignalRequest(resourceIds, this.smartSignalManifes.Id, null, analysisCadence, smartSignalsSettings);
-                    SmartSignalResultItemQueryRunInfo queryRunInfo = await this.queryRunInfoProvider.GetQueryRunInfoAsync(new List<ResourceIdentifier>() { resultItem.ResourceIdentifier }, this.cancellationTokenSource.Token);
+                    SmartSignalResultItemQueryRunInfo queryRunInfo = await this.queryRunInfoProvider.GetQueryRunInfoAsync(new List<ResourceIdentifier>() { alert.ResourceIdentifier }, this.cancellationTokenSource.Token);
                     SmartSignalResultItemPresentation resultItemPresentation = SmartSignalResultItemPresentation.CreateFromResultItem(
-                        smartSignalRequest, this.smartSignalManifes.Name, resultItem, queryRunInfo);
+                        smartSignalRequest, this.smartSignalManifes.Name, alert, queryRunInfo);
 
                     // Create Azure resource identifier 
                     ResourceIdentifier resourceIdentifier = ResourceIdentifier.CreateFromResourceId(resultItemPresentation.ResourceId);

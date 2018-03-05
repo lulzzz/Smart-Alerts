@@ -8,6 +8,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
 {
     using System;
     using System.Runtime.Serialization;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
 
     /// <summary>
     /// This exception is thrown when a signals' result item resource type is not one of the types supported by the signal.

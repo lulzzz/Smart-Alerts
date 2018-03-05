@@ -37,9 +37,9 @@
     <RequireLicenseAcceptance>true</RequireLicenseAcceptance>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartSignalsSDK\SmartSignalsSDK.csproj">
+    <ProjectReference Include="..\SmartDetectorsSDK\SmartDetectorsSDK.csproj">
       <PackageDirectory>lib</PackageDirectory>
-    </ProjectReference>    
+    </ProjectReference>
     <ProjectReference Include="..\SmartSignalsBuildTask\SmartSignalsBuildTask.csproj">
       <ExcludeFromNuPkg>true</ExcludeFromNuPkg>
     </ProjectReference>

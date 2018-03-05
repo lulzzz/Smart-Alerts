@@ -9,6 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Newtonsoft.Json.Linq;
 
     /// <summary>
@@ -59,10 +60,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
         Task<JObject> GetResourcePropertiesAsync(ResourceIdentifier resourceIdentifier, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Returns the application insights app ID.
+        /// Returns the Application Insights app ID.
         /// </summary>
         /// <param name="resourceIdentifier">
-        /// The application insights resource identifier.
+        /// The Application Insights resource identifier.
         /// The value of the <see cref="ResourceIdentifier.ResourceType"/> property must be equal to <see cref="ResourceType.ApplicationInsights"/>
         /// </param>
         /// <param name="cancellationToken">The cancellation token.</param>
