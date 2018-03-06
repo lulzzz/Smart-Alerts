@@ -14,8 +14,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
     using System.Threading.Tasks;
     using System.Windows;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.Package;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Package;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
 
     /// <summary>
     /// An observable class that runs a smart signal.
@@ -28,7 +28,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
 
         private readonly IQueryRunInfoProvider queryRunInfoProvider;
 
-        private readonly SmartSignalManifest smartSignalManifes;
+        private readonly SmartDetectorManifest smartDetectorManifes;
 
         private ObservableCollection<SignalResultItem> results;
 
@@ -44,19 +44,19 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
         /// <param name="smartDetector">The Smart Detector.</param>
         /// <param name="analysisServicesFactory">The analysis services factory.</param>
         /// <param name="queryRunInfoProvider">The query run information provider.</param>
-        /// <param name="smartSignalManifest">The smart signal manifest.</param>
+        /// <param name="smartSignalManifes">The smart detector manifest.</param>
         /// <param name="tracer">The tracer.</param>
         public SmartSignalRunner(
             ISmartDetector smartDetector, 
             IAnalysisServicesFactory analysisServicesFactory,
             IQueryRunInfoProvider queryRunInfoProvider,
-            SmartSignalManifest smartSignalManifest,
+            SmartDetectorManifest smartSignalManifes,
             ITracer tracer)
         {
             this.smartDetector = smartDetector;
             this.analysisServicesFactory = analysisServicesFactory;
             this.queryRunInfoProvider = queryRunInfoProvider;
-            this.smartSignalManifes = smartSignalManifest;
+            this.smartDetectorManifes = smartSignalManifes;
             this.Tracer = tracer;
             this.IsSignalRunning = false;
             this.Results = new ObservableCollection<SignalResultItem>();
@@ -138,18 +138,18 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
                 List<SignalResultItem> signalResultItems = new List<SignalResultItem>();
                 foreach (var alert in alerts)
                 {
-                    // Create result item presentation 
+                    // Create alert presentation 
                     var resourceIds = resources.Select(resource => resource.ResourceName).ToList();
-                    var smartSignalsSettings = new SmartSignalSettings();
-                    var smartSignalRequest = new SmartSignalRequest(resourceIds, this.smartSignalManifes.Id, null, analysisCadence, smartSignalsSettings);
-                    SmartSignalResultItemQueryRunInfo queryRunInfo = await this.queryRunInfoProvider.GetQueryRunInfoAsync(new List<ResourceIdentifier>() { alert.ResourceIdentifier }, this.cancellationTokenSource.Token);
-                    SmartSignalResultItemPresentation resultItemPresentation = SmartSignalResultItemPresentation.CreateFromResultItem(
-                        smartSignalRequest, this.smartSignalManifes.Name, alert, queryRunInfo);
+                    var smartDetectorSettings = new SmartDetectorSettings();
+                    var smartDetectorRequest = new SmartDetectorRequest(resourceIds, this.smartDetectorManifes.Id, null, analysisCadence, smartDetectorSettings);
+                    QueryRunInfo queryRunInfo = await this.queryRunInfoProvider.GetQueryRunInfoAsync(new List<ResourceIdentifier>() { alert.ResourceIdentifier }, this.cancellationTokenSource.Token);
+                    AlertPresentation alertPresentation = AlertPresentation.CreateFromAlert(
+                        smartDetectorRequest, this.smartDetectorManifes.Name, alert, queryRunInfo);
 
                     // Create Azure resource identifier 
-                    ResourceIdentifier resourceIdentifier = ResourceIdentifier.CreateFromResourceId(resultItemPresentation.ResourceId);
+                    ResourceIdentifier resourceIdentifier = ResourceIdentifier.CreateFromResourceId(alertPresentation.ResourceId);
 
-                    signalResultItems.Add(new SignalResultItem(resultItemPresentation, resourceIdentifier));
+                    signalResultItems.Add(new SignalResultItem(alertPresentation, resourceIdentifier));
                 }
 
                 this.Results = new ObservableCollection<SignalResultItem>(signalResultItems);

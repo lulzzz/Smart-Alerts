@@ -13,10 +13,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartSignals.Analysis;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Extensions;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Azure.WebJobs.Host;
@@ -74,13 +74,13 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
                     tracer.TraceAppCounters();
 
                     // Read the request
-                    SmartSignalRequest smartSignalRequest = await request.Content.ReadAsAsync<SmartSignalRequest>(cancellationToken);
-                    tracer.AddCustomProperty("SignalId", smartSignalRequest.SignalId);
-                    tracer.TraceInformation($"Analyze request received: {JsonConvert.SerializeObject(smartSignalRequest)}");
+                    SmartDetectorRequest smartDetectorRequest = await request.Content.ReadAsAsync<SmartDetectorRequest>(cancellationToken);
+                    tracer.AddCustomProperty("SmartDetectorId", smartDetectorRequest.SmartDetectorId);
+                    tracer.TraceInformation($"Analyze request received: {JsonConvert.SerializeObject(smartDetectorRequest)}");
 
                     // Process the request
                     ISmartSignalRunner runner = childContainer.Resolve<ISmartSignalRunner>();
-                    List<SmartSignalResultItemPresentation> resultPresentations = await runner.RunAsync(smartSignalRequest, cancellationToken);
+                    List<AlertPresentation> resultPresentations = await runner.RunAsync(smartDetectorRequest, cancellationToken);
                     tracer.TraceInformation($"Analyze completed, returning {resultPresentations.Count} results");
 
                     // Return the generated presentations

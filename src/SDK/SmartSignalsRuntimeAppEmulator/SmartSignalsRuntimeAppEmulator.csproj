@@ -76,7 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
-    <ProjectReference Include="..\SmartSignalsShared\SmartSignalsShared.csproj" />
+    <ProjectReference Include="..\SmartDetectorsShared\SmartDetectorsShared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Controls\SignalConfigurationControl.xaml.cs">

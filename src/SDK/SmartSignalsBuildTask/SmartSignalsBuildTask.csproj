@@ -26,6 +26,6 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartSignalsShared\SmartSignalsShared.csproj" />
+    <ProjectReference Include="..\SmartDetectorsShared\SmartDetectorsShared.csproj" />
   </ItemGroup>
 </Project>

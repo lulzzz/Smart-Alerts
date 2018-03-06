@@ -8,7 +8,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Build
 {
     using System.IO;
     using System.Security;
-    using Microsoft.Azure.Monitoring.SmartSignals.Package;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Build.Utilities;
 
     /// <summary>
@@ -34,10 +34,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Build
         {
             try
             {
-                SmartSignalPackage package = SmartSignalPackage.CreateFromFolder(this.PackagePath);
+                SmartDetectorPackage package = SmartDetectorPackage.CreateFromFolder(this.PackagePath);
                 package.SaveToFile(Path.Combine(this.PackagePath, this.PackageName));
             }
-            catch (InvalidSmartSignalPackageException exception)
+            catch (InvalidSmartDetectorPackageException exception)
             {
                 Log.LogError(exception.Message);
                 return false;

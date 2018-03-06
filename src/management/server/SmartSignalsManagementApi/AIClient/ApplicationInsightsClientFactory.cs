@@ -6,8 +6,8 @@
 
 namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient
 {
-    using Microsoft.Azure.Monitoring.SmartSignals.Clients;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
 
     /// <summary>
     /// An implementation of the <see cref="IApplicationInsightsClientFactory"/> interface.

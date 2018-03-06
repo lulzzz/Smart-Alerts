@@ -7,11 +7,11 @@
 namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
 {
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Trace;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.ChildProcess;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalLoader;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
-    using Microsoft.Azure.Monitoring.SmartSignals.Trace;
     using Unity;
 
     /// <summary>
@@ -30,7 +30,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
             container = container
                 .RegisterType<IAnalysisServicesFactory, AnalysisServicesFactory>()
                 .RegisterType<IQueryRunInfoProvider, QueryRunInfoProvider>()
-                .RegisterType<ISmartSignalLoader, SmartSignalLoader>();
+                .RegisterType<ISmartDetectorLoader, SmartDetectorLoader>();
 
             if (withChildProcessRunner)
             {

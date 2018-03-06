@@ -8,7 +8,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
 
     /// <summary>
     /// An interface for sending Smart Signal results Email
@@ -19,8 +19,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
         /// Sends the Smart Signal result Email.
         /// </summary>
         /// <param name="signalExecution">The signals execution information.</param>
-        /// <param name="smartSignalResultItems">The Smart Signal result items.</param>
+        /// <param name="alerts">The Alerts.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        Task SendSignalResultEmailAsync(SignalExecutionInfo signalExecution, IList<SmartSignalResultItemPresentation> smartSignalResultItems);
+        Task SendSignalResultEmailAsync(SignalExecutionInfo signalExecution, IList<AlertPresentation> alerts);
     }
 }

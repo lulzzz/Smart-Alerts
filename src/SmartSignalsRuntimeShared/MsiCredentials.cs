@@ -14,8 +14,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared
     using System.Threading.Tasks;
     using System.Web;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.Clients;
-    using Microsoft.Azure.Monitoring.SmartSignals.Extensions;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Extensions;
     using Microsoft.Rest;
     using Newtonsoft.Json;
     using Polly;

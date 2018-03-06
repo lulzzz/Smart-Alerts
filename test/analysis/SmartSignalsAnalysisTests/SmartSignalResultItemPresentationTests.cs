@@ -10,8 +10,8 @@ namespace SmartSignalsAnalysisTests
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartSignals;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -32,7 +32,7 @@ namespace SmartSignalsAnalysisTests
             Assert.IsTrue(presentation.AnalysisTimestamp <= DateTime.UtcNow, "Unexpected analysis timestamp in the future");
             Assert.IsTrue(presentation.AnalysisTimestamp >= DateTime.UtcNow.AddMinutes(-1), "Unexpected analysis timestamp - too back in the past");
             Assert.AreEqual(24 * 60, presentation.AnalysisWindowSizeInMinutes, "Unexpected analysis window size");
-            Assert.AreEqual(SignalName, presentation.SignalName, "Unexpected signal name");
+            Assert.AreEqual(SignalName, presentation.SmartDetectorName, "Unexpected signal name");
             Assert.AreEqual("Test title", presentation.Title, "Unexpected title");
             Assert.AreEqual(8, presentation.Properties.Count, "Unexpected number of properties");
             this.VerifyProperty(presentation.Properties, "Machine name", AlertPresentationSection.Property, "strongOne", "The machine on which the CPU had increased");
@@ -82,29 +82,29 @@ namespace SmartSignalsAnalysisTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidSmartSignalResultItemPresentationException))]
+        [ExpectedException(typeof(InvalidAlertPresentationException))]
         public void WhenProcessingSmartSignalResultItemWithQueriesAndNullRunInfoThenAnExceptionIsThrown()
         {
             this.CreatePresentation(new TestResultItem(), nullQueryRunInfo: true);
         }
 
-        private SmartSignalResultItemPresentation CreatePresentation(Alert resultItem, bool nullQueryRunInfo = false)
+        private AlertPresentation CreatePresentation(Alert resultItem, bool nullQueryRunInfo = false)
         {
-            SmartSignalResultItemQueryRunInfo queryRunInfo = null;
+            QueryRunInfo queryRunInfo = null;
             if (!nullQueryRunInfo)
             {
-                queryRunInfo = new SmartSignalResultItemQueryRunInfo(
+                queryRunInfo = new QueryRunInfo(
                     resultItem.ResourceIdentifier.ResourceType == ResourceType.ApplicationInsights ? TelemetryDbType.ApplicationInsights : TelemetryDbType.LogAnalytics,
                     new List<string>() { "resourceId1", "resourceId2" });
             }
 
             DateTime lastExecutionTime = DateTime.Now.Date.AddDays(-1);
             string resourceId = "resourceId";
-            var request = new SmartSignalRequest(new List<string>() { resourceId }, "signalId", lastExecutionTime, TimeSpan.FromDays(1), new SmartSignalSettings());
-            return SmartSignalResultItemPresentation.CreateFromResultItem(request, SignalName, resultItem, queryRunInfo);
+            var request = new SmartDetectorRequest(new List<string>() { resourceId }, "smartDetectorId", lastExecutionTime, TimeSpan.FromDays(1), new SmartDetectorSettings());
+            return AlertPresentation.CreateFromAlert(request, SignalName, resultItem, queryRunInfo);
         }
 
-        private void VerifyProperty(List<SmartSignalResultItemPresentationProperty> properties, string name, AlertPresentationSection displayCategory, string value, string infoBalloon)
+        private void VerifyProperty(List<AlertPresentationProperty> properties, string name, AlertPresentationSection displayCategory, string value, string infoBalloon)
         {
             var property = properties.SingleOrDefault(p => p.Name == name);
             Assert.IsNotNull(property, $"Property {name} not found");

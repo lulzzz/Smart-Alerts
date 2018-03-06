@@ -14,8 +14,8 @@ namespace SmartSignalsSharedTests
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.Package;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalLoader;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Package;
+    using Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -29,7 +29,7 @@ namespace SmartSignalsSharedTests
     {
         private Dictionary<string, DllInfo> dllInfos;
         private Mock<ITracer> tracerMock;
-        private Dictionary<string, SmartSignalManifest> manifests;
+        private Dictionary<string, SmartDetectorManifest> manifests;
         private Dictionary<string, Dictionary<string, byte[]>> assemblies;
 
         [TestInitialize]
@@ -45,10 +45,10 @@ namespace SmartSignalsSharedTests
 
             Assembly currentAssembly = Assembly.GetExecutingAssembly();
 
-            this.manifests = new Dictionary<string, SmartSignalManifest>()
+            this.manifests = new Dictionary<string, SmartDetectorManifest>()
             {
-                ["1"] = new SmartSignalManifest("1", "Test signal", "Test signal description", Version.Parse("1.0"), "TestSignalLibrary", "TestSignalLibrary.TestSignal", new List<ResourceType>() { ResourceType.Subscription }, new List<int> { 60 }),
-                ["2"] = new SmartSignalManifest("2", "Test signal with dependency", "Test signal with dependency description", Version.Parse("1.0"), "TestSignalLibrary", "TestSignalLibrary.TestSignalWithDependency", new List<ResourceType>() { ResourceType.Subscription }, new List<int> { 60 })
+                ["1"] = new SmartDetectorManifest("1", "Test signal", "Test signal description", Version.Parse("1.0"), "TestSignalLibrary", "TestSignalLibrary.TestSignal", new List<ResourceType>() { ResourceType.Subscription }, new List<int> { 60 }),
+                ["2"] = new SmartDetectorManifest("2", "Test signal with dependency", "Test signal with dependency description", Version.Parse("1.0"), "TestSignalLibrary", "TestSignalLibrary.TestSignalWithDependency", new List<ResourceType>() { ResourceType.Subscription }, new List<int> { 60 })
             };
 
             this.assemblies = new Dictionary<string, Dictionary<string, byte[]>>
@@ -89,21 +89,21 @@ namespace SmartSignalsSharedTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(SmartSignalLoadException))]
+        [ExpectedException(typeof(SmartDetectorLoadException))]
         public async Task WhenLoadingSignalWithWrongTypeThenTheCorrectExceptionIsThrown()
         {
             await this.TestLoadSignalSimple(typeof(TestSignalNoInterface));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(SmartSignalLoadException))]
+        [ExpectedException(typeof(SmartDetectorLoadException))]
         public async Task WhenLoadingSignalWithoutDefaultConstructorThenTheCorrectExceptionIsThrown()
         {
             await this.TestLoadSignalSimple(typeof(TestSignalNoDefaultConstructor));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(SmartSignalLoadException))]
+        [ExpectedException(typeof(SmartDetectorLoadException))]
         public async Task WhenLoadingSignalWithGenericDefinitionThenTheCorrectExceptionIsThrown()
         {
             await this.TestLoadSignalSimple(typeof(TestSignalGeneric<>));
@@ -128,10 +128,10 @@ namespace SmartSignalsSharedTests
 
         private async Task TestLoadSignalSimple(Type signalType, string expectedTitle = "test test test")
         {
-            ISmartSignalLoader loader = new SmartSignalLoader(this.tracerMock.Object);
-            SmartSignalManifest manifest = new SmartSignalManifest("3", "simple", "description", Version.Parse("1.0"), signalType.Assembly.GetName().Name, signalType.FullName, new List<ResourceType>() { ResourceType.Subscription }, new List<int> { 60 });
-            SmartSignalPackage package = new SmartSignalPackage(manifest, this.assemblies["3"]);
-            ISmartDetector detector = loader.LoadSignal(package);
+            ISmartDetectorLoader loader = new SmartDetectorLoader(this.tracerMock.Object);
+            SmartDetectorManifest manifest = new SmartDetectorManifest("3", "simple", "description", Version.Parse("1.0"), signalType.Assembly.GetName().Name, signalType.FullName, new List<ResourceType>() { ResourceType.Subscription }, new List<int> { 60 });
+            SmartDetectorPackage package = new SmartDetectorPackage(manifest, this.assemblies["3"]);
+            ISmartDetector detector = loader.LoadSmartDetector(package);
             Assert.IsNotNull(detector, "Smart Detector is NULL");
 
             var resource = new ResourceIdentifier(ResourceType.VirtualMachine, "someSubscription", "someGroup", "someVM");
@@ -148,9 +148,9 @@ namespace SmartSignalsSharedTests
 
         private async Task TestLoadSignalFromDll(string signalId, string expectedTitle)
         {
-            ISmartSignalLoader loader = new SmartSignalLoader(this.tracerMock.Object);
-            SmartSignalPackage package = new SmartSignalPackage(this.manifests[signalId], this.assemblies[signalId]);
-            ISmartDetector detector = loader.LoadSignal(package);
+            ISmartDetectorLoader loader = new SmartDetectorLoader(this.tracerMock.Object);
+            SmartDetectorPackage package = new SmartDetectorPackage(this.manifests[signalId], this.assemblies[signalId]);
+            ISmartDetector detector = loader.LoadSmartDetector(package);
             Assert.IsNotNull(detector, "Smart Detector is NULL");
 
             var resource = new ResourceIdentifier(ResourceType.VirtualMachine, "someSubscription", "someGroup", "someVM");

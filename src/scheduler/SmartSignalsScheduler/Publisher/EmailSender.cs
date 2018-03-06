@@ -12,10 +12,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Exceptions;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
     using SendGrid;
     using SendGrid.Helpers.Mail;
     using Unity.Attributes;
@@ -66,9 +66,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
         /// Sends the Smart Signal result Email.
         /// </summary>
         /// <param name="signalExecution">The signals execution information.</param>
-        /// <param name="smartSignalResultItems">The Smart Signal result items.</param>
+        /// <param name="alerts">The Alerts.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        public async Task SendSignalResultEmailAsync(SignalExecutionInfo signalExecution, IList<SmartSignalResultItemPresentation> smartSignalResultItems)
+        public async Task SendSignalResultEmailAsync(SignalExecutionInfo signalExecution, IList<AlertPresentation> alerts)
         {
             AlertRule alertRule = signalExecution.AlertRule;
             if (this.sendGridClient == null)
@@ -83,7 +83,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
                 return;
             }
 
-            if (smartSignalResultItems == null || !smartSignalResultItems.Any())
+            if (alerts == null || !alerts.Any())
             {
                 this.tracer.TraceInformation($"no result items to publish for signal {alertRule.SignalId}");
                 return;
@@ -93,14 +93,14 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
 
             var exceptions = new List<Exception>();
 
-            foreach (SmartSignalResultItemPresentation resultItem in smartSignalResultItems)
+            foreach (AlertPresentation alert in alerts)
             {
                 ResourceIdentifier resource = ResourceIdentifier.CreateFromResourceId(alertRule.ResourceId);
 
                 // TODO: Fix links
                 string emailBody = Resources.SmartSignalEmailTemplate
-                    .Replace(SignalNamePlaceHolder, resultItem.SignalName)
-                    .Replace(ResourceNamePlaceHolder, resultItem.ResourceId)
+                    .Replace(SignalNamePlaceHolder, alert.SmartDetectorName)
+                    .Replace(ResourceNamePlaceHolder, alert.ResourceId)
                     .Replace(LinkToPortalPlaceHolder, "LinkToPortal")
                     .Replace(RuleNamePlaceHolder, alertRule.Name) 
                     .Replace(RuleDescriptionPlaceHolder, alertRule.Description)
@@ -112,8 +112,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
                 var msg = new SendGridMessage
                 {
                     From = new EmailAddress("smartsignals@microsoft.com", "Smart Signals"),
-                    Subject = $"Azure Smart Alerts (preview) - {resultItem.SignalName} detected",
-                    PlainTextContent = $@"{resultItem.SignalName} was detected for {resultItem.ResourceId}. 
+                    Subject = $"Azure Smart Alerts (preview) - {alert.SmartDetectorName} detected",
+                    PlainTextContent = $@"{alert.SmartDetectorName} was detected for {alert.ResourceId}. 
                                         You can view more details for this alert here: {"LinkToPortal"}",
                     HtmlContent = emailBody
                 };

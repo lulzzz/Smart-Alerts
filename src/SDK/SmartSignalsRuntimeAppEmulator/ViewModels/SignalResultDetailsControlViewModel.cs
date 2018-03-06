@@ -15,8 +15,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
     using System.Linq;
     using System.Text;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
     using Unity.Attributes;
 
     /// <summary>
@@ -28,9 +28,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
 
         private ObservableCollection<AzureResourceProperty> essentialsSectionProperties;
 
-        private ObservableCollection<SmartSignalResultItemPresentationProperty> propertiesSectionProperties;
+        private ObservableCollection<AlertPresentationProperty> propertiesSectionProperties;
 
-        private ObservableCollection<SmartSignalResultItemPresentationProperty> analysisSectionProperties;
+        private ObservableCollection<AlertPresentationProperty> analysisSectionProperties;
 
         private ObservableCollection<AnalyticsQuery> analyticsQueries;
 
@@ -63,15 +63,15 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
                     new AzureResourceProperty("Resource name", this.SignalResult.ResourceIdentifier.ResourceName)
                 });
 
-            this.PropertiesSectionProperties = new ObservableCollection<SmartSignalResultItemPresentationProperty>(
-                this.SignalResult.ResultItemPresentation.Properties
+            this.PropertiesSectionProperties = new ObservableCollection<AlertPresentationProperty>(
+                this.SignalResult.AlertPresentation.Properties
                     .Where(prop => prop.DisplayCategory == AlertPresentationSection.Property).ToList());
 
-            this.AnalysisSectionProperties = new ObservableCollection<SmartSignalResultItemPresentationProperty>(
-                this.SignalResult.ResultItemPresentation.Properties
+            this.AnalysisSectionProperties = new ObservableCollection<AlertPresentationProperty>(
+                this.SignalResult.AlertPresentation.Properties
                     .Where(prop => prop.DisplayCategory == AlertPresentationSection.Analysis).ToList());
 
-            List<AnalyticsQuery> queries = this.SignalResult.ResultItemPresentation.Properties
+            List<AnalyticsQuery> queries = this.SignalResult.AlertPresentation.Properties
                     .Where(prop => prop.DisplayCategory == AlertPresentationSection.Chart)
                     .Select(chartItem => new AnalyticsQuery(chartItem.Name, chartItem.Value)).ToList();
 
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
         /// <summary>
         /// Gets the properties section's properties.
         /// </summary>
-        public ObservableCollection<SmartSignalResultItemPresentationProperty> PropertiesSectionProperties
+        public ObservableCollection<AlertPresentationProperty> PropertiesSectionProperties
         {
             get
             {
@@ -141,7 +141,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
         /// <summary>
         /// Gets the analysis section's properties.
         /// </summary>
-        public ObservableCollection<SmartSignalResultItemPresentationProperty> AnalysisSectionProperties
+        public ObservableCollection<AlertPresentationProperty> AnalysisSectionProperties
         {
             get
             {
@@ -219,7 +219,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
             // Use the first resource ID from query run info for the query.
             // It might not work for Log Analytics results - since there might be few resources.
             // Anyway, this is temporary hack until there will be query visualizations in emulator.
-            string resultResourceId = this.SignalResult.ResultItemPresentation.QueryRunInfo.ResourceIds.First();
+            string resultResourceId = this.SignalResult.AlertPresentation.QueryRunInfo.ResourceIds.First();
             ResourceIdentifier resultResourceIdentifier = ResourceIdentifier.CreateFromResourceId(resultResourceId);
 
             Uri queryDeepLink =

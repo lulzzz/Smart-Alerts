@@ -8,7 +8,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models
 {
     using System.Collections.Generic;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
     using Newtonsoft.Json;
 
     /// <summary>

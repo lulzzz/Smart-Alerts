@@ -14,10 +14,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
     using System.Threading.Tasks;
     using System.Windows;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartSignals.Emulator.Controls;
     using Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models;
-    using Microsoft.Azure.Monitoring.SmartSignals.Package;
     using Unity.Attributes;
 
     /// <summary>
@@ -27,7 +27,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
     {
         private readonly IAzureResourceManagerClient azureResourceManagerClient;
 
-        private readonly SmartSignalManifest smartSignalManifes;
+        private readonly SmartDetectorManifest smartDetectorManifes;
 
         private readonly ITracer tracer;
 
@@ -72,25 +72,25 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.ViewModels
         /// </summary>
         /// <param name="azureResourceManagerClient">The Azure resources manager client.</param>
         /// <param name="tracer">The tracer.</param>
-        /// <param name="smartSignalManifest">The smart signal manifest.</param>
+        /// <param name="smartDetectorManifest">The smart detector manifest.</param>
         /// <param name="signalRunner">The smart signal runner.</param>
         [InjectionConstructor]
         public SignalConfigurationControlViewModel(
             IAzureResourceManagerClient azureResourceManagerClient,
             ITracer tracer,
-            SmartSignalManifest smartSignalManifest,
+            SmartDetectorManifest smartDetectorManifest,
             SmartSignalRunner signalRunner)
         {
             this.azureResourceManagerClient = azureResourceManagerClient;
-            this.smartSignalManifes = smartSignalManifest;
+            this.smartDetectorManifes = smartDetectorManifest;
             this.tracer = tracer;
 
             this.SignalRunner = signalRunner;
-            this.SignalName = this.smartSignalManifes.Name;
+            this.SignalName = this.smartDetectorManifes.Name;
             this.ShouldShowStatusControl = false;
 
             // Initialize cadences combo box
-            IEnumerable<SignalCadence> cadences = this.smartSignalManifes.SupportedCadencesInMinutes
+            IEnumerable<SignalCadence> cadences = this.smartDetectorManifes.SupportedCadencesInMinutes
                     .Select(cadence => new SignalCadence(TimeSpan.FromMinutes(cadence)));
 
             this.Cadences = new ObservableCollection<SignalCadence>(cadences);

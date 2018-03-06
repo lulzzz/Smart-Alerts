@@ -45,6 +45,6 @@
   </ItemGroup>  
   <ItemGroup>
     <ProjectReference Include="..\SDK\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
-    <ProjectReference Include="..\SDK\SmartSignalsShared\SmartSignalsShared.csproj" />
+    <ProjectReference Include="..\SDK\SmartDetectorsShared\SmartDetectorsShared.csproj" />
   </ItemGroup>
 </Project>

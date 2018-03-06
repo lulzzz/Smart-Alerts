@@ -9,7 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Trace
     using System;
     using System.Collections.Generic;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.WebJobs.Host;
 
     /// <summary>

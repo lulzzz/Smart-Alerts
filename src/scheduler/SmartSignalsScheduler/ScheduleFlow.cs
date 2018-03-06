@@ -11,12 +11,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
 
     /// <summary>
     /// This class is responsible for discovering which signal should be executed and sends them to the analysis flow
@@ -68,13 +68,13 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
             {
                 try
                 {
-                    IList<SmartSignalResultItemPresentation> signalResultItems = await this.analysisExecuter.ExecuteSignalAsync(signalExecution, new List<string> { signalExecution.AlertRule.ResourceId });
-                    this.tracer.TraceInformation($"Found {signalResultItems.Count} signal result items");
-                    await this.smartSignalResultPublisher.PublishSignalResultItemsAsync(signalExecution.AlertRule.SignalId, signalResultItems);
+                    IList<AlertPresentation> alerts = await this.analysisExecuter.ExecuteSignalAsync(signalExecution, new List<string> { signalExecution.AlertRule.ResourceId });
+                    this.tracer.TraceInformation($"Found {alerts.Count} alerts");
+                    await this.smartSignalResultPublisher.PublishSignalResultItemsAsync(signalExecution.AlertRule.SignalId, alerts);
                     await this.signalRunsTracker.UpdateSignalRunAsync(signalExecution);
 
                     // We send the mail after we mark the run as successful so if it will fail then the signal will not run again
-                    await this.emailSender.SendSignalResultEmailAsync(signalExecution, signalResultItems);
+                    await this.emailSender.SendSignalResultEmailAsync(signalExecution, alerts);
                 }
                 catch (Exception exception)
                 {
