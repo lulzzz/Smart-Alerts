@@ -3,9 +3,9 @@
   <PropertyGroup>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
-  <UsingTask TaskName="Microsoft.Azure.Monitoring.SmartSignals.Build.PackageSmartSignal" AssemblyFile="$(_SmartAlertsTaskAssemblyFullPath)"/>
-  <Target Name="PackageSmartSignalAfterBuild" AfterTargets="AfterBuild">
-    <PackageSmartSignal PackagePath="$(ProjectDir)$(OutDir)" PackageName="$(ProjectName).package"/>
+  <UsingTask TaskName="Microsoft.Azure.Monitoring.SmartDetectors.Build.PackageSmartDetector" AssemblyFile="$(_SmartDetectorsTaskAssemblyFullPath)"/>
+  <Target Name="PackageSmartDetectorAfterBuild" AfterTargets="AfterBuild">
+    <PackageSmartDetector PackagePath="$(ProjectDir)$(OutDir)" PackageName="$(ProjectName).package"/>
   </Target>
   <Target Name="RemovePackage" BeforeTargets="Clean">
     <Delete Files="$(ProjectDir)$(OutDir)$(ProjectName).package" />

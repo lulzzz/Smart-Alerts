@@ -1,10 +1,10 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="PackageSmartSignal.cs" company="Microsoft Corporation">
+// <copyright file="PackageSmartDetector.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.Build
+namespace Microsoft.Azure.Monitoring.SmartDetectors.Build
 {
     using System.IO;
     using System.Security;
@@ -12,9 +12,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Build
     using Microsoft.Build.Utilities;
 
     /// <summary>
-    /// Represents the build task of a Smart Signal
+    /// Represents the build task of a Smart Detector
     /// </summary>
-    public class PackageSmartSignal : Task
+    public class PackageSmartDetector : Task
     {
         /// <summary>
         /// Gets or sets the path of the zipped package.
@@ -27,7 +27,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Build
         public string PackageName { private get; set; }
 
         /// <summary>
-        /// Executes PackageSmartSignal task. 
+        /// Executes PackageSmartDetector task. 
         /// </summary>
         /// <returns>True if the task successfully executed; otherwise, False.</returns>
         public override bool Execute()
@@ -44,12 +44,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Build
             }
             catch (IOException ioe)
             {
-                Log.LogError($"Failed to create Smart Signal Package - failed creating the package file: {ioe.Message}");
+                Log.LogError($"Failed to create Smart Detector Package - failed creating the package file: {ioe.Message}");
                 return false;
             }
             catch (SecurityException securityException)
             {
-                Log.LogError($"Failed to create Smart Signal Package - failed creating the package file: {securityException.Message}");
+                Log.LogError($"Failed to create Smart Detector Package - failed creating the package file: {securityException.Message}");
                 return false;
             }
 

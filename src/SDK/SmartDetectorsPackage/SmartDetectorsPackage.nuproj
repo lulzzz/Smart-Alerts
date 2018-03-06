@@ -21,13 +21,13 @@
   </PropertyGroup>
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
-    <Id>Microsoft.Azure.Monitoring.SmartAlerts</Id>
-    <Version>1.0.0-beta</Version>
-    <Title>Azure Smart Alerts</Title>
+    <Id>Microsoft.Azure.Monitoring.SmartDetectors</Id>
+    <Version>0.0.1-beta</Version>
+    <Title>Azure Smart Detectors</Title>
     <Authors>Microsoft</Authors>
     <Owners>Microsoft Corporation</Owners>
-    <Summary>Azure Smart Alerts</Summary>
-    <Description>This client library provides an SDK for authoring Azure Smart Signals hosted on the Azure Smart Signals Runtime Application.</Description>
+    <Summary>Azure Smart Detectors</Summary>
+    <Description>This client library provides an SDK for authoring Azure Smart Detectors hosted on the Azure Smart Alerts Monitoring Appliance.</Description>
     <ReleaseNotes>
     </ReleaseNotes>
     <ProjectUrl>https://github.com/Azure/Smart-Alerts</ProjectUrl>
@@ -40,13 +40,13 @@
     <ProjectReference Include="..\SmartDetectorsSDK\SmartDetectorsSDK.csproj">
       <PackageDirectory>lib</PackageDirectory>
     </ProjectReference>
-    <ProjectReference Include="..\SmartSignalsBuildTask\SmartSignalsBuildTask.csproj">
+    <ProjectReference Include="..\SmartDetectorsBuildTask\SmartDetectorsBuildTask.csproj">
       <ExcludeFromNuPkg>true</ExcludeFromNuPkg>
     </ProjectReference>
-    <File Include="..\SmartSignalsBuildTask\build\**.*">
+    <File Include="..\SmartDetectorsBuildTask\build\**.*">
       <TargetPath>build\</TargetPath>
     </File>
-    <File Include="..\SmartSignalsBuildTask\$(Outdir)\net461\**.*">
+    <File Include="..\SmartDetectorsBuildTask\$(Outdir)\net461\**.*">
       <TargetPath>tools\net461\BuildTask</TargetPath>
     </File>
     <ProjectReference Include="..\SmartSignalsRuntimeAppEmulator\SmartSignalsRuntimeAppEmulator.csproj">
@@ -57,7 +57,7 @@
     </File>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="build\net461\Microsoft.Azure.Monitoring.SmartAlerts.targets" />
+    <Content Include="build\net461\Microsoft.Azure.Monitoring.SmartDetectors.targets" />
   </ItemGroup>
   <Import Project="$(NuProjPath)\NuProj.targets" />
 </Project>

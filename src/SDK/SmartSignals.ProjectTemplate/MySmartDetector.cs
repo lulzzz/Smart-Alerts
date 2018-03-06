@@ -7,7 +7,7 @@
     using Microsoft.Azure.Monitoring.SmartDetectors;
 
     /// <summary>
-    /// A specific implementation of a <see cref="ISmartDetector"/>. 
+    /// A specific implementation of a <see cref="ISmartDetector"/>.	
     /// The default implementation always returns a single alert with default title.
     /// </summary>
     public class MySmartDetector : ISmartDetector
