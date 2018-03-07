@@ -129,8 +129,11 @@ namespace SmartSignalsSharedTests
                 Interval = TimeSpan.FromMinutes(60)
             };
 
-            var metrics1 = await client.GetResourceMetricsAsync(resourceId, parameters);
-            var metrics2 = await client.GetResourceMetricsAsync(ServiceType.AzureStorageQueue, parameters);
+            var metrics1 = (await client.GetResourceMetricsAsync(resourceId, parameters)).ToList();
+            var metrics2 = (await client.GetResourceMetricsAsync(ServiceType.AzureStorageQueue, parameters)).ToList();
+            Assert.IsTrue(metrics1.Any() && metrics2.Any(), "Lists are not full with data");
+            Assert.IsTrue(metrics1.First().Timeseries.Any() && metrics2.First().Timeseries.Any(), "Metrics do not contian Time series");
+            Assert.IsTrue(metrics1.First().Timeseries.First().Data.Any() && metrics2.First().Timeseries.First().Data.Any(), "Time series are not full with data");
         }
 
         /// <summary>
