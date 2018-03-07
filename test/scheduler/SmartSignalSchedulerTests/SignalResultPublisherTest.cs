@@ -10,11 +10,11 @@ namespace SmartSignalSchedulerTests
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Exceptions;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
@@ -43,7 +43,7 @@ namespace SmartSignalSchedulerTests
         [TestMethod]
         public async Task WhenNoResultsToPublishThenResultStoreIsNotCalled()
         {
-            await this.publisher.PublishSignalResultItemsAsync("signalId", new List<SmartSignalResultItemPresentation>());
+            await this.publisher.PublishSignalResultItemsAsync("signalId", new List<AlertPresentation>());
 
             this.containerMock.Verify(m => m.UploadBlobAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
             this.tracerMock.Verify(m => m.TrackEvent(It.IsAny<string>(), It.IsAny<IDictionary<string, string>>(), It.IsAny<IDictionary<string, double>>()), Times.Never);
@@ -59,12 +59,12 @@ namespace SmartSignalSchedulerTests
             var blobName = $"{signalId}/{todayString}/id1";
             this.containerMock.Setup(m => m.UploadBlobAsync(blobName, It.IsAny<string>(), It.IsAny<CancellationToken>())).Throws(new StorageException());
 
-            var resultItems = new List<SmartSignalResultItemPresentation>
+            var alerts = new List<AlertPresentation>
             {
-                new SmartSignalResultItemPresentation("id1", "title1", null, "resource1", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null),
-                new SmartSignalResultItemPresentation("id2", "title2", null, "resource2", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null)
+                new AlertPresentation("id1", "title1", "resource1", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null),
+                new AlertPresentation("id2", "title2", "resource2", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null)
             };
-            await this.publisher.PublishSignalResultItemsAsync("signalId", resultItems);
+            await this.publisher.PublishSignalResultItemsAsync("signalId", alerts);
         }
 
         [TestMethod]
@@ -87,12 +87,12 @@ namespace SmartSignalSchedulerTests
             this.containerMock.Setup(m => m.UploadBlobAsync(blobName1, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(blobMock1.Object);
             this.containerMock.Setup(m => m.UploadBlobAsync(blobName2, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(blobMock2.Object);
 
-            var resultItems = new List<SmartSignalResultItemPresentation>
+            var alerts = new List<AlertPresentation>
             {
-                new SmartSignalResultItemPresentation("id1", "title1", null, "resource1", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null),
-                new SmartSignalResultItemPresentation("id2", "title2", null, "resource2", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null)
+                new AlertPresentation("id1", "title1", "resource1", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null),
+                new AlertPresentation("id2", "title2", "resource2", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null)
             };
-            await this.publisher.PublishSignalResultItemsAsync(signalId, resultItems);
+            await this.publisher.PublishSignalResultItemsAsync(signalId, alerts);
 
             this.tracerMock.Verify(m => m.TrackEvent("SmartSignalResult", It.Is<IDictionary<string, string>>(properties => properties["SignalId"] == signalId && properties["ResultItemBlobUri"] == blobUri1.AbsoluteUri), It.IsAny<IDictionary<string, double>>()), Times.Once);
             this.tracerMock.Verify(m => m.TrackEvent("SmartSignalResult", It.Is<IDictionary<string, string>>(properties => properties["SignalId"] == signalId && properties["ResultItemBlobUri"] == blobUri2.AbsoluteUri), It.IsAny<IDictionary<string, double>>()), Times.Once);

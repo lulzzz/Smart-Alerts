@@ -11,13 +11,13 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals;
-    using Microsoft.Azure.Monitoring.SmartSignals.Clients;
-    using Microsoft.Azure.Monitoring.SmartSignals.Extensions;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Extensions;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Exceptions;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
     using Newtonsoft.Json;
     using Polly;
 
@@ -57,9 +57,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
         /// <param name="signalExecutionInfo">The signal execution information</param>
         /// <param name="resourceIds">The resource IDs used by the signal</param>
         /// <returns>A list of smart signal result items</returns>
-        public async Task<IList<SmartSignalResultItemPresentation>> ExecuteSignalAsync(SignalExecutionInfo signalExecutionInfo, IList<string> resourceIds)
+        public async Task<IList<AlertPresentation>> ExecuteSignalAsync(SignalExecutionInfo signalExecutionInfo, IList<string> resourceIds)
         {
-            var analysisRequest = new SmartSignalRequest(resourceIds, signalExecutionInfo.AlertRule.SignalId, signalExecutionInfo.LastExecutionTime, signalExecutionInfo.AlertRule.Cadence, null);
+            var analysisRequest = new SmartDetectorRequest(resourceIds, signalExecutionInfo.AlertRule.SignalId, signalExecutionInfo.LastExecutionTime, signalExecutionInfo.AlertRule.Cadence, null);
             return await this.SendToAnalysisAsync(analysisRequest);
         }
 
@@ -68,7 +68,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
         /// </summary>
         /// <param name="analysisRequest">The request to send to the analysis function</param>
         /// <returns>A list of smart signal result items</returns>
-        private async Task<IList<SmartSignalResultItemPresentation>> SendToAnalysisAsync(SmartSignalRequest analysisRequest)
+        private async Task<IList<AlertPresentation>> SendToAnalysisAsync(SmartDetectorRequest analysisRequest)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, this.analysisUrl);
             string requestBody = JsonConvert.SerializeObject(analysisRequest);
@@ -77,17 +77,17 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
             this.tracer.TraceVerbose($"Sending analysis request {requestBody}");
 
             // Send the request
-            var response = await this.retryPolicy.RunAndTrackDependencyAsync(this.tracer, DependencyName, analysisRequest.SignalId, () => this.httpClientWrapper.SendAsync(requestMessage, default(CancellationToken)));
+            var response = await this.retryPolicy.RunAndTrackDependencyAsync(this.tracer, DependencyName, analysisRequest.SmartDetectorId, () => this.httpClientWrapper.SendAsync(requestMessage, default(CancellationToken)));
 
             if (!response.IsSuccessStatusCode)
             {
                 string content = response.Content != null ? await response.Content.ReadAsStringAsync() : string.Empty;
-                var message = $"Failed to execute signal {analysisRequest.SignalId}. Fail StatusCode: {response.StatusCode}. Reason: {response.ReasonPhrase}. Content: {content}.";
+                var message = $"Failed to execute signal {analysisRequest.SmartDetectorId}. Fail StatusCode: {response.StatusCode}. Reason: {response.ReasonPhrase}. Content: {content}.";
                 throw new AnalysisExecutionException(message);
             }
 
             var httpAnalysisResult = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<IList<SmartSignalResultItemPresentation>>(httpAnalysisResult);
+            return JsonConvert.DeserializeObject<IList<AlertPresentation>>(httpAnalysisResult);
         }
     }
 }

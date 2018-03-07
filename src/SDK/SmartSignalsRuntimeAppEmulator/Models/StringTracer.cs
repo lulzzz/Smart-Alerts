@@ -10,6 +10,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
     using System.Collections.Generic;
     using System.Globalization;
     using System.Text;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
 
     /// <summary>
     /// Implementation of <see cref="ITracer"/> that saves all traces in a string.

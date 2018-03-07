@@ -7,7 +7,7 @@
 namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Extensions
 {
     using System;
-    using System.Linq;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 

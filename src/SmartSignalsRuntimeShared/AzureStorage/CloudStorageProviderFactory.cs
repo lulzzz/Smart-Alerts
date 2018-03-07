@@ -7,7 +7,7 @@
 namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage
 {
     using System;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
     using Microsoft.WindowsAzure.Storage.Table;

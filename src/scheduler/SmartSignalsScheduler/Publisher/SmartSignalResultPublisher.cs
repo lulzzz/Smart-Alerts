@@ -11,12 +11,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Exceptions;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
     using Newtonsoft.Json;
@@ -46,11 +46,11 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
         /// Publish Smart Signal result items as events to Application Insights
         /// </summary>
         /// <param name="signalId">The signal ID</param>
-        /// <param name="smartSignalResultItems">The Smart Signal result items to publish</param>
+        /// <param name="alerts">The Alerts to publish</param>
         /// <returns>A <see cref="Task"/> object, running the current operation</returns>
-        public async Task PublishSignalResultItemsAsync(string signalId, IList<SmartSignalResultItemPresentation> smartSignalResultItems)
+        public async Task PublishSignalResultItemsAsync(string signalId, IList<AlertPresentation> alerts)
         {
-            if (smartSignalResultItems == null || !smartSignalResultItems.Any())
+            if (alerts == null || !alerts.Any())
             {
                 this.tracer.TraceInformation($"no result items to publish for signal {signalId}");
                 return;
@@ -59,10 +59,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
             try
             {
                 var todayString = DateTime.UtcNow.ToString("yyyy-MM-dd");
-                foreach (var resultItem in smartSignalResultItems)
+                foreach (var alert in alerts)
                 {
-                    var blobName = $"{signalId}/{todayString}/{resultItem.Id}";
-                    var resultItemString = JsonConvert.SerializeObject(resultItem);
+                    var blobName = $"{signalId}/{todayString}/{alert.Id}";
+                    var resultItemString = JsonConvert.SerializeObject(alert);
                     ICloudBlob blob = await this.containerClient.UploadBlobAsync(blobName, resultItemString, CancellationToken.None);
 
                     var eventProperties = new Dictionary<string, string>
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
                 throw new SignalResultPublishException($"Failed to publish signal results to storage for {signalId}", e);
             }
 
-            this.tracer.TraceInformation($"{smartSignalResultItems.Count} Smart Signal result items for signal {signalId} were published to the results store");
+            this.tracer.TraceInformation($"{alerts.Count} Alerts for signal {signalId} were published to the results store");
         }
     }
 }

@@ -10,9 +10,9 @@ namespace SmartSignalsAnalysisTests
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals;
-    using Microsoft.Azure.Monitoring.SmartSignals.Clients;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -58,7 +58,7 @@ namespace SmartSignalsAnalysisTests
 
             IQueryRunInfoProvider provider = new QueryRunInfoProvider(this.azureResourceManagerClientMock.Object);
 
-            SmartSignalResultItemQueryRunInfo queryRunInfo = await provider.GetQueryRunInfoAsync(resources, default(CancellationToken));
+            QueryRunInfo queryRunInfo = await provider.GetQueryRunInfoAsync(resources, default(CancellationToken));
 
             Assert.IsNotNull(queryRunInfo, "Query run information is null");
             Assert.AreEqual(TelemetryDbType.ApplicationInsights, queryRunInfo.Type, "Wrong telemetry DB type");
@@ -112,7 +112,7 @@ namespace SmartSignalsAnalysisTests
 
             string[] resourceIds = resources.Select(r => r.ToResourceId()).ToArray();
             IQueryRunInfoProvider provider = new QueryRunInfoProvider(this.azureResourceManagerClientMock.Object);
-            SmartSignalResultItemQueryRunInfo queryRunInfo = await provider.GetQueryRunInfoAsync(resources, default(CancellationToken));
+            QueryRunInfo queryRunInfo = await provider.GetQueryRunInfoAsync(resources, default(CancellationToken));
 
             Assert.IsNotNull(queryRunInfo, "Query run information is null");
             Assert.AreEqual(TelemetryDbType.LogAnalytics, queryRunInfo.Type, "Wrong telemetry DB type");
@@ -131,7 +131,7 @@ namespace SmartSignalsAnalysisTests
 
             string[] array = resources.Select(r => r.ToResourceId()).ToArray();
             IQueryRunInfoProvider provider = new QueryRunInfoProvider(this.azureResourceManagerClientMock.Object);
-            SmartSignalResultItemQueryRunInfo queryRunInfo = await provider.GetQueryRunInfoAsync(resources, default(CancellationToken));
+            QueryRunInfo queryRunInfo = await provider.GetQueryRunInfoAsync(resources, default(CancellationToken));
 
             Assert.IsNotNull(queryRunInfo, "Query run information is null");
             Assert.AreEqual(TelemetryDbType.LogAnalytics, queryRunInfo.Type, "Wrong telemetry DB type");
@@ -173,7 +173,7 @@ namespace SmartSignalsAnalysisTests
                 .ReturnsAsync("workspaceId");
 
             IQueryRunInfoProvider provider = new QueryRunInfoProvider(this.azureResourceManagerClientMock.Object);
-            SmartSignalResultItemQueryRunInfo queryRunInfo = await provider.GetQueryRunInfoAsync(resources, default(CancellationToken));
+            QueryRunInfo queryRunInfo = await provider.GetQueryRunInfoAsync(resources, default(CancellationToken));
 
             Assert.IsNotNull(queryRunInfo, "Query run information is null");
             this.azureResourceManagerClientMock.Verify(x => x.GetAllResourcesInSubscriptionAsync(SubscriptionId + "1", It.IsAny<IEnumerable<ResourceType>>(), It.IsAny<CancellationToken>()), Times.Once);

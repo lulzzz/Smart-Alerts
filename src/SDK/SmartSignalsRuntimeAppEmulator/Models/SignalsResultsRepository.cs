@@ -6,7 +6,9 @@
 
 namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
 {
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
 
     /// <summary>
     /// Represents the Signal results repository model. Holds all Smart Signal results created in the current run.
@@ -18,12 +20,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
         /// </summary>
         public SignalsResultsRepository()
         {
-            this.Results = new ObservableCollection<SmartSignalResult>();
+            this.Results = new ObservableCollection<List<Alert>>();
         }
 
         /// <summary>
         /// Gets the collection of result in the repository.
         /// </summary>
-        public ObservableCollection<SmartSignalResult> Results { get; }
+        public ObservableCollection<List<Alert>> Results { get; }
     }
 }

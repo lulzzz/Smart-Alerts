@@ -11,11 +11,11 @@ namespace ManagementApiTests.EndpointsLogic
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
-    using Microsoft.Azure.Monitoring.SmartSignals.Package;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Exceptions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -41,9 +41,9 @@ namespace ManagementApiTests.EndpointsLogic
         public async Task WhenGettingAllSignalsHappyFlow()
         {
             this.smartSignalsRepository.Setup(repository => repository.ReadAllSignalsManifestsAsync(It.IsAny<CancellationToken>()))
-                                       .ReturnsAsync(() => new List<SmartSignalManifest>()
+                                       .ReturnsAsync(() => new List<SmartDetectorManifest>()
                 {
-                    new SmartSignalManifest("someId", "someName", "someDescription", Version.Parse("1.0"), "someAssemblyName", "someClassName", new List<ResourceType> { ResourceType.ResourceGroup }, new List<int> { 60 })
+                    new SmartDetectorManifest("someId", "someName", "someDescription", Version.Parse("1.0"), "someAssemblyName", "someClassName", new List<ResourceType> { ResourceType.ResourceGroup }, new List<int> { 60 })
                 });
 
             ListSmartSignalsResponse response = await this.signalsLogic.GetAllSmartSignalsAsync(CancellationToken.None);

@@ -11,9 +11,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
     using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.ChildProcess;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
 
     /// <summary>
     /// An implementation of <see cref="ISmartSignalRunner"/>, that runs the analysis in a separate process
@@ -42,7 +43,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
         /// <param name="request">The request</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>A <see cref="Task{TResult}"/>, returning the generated result items presentations</returns>
-        public async Task<List<SmartSignalResultItemPresentation>> RunAsync(SmartSignalRequest request, CancellationToken cancellationToken)
+        public async Task<List<AlertPresentation>> RunAsync(SmartDetectorRequest request, CancellationToken cancellationToken)
         {
             // Find the executable location
             string currentDllPath = new Uri(typeof(SmartSignalRunnerInChildProcess).Assembly.CodeBase).AbsolutePath;
@@ -54,7 +55,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
             }
 
             // Run the child process
-            return await this.childProcessManager.RunChildProcessAsync<List<SmartSignalResultItemPresentation>>(exePath, request, cancellationToken);
+            return await this.childProcessManager.RunChildProcessAsync<List<AlertPresentation>>(exePath, request, cancellationToken);
         }
     }
 }

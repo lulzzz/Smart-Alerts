@@ -8,14 +8,14 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SampleSignal
     using System;
     using System.Collections.Generic;
     using System.Data;
-
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
 
     /// <summary>
     /// Sample signal logic, tests fetching from different clients and result presentation
     /// </summary>
-    public class HighRequestCountSignal : ISmartSignal
+    public class HighRequestCountSignal : ISmartDetector
     {
         private const string MaximumProcessorTimeLogAnalyticsQuery =
             "Perf | where TimeGenerated  >= ago(1h) | where CounterName == '% Processor Time' | summarize arg_max(CounterValue, TimeGenerated) ";
@@ -30,9 +30,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SampleSignal
         /// <param name="tracer">used to save trace messages</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <returns>The smart signal result containing the result items</returns>
-        public async Task<SmartSignalResult> AnalyzeResourcesAsync(AnalysisRequest analysisRequest, ITracer tracer, CancellationToken cancellationToken)
+        public async Task<List<Alert>> AnalyzeResourcesAsync(AnalysisRequest analysisRequest, ITracer tracer, CancellationToken cancellationToken)
         {
-            SmartSignalResult smartSignalResult = new SmartSignalResult();
+            List<Alert> alerts = new List<Alert>();
 
             // 1. Fetch from Application Insights client - name of an application with maximum request in the last 24h
             ITelemetryDataClient applicationInsightsDataClient = await analysisRequest.AnalysisServicesFactory.CreateApplicationInsightsTelemetryDataClientAsync(
@@ -68,9 +68,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SampleSignal
                 tracer.TraceError("Failed to perform the query in Log Analytics");
             }
 
-            analysisRequest.TargetResources.ForEach(resourceIdentifier => smartSignalResult.ResultItems.Add(
+            analysisRequest.TargetResources.ForEach(resourceIdentifier => alerts.Add(
                 new HighRequestCountSignalResultItem("High Processing Time Percentage(LA) and Request Count(AI)", appName, countReqByAppName, highestProcessorTimePercent, timeOfHighestProcessorTime, resourceIdentifier)));
-            return smartSignalResult;
+            return alerts;
         }
     }
 }

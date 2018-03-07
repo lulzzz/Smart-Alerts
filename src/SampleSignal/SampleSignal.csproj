@@ -7,14 +7,14 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SDK\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>  
   <ItemGroup>
     <None Update="manifest.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SDK\SmartSignalsSDK\SmartSignalsSDK.csproj" />
   </ItemGroup>
 </Project>

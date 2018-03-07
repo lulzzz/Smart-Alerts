@@ -10,6 +10,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.ChildProcess
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
 
     /// <summary>
     /// An interface of a class that manages running a task in a separate process

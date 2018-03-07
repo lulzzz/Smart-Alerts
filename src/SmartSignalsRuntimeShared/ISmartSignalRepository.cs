@@ -9,7 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals.Package;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Package;
 
     /// <summary>
     /// Interface for the Smart Signal repository
@@ -22,7 +22,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A <see cref="Task{TResult}"/> returning the smart signals manifests</returns>
-        Task<IList<SmartSignalManifest>> ReadAllSignalsManifestsAsync(CancellationToken cancellationToken);
+        Task<IList<SmartDetectorManifest>> ReadAllSignalsManifestsAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Reads a smart signal's package from the repository
@@ -30,6 +30,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared
         /// <param name="signalId">The signal's ID</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A <see cref="Task{TResult}"/> returning the signal package</returns>
-        Task<SmartSignalPackage> ReadSignalPackageAsync(string signalId, CancellationToken cancellationToken);
+        Task<SmartDetectorPackage> ReadSignalPackageAsync(string signalId, CancellationToken cancellationToken);
     }
 }

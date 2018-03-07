@@ -6,41 +6,42 @@
 
 namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models
 {
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
 
     /// <summary>
     /// Represents signal result item.
     /// </summary>
     public class SignalResultItem : ObservableObject
     {
-        private SmartSignalResultItemPresentation smartSignalResultItemPresentation;
+        private AlertPresentation alertPresentation;
 
         private ResourceIdentifier resourceIdentifier;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SignalResultItem"/> class
         /// </summary>
-        /// <param name="smartSignalResultItemPresentation">The signal result item presentation object</param>
+        /// <param name="alertPresentation">The alert presentation object</param>
         /// <param name="resourceIdentifier">The signal result's resource identifier</param>
-        public SignalResultItem(SmartSignalResultItemPresentation smartSignalResultItemPresentation, ResourceIdentifier resourceIdentifier)
+        public SignalResultItem(AlertPresentation alertPresentation, ResourceIdentifier resourceIdentifier)
         {
-            this.ResultItemPresentation = smartSignalResultItemPresentation;
+            this.AlertPresentation = alertPresentation;
             this.ResourceIdentifier = resourceIdentifier;
         }
 
         /// <summary>
-        /// Gets the signal result presentation item.
+        /// Gets the alert presentation.
         /// </summary>
-        public SmartSignalResultItemPresentation ResultItemPresentation
+        public AlertPresentation AlertPresentation
         {
             get
             {
-                return this.smartSignalResultItemPresentation;
+                return this.alertPresentation;
             }
 
             private set
             {
-                this.smartSignalResultItemPresentation = value;
+                this.alertPresentation = value;
                 this.OnPropertyChanged();
             }
         }

@@ -12,8 +12,8 @@ namespace SmartSignalsRuntimeSharedTests
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals;
-    using Microsoft.Azure.Monitoring.SmartSignals.Package;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Exceptions;
@@ -147,7 +147,7 @@ namespace SmartSignalsRuntimeSharedTests
             };
         }
 
-        private void AssertMetadata(SmartSignalManifest signalManifest, Dictionary<string, string> expectedMetadata)
+        private void AssertMetadata(SmartDetectorManifest smartDetectorManifest, Dictionary<string, string> expectedMetadata)
         {
             var supportedResourceTypes = JArray.Parse(expectedMetadata["supportedResourceTypes"])
                 .Select(jtoken => (ResourceType)Enum.Parse(typeof(ResourceType), jtoken.ToString(), true))
@@ -157,23 +157,23 @@ namespace SmartSignalsRuntimeSharedTests
                 .Select(jToken => int.Parse(jToken.ToString()))
                 .ToList();
 
-            Assert.AreEqual(expectedMetadata["id"], signalManifest.Id);
-            Assert.AreEqual(expectedMetadata["name"], signalManifest.Name);
-            Assert.AreEqual(expectedMetadata["version"], signalManifest.Version.ToString());
-            Assert.AreEqual(expectedMetadata["description"], signalManifest.Description);
-            Assert.AreEqual(expectedMetadata["assemblyName"], signalManifest.AssemblyName);
-            Assert.AreEqual(expectedMetadata["className"], signalManifest.ClassName);
+            Assert.AreEqual(expectedMetadata["id"], smartDetectorManifest.Id);
+            Assert.AreEqual(expectedMetadata["name"], smartDetectorManifest.Name);
+            Assert.AreEqual(expectedMetadata["version"], smartDetectorManifest.Version.ToString());
+            Assert.AreEqual(expectedMetadata["description"], smartDetectorManifest.Description);
+            Assert.AreEqual(expectedMetadata["assemblyName"], smartDetectorManifest.AssemblyName);
+            Assert.AreEqual(expectedMetadata["className"], smartDetectorManifest.ClassName);
 
-            Assert.AreEqual(supportedResourceTypes.Count, signalManifest.SupportedResourceTypes.Count);
+            Assert.AreEqual(supportedResourceTypes.Count, smartDetectorManifest.SupportedResourceTypes.Count);
             foreach (var supportedResourceType in supportedResourceTypes)
             {
-                Assert.IsTrue(signalManifest.SupportedResourceTypes.Contains(supportedResourceType));
+                Assert.IsTrue(smartDetectorManifest.SupportedResourceTypes.Contains(supportedResourceType));
             }
 
-            Assert.AreEqual(supportedCadencesInMinutes.Count, signalManifest.SupportedCadencesInMinutes.Count);
+            Assert.AreEqual(supportedCadencesInMinutes.Count, smartDetectorManifest.SupportedCadencesInMinutes.Count);
             foreach (var supportedCadence in supportedCadencesInMinutes)
             {
-                Assert.IsTrue(signalManifest.SupportedCadencesInMinutes.Contains(supportedCadence));
+                Assert.IsTrue(smartDetectorManifest.SupportedCadencesInMinutes.Contains(supportedCadence));
             }
         }
     }

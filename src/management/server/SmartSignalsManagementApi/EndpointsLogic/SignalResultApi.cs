@@ -12,10 +12,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
     using Newtonsoft.Json;
@@ -37,7 +37,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         /// Initializes a new instance of the <see cref="SignalResultApi"/> class.
         /// </summary>
         /// <param name="storageProviderFactory">The storage provider factory.</param>
-        /// <param name="applicationInsightsClientFactory">The application insights client factory.</param>
+        /// <param name="applicationInsightsClientFactory">The Application Insights client factory.</param>
         public SignalResultApi(ICloudStorageProviderFactory storageProviderFactory, IApplicationInsightsClientFactory applicationInsightsClientFactory)
         {
             this.signalResultStorageContainer = storageProviderFactory.GetSmartSignalResultStorageContainer();
@@ -66,12 +66,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
                 var blobsContent = await Task.WhenAll(signalResultsBlobsUri.Select(blobUri => this.signalResultStorageContainer
                                                                                               .DownloadBlobContentAsync(new CloudBlockBlob(new Uri(blobUri)).Name)));
                 
-                // Deserialize the blobs content to result item
-                IEnumerable<SmartSignalResultItemPresentation> smartSignalsResults = blobsContent.Select(JsonConvert.DeserializeObject<SmartSignalResultItemPresentation>);
+                // Deserialize the blobs content to alert
+                IEnumerable<AlertPresentation> alerts = blobsContent.Select(JsonConvert.DeserializeObject<AlertPresentation>);
 
                 return new ListSmartSignalsResultsResponse
                 {
-                    SignalsResults = smartSignalsResults.ToList()
+                    Alerts = alerts.ToList()
                 };
             }
             catch (ApplicationInsightsClientException e)

@@ -9,12 +9,13 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator
     using System;
     using System.IO;
     using System.Windows;
-    using Microsoft.Azure.Monitoring.SmartSignals.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Package;
+    using Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Trace;
     using Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models;
-    using Microsoft.Azure.Monitoring.SmartSignals.Package;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalLoader;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
-    using Microsoft.Azure.Monitoring.SmartSignals.Trace;
     using Microsoft.Win32;
     using Unity;
 
@@ -36,7 +37,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator
         {
             ITracer stringTracer = new StringTracer(string.Empty);
             ITracer consoleTracer = new ConsoleTracer(string.Empty);
-            var signalLoader = new SmartSignalLoader(consoleTracer);
+            var smartDetectorLoader = new SmartDetectorLoader(consoleTracer);
 
             // *Temporary*: if package file path wasn't accepted, raise file selection window to allow package file selection.
             // This option should be removed before launching version for customers (bug for tracking: 1177247)
@@ -44,14 +45,14 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator
                 this.GetSignalPackagePath() : 
                 Diagnostics.EnsureStringNotNullOrWhiteSpace(() => e.Args[0]);
             
-            SmartSignalPackage signalPackage;
+            SmartDetectorPackage smartDetectorPackage;
             using (var fileStream = new FileStream(signalPackagePath, FileMode.Open))
             {
-                signalPackage = SmartSignalPackage.CreateFromStream(fileStream, consoleTracer);
+                smartDetectorPackage = SmartDetectorPackage.CreateFromStream(fileStream, consoleTracer);
             }
 
-            SmartSignalManifest signalManifest = signalPackage.Manifest;
-            ISmartSignal signal = signalLoader.LoadSignal(signalPackage);
+            SmartDetectorManifest smartDetectorManifest = smartDetectorPackage.Manifest;
+            ISmartDetector detector = smartDetectorLoader.LoadSmartDetector(smartDetectorPackage);
 
             // Authenticate the user to Active Directory
             var authenticationServices = new AuthenticationServices();
@@ -65,7 +66,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator
             var httpClientWrapper = new HttpClientWrapper();
             IAnalysisServicesFactory analysisServicesFactory = new AnalysisServicesFactory(consoleTracer, httpClientWrapper, credentialsFactory, azureResourceManagerClient, queryRunInroProvider);
 
-            var signalRunner = new SmartSignalRunner(signal, analysisServicesFactory, queryRunInroProvider, signalManifest, stringTracer);
+            var signalRunner = new SmartSignalRunner(detector, analysisServicesFactory, queryRunInroProvider, smartDetectorManifest, stringTracer);
 
             // Create a Unity container with all the required models and view models registrations
             Container = new UnityContainer();
@@ -74,8 +75,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Emulator
                 .RegisterInstance(new SignalsResultsRepository())
                 .RegisterInstance(authenticationServices)
                 .RegisterInstance(azureResourceManagerClient)
-                .RegisterInstance(signal)
-                .RegisterInstance(signalManifest)
+                .RegisterInstance(detector)
+                .RegisterInstance(smartDetectorManifest)
                 .RegisterInstance(analysisServicesFactory)
                 .RegisterInstance(signalRunner);
         }

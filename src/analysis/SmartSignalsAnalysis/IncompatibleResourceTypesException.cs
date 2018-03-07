@@ -8,7 +8,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
 {
     using System;
     using System.Runtime.Serialization;
-    using Microsoft.Azure.Monitoring.SmartSignals.Package;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Package;
 
     /// <summary>
     /// This exception is thrown when the requested resource type is not supported by the requested signal.
@@ -21,9 +22,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
         /// with the specified error message.
         /// </summary>
         /// <param name="requestResourceType">The requested resource type</param>
-        /// <param name="smartSignalManifest">The signal manifest</param>
-        public IncompatibleResourceTypesException(ResourceType requestResourceType, SmartSignalManifest smartSignalManifest)
-            : base($"Resource type {requestResourceType} is not supported by signal {smartSignalManifest.Name}")
+        /// <param name="smartDetectorManifest">The smart detector manifest</param>
+        public IncompatibleResourceTypesException(ResourceType requestResourceType, SmartDetectorManifest smartDetectorManifest)
+            : base($"Resource type {requestResourceType} is not supported by signal {smartDetectorManifest.Name}")
         {
         }
 

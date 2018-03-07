@@ -8,7 +8,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals.SignalResultPresentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
 
     /// <summary>
     /// An interface for publishing Smart Signal results
@@ -19,8 +19,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
         /// Publish Smart Signal result items as events to Application Insights
         /// </summary>
         /// <param name="signalId">The signal ID</param>
-        /// <param name="smartSignalResultItems">The Smart Signal result items to publish</param>
+        /// <param name="alerts">The Alerts to publish</param>
         /// <returns>A <see cref="Task"/> object, running the current operation</returns>
-        Task PublishSignalResultItemsAsync(string signalId, IList<SmartSignalResultItemPresentation> smartSignalResultItems);
+        Task PublishSignalResultItemsAsync(string signalId, IList<AlertPresentation> alerts);
     }
 }

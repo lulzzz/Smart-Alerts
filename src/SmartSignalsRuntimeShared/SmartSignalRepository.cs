@@ -12,10 +12,11 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals.Package;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Package;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Exceptions;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
     using Newtonsoft.Json.Linq;
@@ -46,13 +47,13 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A <see cref="Task{TResult}"/> returning the smart signals manifests</returns>
-        public async Task<IList<SmartSignalManifest>> ReadAllSignalsManifestsAsync(CancellationToken cancellationToken)
+        public async Task<IList<SmartDetectorManifest>> ReadAllSignalsManifestsAsync(CancellationToken cancellationToken)
         {
             // We don't want to open the signal packages to get the manifest so we read it from the blob's metadata
             this.tracer.TraceInformation("Getting all smart signals manifests from the blob metadata");
             try
             {
-                var allSignalsManifests = new List<SmartSignalManifest>();
+                var allSignalsManifests = new List<SmartDetectorManifest>();
                 IEnumerable<CloudBlob> blobs = (await this.containerClient.ListBlobsAsync(string.Empty, true, BlobListingDetails.Metadata, cancellationToken)).Cast<CloudBlob>().Where(blob => blob.Metadata.ContainsKey("id"));
 
                 ILookup<string, CloudBlob> signalIdToAllVersionsLookup = blobs.ToLookup(blob => blob.Metadata["id"], blob => blob);
@@ -89,7 +90,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared
         /// <param name="signalId">The signal's ID</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A <see cref="Task{TResult}"/> returning the signal package</returns>
-        public async Task<SmartSignalPackage> ReadSignalPackageAsync(string signalId, CancellationToken cancellationToken)
+        public async Task<SmartDetectorPackage> ReadSignalPackageAsync(string signalId, CancellationToken cancellationToken)
         {
             this.tracer.TraceInformation($"Getting smart signal {signalId} package");
             try
@@ -101,7 +102,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared
                 {
                     // Download the blob to a stream and generate the signal package from it
                     await latestVersionSignalBlob.DownloadToStreamAsync(blobMemoryStream, cancellationToken);
-                    return SmartSignalPackage.CreateFromStream(blobMemoryStream, this.tracer);
+                    return SmartDetectorPackage.CreateFromStream(blobMemoryStream, this.tracer);
                 }
             }
             catch (StorageException e)
@@ -169,11 +170,11 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared
         }
 
         /// <summary>
-        /// Generates a <see cref="SmartSignalManifest"/> from the blob's metadata
+        /// Generates a <see cref="SmartDetectorManifest"/> from the blob's metadata
         /// </summary>
         /// <param name="signalMetadata">The blob's metadata</param>
-        /// <returns>A <see cref="SmartSignalManifest"/> representing the signal's manifest</returns>
-        private SmartSignalManifest GenerateSmartSignalManifest(IDictionary<string, string> signalMetadata)
+        /// <returns>A <see cref="SmartDetectorManifest"/> representing the signal's manifest</returns>
+        private SmartDetectorManifest GenerateSmartSignalManifest(IDictionary<string, string> signalMetadata)
         {
             var supportedResourceTypes = JArray.Parse(signalMetadata["supportedResourceTypes"])
                 .Select(jtoken => (ResourceType)Enum.Parse(typeof(ResourceType), jtoken.ToString(), true))
@@ -183,7 +184,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared
                 .Select(jToken => int.Parse(jToken.ToString()))
                 .ToList();
 
-             return new SmartSignalManifest(
+             return new SmartDetectorManifest(
                  signalMetadata["id"],
                  signalMetadata["name"],
                  signalMetadata["description"],

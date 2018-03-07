@@ -11,9 +11,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Extensions;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
     using Microsoft.Rest;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;

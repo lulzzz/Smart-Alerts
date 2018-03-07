@@ -12,11 +12,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Package;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
-    using Microsoft.Azure.Monitoring.SmartSignals.Package;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
 
     /// <summary>
     /// This class is the logic for the /signal endpoint.
@@ -46,10 +47,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         {
             try
             {
-                IList<SmartSignalManifest> smartSignalManifests = await this.smartSignalsRepository.ReadAllSignalsManifestsAsync(cancellationToken);
+                IList<SmartDetectorManifest> smartDetectorManifests = await this.smartSignalsRepository.ReadAllSignalsManifestsAsync(cancellationToken);
 
-                // Convert smart signals to the required response
-                var signals = smartSignalManifests.Select(manifest => new Signal
+                // Convert smart detectors to the required response
+                var signals = smartDetectorManifests.Select(manifest => new Signal
                 {
                    Id = manifest.Id,
                    Name = manifest.Name,
