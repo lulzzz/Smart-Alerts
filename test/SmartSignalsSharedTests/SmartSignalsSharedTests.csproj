@@ -8,6 +8,7 @@
     <Compile Remove="AzureResourceManagerClientTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Management.Monitor.Fluent" Version="1.6.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="Moq" Version="4.7.145" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.2.0" />
@@ -18,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\SDK\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
     <ProjectReference Include="..\..\src\SDK\SmartDetectorsShared\SmartDetectorsShared.csproj" />
+    <ProjectReference Include="..\..\src\SDK\SmartSignalsRuntimeAppEmulator\SmartSignalsRuntimeAppEmulator.csproj" />
     <ProjectReference Include="..\testSignal\TestSignalLibrary\TestSignalLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -43,6 +43,11 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors
         /// <summary>
         /// The log analytics workspace resource type.
         /// </summary>
-        LogAnalytics
+        LogAnalytics,
+
+        /// <summary>
+        /// The Azure Storage resource type.
+        /// </summary>
+        AzureStorage,
     }
 }

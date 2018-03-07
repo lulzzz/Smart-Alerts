@@ -12,8 +12,8 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Clients
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Mdm;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
 
     /// <summary>
     /// An implementation of the <see cref="IAnalysisServicesFactory"/> interface.
@@ -88,6 +88,18 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Clients
 
             // Create the client
             return new ApplicationInsightsTelemetryDataClient(this.tracer, this.httpClientWrapper, this.credentialsFactory, firstApplicationId, resources.Select(resource => resource.ToResourceId()), this.queryTimeout);
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="IMdmClient"/>, used to fetch the resource metrics from MDM.
+        /// </summary>
+        /// <param name="resource">The resource to analyze.</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <returns>The MDM client, that can be used to fetch the resource metrics from MDM.</returns>
+        public IMdmClient CreateMdmClientAsync(ResourceIdentifier resource, CancellationToken cancellationToken)
+        {
+            // Create the client
+            return new MdmClient(this.tracer, this.credentialsFactory, resource);
         }
 
         /// <summary>
