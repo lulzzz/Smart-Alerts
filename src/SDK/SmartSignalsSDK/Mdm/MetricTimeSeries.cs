@@ -14,13 +14,24 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Mdm
     public class MetricTimeSeries
     {
         /// <summary>
-        /// Gets or sets the data points of metric values
+        /// Initializes a new instance of the <see cref="MetricTimeSeries"/> class 
         /// </summary>
-        public IList<MetricValues> Data { get; set; }
+        /// <param name="data">The data points of metric values</param>
+        /// <param name="metaData">The meta data regarding the list of data points</param>
+        public MetricTimeSeries(IReadOnlyList<MetricValues> data, IReadOnlyList<KeyValuePair<string, string>> metaData)
+        {
+            this.Data = data;
+            this.MetaData = metaData;
+        }
 
         /// <summary>
-        /// Gets or sets the meta data regarding the list of data points
+        /// Gets the data points of metric values
         /// </summary>
-        public IList<string> MetaData { get; set; }
+        public IReadOnlyList<MetricValues> Data { get; }
+
+        /// <summary>
+        /// Gets the meta data regarding the list of data points
+        /// </summary>
+        public IReadOnlyList<KeyValuePair<string, string>> MetaData { get; }
     }
 }

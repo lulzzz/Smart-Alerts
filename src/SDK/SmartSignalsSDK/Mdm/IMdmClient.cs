@@ -26,15 +26,15 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Mdm
         /// <param name="queryProperties">MDM properties to be used when fetching data from MDM. All fields are optional</param>
         /// <param name="cancellationToken">Cancelation Token for the async operation</param>
         /// <returns>A <see cref="Task{TResult}"/> object that represents the asynchronous operation, returning the list metrics</returns>
-        Task<IEnumerable<MdmQueryResult>> GetResourceMetrics(string resourceFullUri, QueryParameters queryProperties, CancellationToken cancellationToken);
+        Task<IEnumerable<MdmQueryResult>> GetResourceMetricsAsync(string resourceFullUri, QueryParameters queryProperties, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Get the resource metric values from MDM, based on the Azure Resource Service (e.g - Azure storage queues service)
+        /// Get the resource metric values from MDM, based on the Azure Resource Service (For example: if the resource is a storage account, possible services are BLOB, Queue, and Table)
         /// </summary>
         /// <param name="azureResourceService">Specific azure resource for which we want to fetch metrics</param>
         /// <param name="queryProperties">MDM properties to be used when fetching data from MDM. All fields are optional</param>
         /// <param name="cancellationToken">Cancelation Token for the async operation</param>
         /// <returns>A <see cref="Task{TResult}"/> object that represents the asynchronous operation, returning the list metrics</returns>
-        Task<IEnumerable<MdmQueryResult>> GetResourceMetrics(ServiceType azureResourceService, QueryParameters queryProperties, CancellationToken cancellationToken);
+        Task<IEnumerable<MdmQueryResult>> GetResourceMetricsAsync(ServiceType azureResourceService, QueryParameters queryProperties, CancellationToken cancellationToken);
     }
 }

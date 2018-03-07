@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="AggregationType.cs" company="Microsoft Corporation">
+// <copyright file="Aggregation.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -13,7 +13,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Mdm
     /// MDM aggregation types
     /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum AggregationType
+    public enum Aggregation
     {
         /// <summary>
         /// No aggregation

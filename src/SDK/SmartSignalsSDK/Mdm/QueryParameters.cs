@@ -33,12 +33,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Mdm
         {
             get
             {
-                string timeFormat = "yyyy-MM-ddTHH:mm:ssZ";
+                const string TimeFormat = "yyyy-MM-ddTHH:mm:ssZ";
 
                 string timespan = null;
                 if (this.StartTime.HasValue && this.EndTime.HasValue)
                 {
-                    timespan = $"{this.StartTime.Value.ToString(timeFormat)}/{this.EndTime.Value.ToString(timeFormat)}";
+                    timespan = $"{this.StartTime.Value.ToString(TimeFormat)}/{this.EndTime.Value.ToString(TimeFormat)}";
                 }
 
                 return timespan;
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Mdm
         /// <summary>
         /// Gets or sets the data aggregation types to perform on the fetched data
         /// </summary>
-        public List<AggregationType> Aggregations { get; set; }
+        public List<Aggregation> Aggregations { get; set; }
 
         /// <summary>
         /// Gets or sets the field to order the fetched results by

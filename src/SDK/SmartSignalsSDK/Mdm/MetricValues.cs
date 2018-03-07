@@ -14,33 +14,52 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Mdm
     public class MetricValues
     {
         /// <summary>
-        /// Gets or sets the timestamp of the metric
+        /// Initializes a new instance of the <see cref="MetricValues"/> class 
         /// </summary>
-        public DateTime TimeStamp { get; set; }
+        /// <param name="timeStamp">The timestamp of the metric</param>
+        /// <param name="average">The aggregated average value</param>
+        /// <param name="minimum">The aggregated minimum value</param>
+        /// <param name="maximum">The aggregated maximum value</param>
+        /// <param name="total">The aggregated total value (sum)</param>
+        /// <param name="count">The aggregated count</param>
+        public MetricValues(DateTime timeStamp, double? average = null, double? minimum = null, double? maximum = null, double? total = null, long? count = null)
+        {
+            this.TimeStamp = timeStamp;
+            this.Average = average;
+            this.Minimum = minimum;
+            this.Maximum = maximum;
+            this.Total = total;
+            this.Count = count;
+        }
 
         /// <summary>
-        /// Gets or sets the aggregated average value 
+        /// Gets the timestamp of the metric
         /// </summary>
-        public double? Average { get; set; }
+        public DateTime TimeStamp { get; }
 
         /// <summary>
-        /// Gets or sets the aggregated minimum value
+        /// Gets the aggregated average value 
         /// </summary>
-        public double? Minimum { get; set; }
+        public double? Average { get; }
 
         /// <summary>
-        /// Gets or sets the aggregated maximum value
+        /// Gets the aggregated minimum value
         /// </summary>
-        public double? Maximum { get; set; }
+        public double? Minimum { get; }
 
         /// <summary>
-        /// Gets or sets the aggregated total value (sum)
+        /// Gets the aggregated maximum value
         /// </summary>
-        public double? Total { get; set; }
+        public double? Maximum { get; }
 
         /// <summary>
-        /// Gets or sets the aggregated count
+        /// Gets the aggregated total value (sum)
         /// </summary>
-        public long? Count { get; set; }
+        public double? Total { get; }
+
+        /// <summary>
+        /// Gets the aggregated count
+        /// </summary>
+        public long? Count { get; }
     }
 }
