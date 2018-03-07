@@ -12,8 +12,8 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Clients
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Mdm;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
 
     /// <summary>
     /// An implementation of the <see cref="IAnalysisServicesFactory"/> interface.

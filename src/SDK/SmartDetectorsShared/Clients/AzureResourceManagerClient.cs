@@ -17,7 +17,6 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Clients
     using Microsoft.Azure.Management.ResourceManager.Fluent.Models;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Extensions;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Rest;
     using Microsoft.Rest.Azure;
     using Microsoft.Rest.Azure.OData;

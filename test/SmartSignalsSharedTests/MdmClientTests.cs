@@ -14,10 +14,10 @@ namespace SmartSignalsSharedTests
     using System.Threading.Tasks;
     using Microsoft.Azure.Management.Monitor.Fluent;
     using Microsoft.Azure.Management.Monitor.Fluent.Models;
-    using Microsoft.Azure.Monitoring.SmartSignals;
-    using Microsoft.Azure.Monitoring.SmartSignals.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Mdm;
     using Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models;
-    using Microsoft.Azure.Monitoring.SmartSignals.Mdm;
     using Microsoft.Rest.Azure;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;

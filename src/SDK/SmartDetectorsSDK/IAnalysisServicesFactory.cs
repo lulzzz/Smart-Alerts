@@ -9,7 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartSignals.Mdm;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Mdm;
 
     /// <summary>
     /// An interface for exposing a factory that creates analysis services used for querying

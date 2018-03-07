@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
+namespace Microsoft.Azure.Monitoring.SmartDetectors.Clients
 {
     using System;
     using System.Collections.Generic;
@@ -14,9 +14,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Clients
     using System.Threading.Tasks;
     using Microsoft.Azure.Management.Monitor.Fluent;
     using Microsoft.Azure.Management.Monitor.Fluent.Models;
-    using Microsoft.Azure.Monitoring.SmartSignals.Extensions;
-    using Microsoft.Azure.Monitoring.SmartSignals.Mdm;
-    using Microsoft.Azure.Monitoring.SmartSignals.Tools;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Extensions;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Mdm;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Rest;
     using Polly;
 
