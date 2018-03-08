@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.ProjectType
+namespace Microsoft.Azure.Monitoring.SmartDetectors.ProjectType
 {
     using System;
     using System.Collections.Generic;

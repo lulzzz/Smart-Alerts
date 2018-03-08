@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Globals">
-    <CustomProjectExtensionsPath Condition="Exists('$(LocalAppData)\CustomProjectSystems\SmartSignals\SmartSignals.props')">$(LocalAppData)\CustomProjectSystems\SmartSignals\</CustomProjectExtensionsPath>
-    <CustomProjectExtensionsPath Condition="'$(CustomProjectExtensionsPath)' == ''">$(MSBuildExtensionsPath)\CustomProjectSystems\SmartSignals\</CustomProjectExtensionsPath>
+    <CustomProjectExtensionsPath Condition="Exists('$(LocalAppData)\CustomProjectSystems\SmartDetectors\SmartDetectors.props')">$(LocalAppData)\CustomProjectSystems\SmartDetectors\</CustomProjectExtensionsPath>
+    <CustomProjectExtensionsPath Condition="'$(CustomProjectExtensionsPath)' == ''">$(MSBuildExtensionsPath)\CustomProjectSystems\SmartDetectors\</CustomProjectExtensionsPath>
   </PropertyGroup>
   
-  <Import Project="$(CustomProjectExtensionsPath)SmartSignals.props" />
+  <Import Project="$(CustomProjectExtensionsPath)SmartDetectors.props" />
 
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
@@ -22,5 +22,5 @@
     </None>
   </ItemGroup>
  
-  <Import Project="$(CustomProjectExtensionsPath)SmartSignals.targets" />
+  <Import Project="$(CustomProjectExtensionsPath)SmartDetectors.targets" />
 </Project>

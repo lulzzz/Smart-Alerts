@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
   <TemplateData>
-    <Name>Smart Signal Project</Name>
-    <Description>A template for creating a Smart Signal project.</Description>
-    <Icon>SmartSignals.ico</Icon>
-    <ProjectType>SmartSignal</ProjectType>
+    <Name>Smart Detector Project</Name>
+    <Description>A template for creating a Smart Detector project.</Description>
+    <Icon>SmartDetectors.ico</Icon>
+    <ProjectType>SmartDetector</ProjectType>
     <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
     <SortOrder>1</SortOrder>
     <TemplateID>{cda0b4bd-45a5-49de-aedf-d67f551ca288}</TemplateID>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>SmartSignal</DefaultName>
+    <DefaultName>SmartDetector</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <CreateInPlace>true</CreateInPlace>
   </TemplateData>
   <TemplateContent>
-    <Project File="SmartSignals.csproj" ReplaceParameters="true">
+    <Project File="SmartDetectors.csproj" ReplaceParameters="true">
       <!-- 
       These are the items which will show up when a new project is created using the custom project system.
       Items referenced in here must also be referenced in the project file.

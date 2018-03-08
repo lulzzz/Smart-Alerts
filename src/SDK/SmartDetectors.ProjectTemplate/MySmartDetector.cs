@@ -17,8 +17,8 @@
     /// </summary>
     /// <param name="analysisRequest">The analysis request data.</param>
     /// <param name="tracer">
-    /// A tracer used for emitting telemetry from the signal's execution. This telemetry will be used for troubleshooting and
-    /// monitoring the signal's executions.
+    /// A tracer used for emitting telemetry from the Smart Detector's execution. This telemetry will be used for troubleshooting and
+    /// monitoring the Smart Detector's executions.
     /// </param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for a task to complete.</param>
     /// <returns>

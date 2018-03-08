@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="1" xml:space="preserve">
-    <value>SmartSignal</value>
+    <value>SmartDetector</value>
   </data>
   <data name="2" xml:space="preserve">
-    <value>SmartSignals Project Files (*.csproj);*.csproj</value>
+    <value>SmartDetectors Project Files (*.csproj);*.csproj</value>
   </data>
   <data name="3" xml:space="preserve">
-    <value>SmartSignals Items</value>
+    <value>SmartDetectors Items</value>
   </data>
 </root>

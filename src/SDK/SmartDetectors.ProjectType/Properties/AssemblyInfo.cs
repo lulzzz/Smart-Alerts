@@ -2,16 +2,16 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: Microsoft.VisualStudio.Shell.ProvideCodeBase(CodeBase = @"$PackageFolder$\SmartSignal.dll")]
+[assembly: Microsoft.VisualStudio.Shell.ProvideCodeBase(CodeBase = @"$PackageFolder$\SmartDetector.dll")]
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SmartSignals.ProjectType")]
+[assembly: AssemblyTitle("SmartDetectors.ProjectType")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SmartSignals.ProjectType")]
+[assembly: AssemblyProduct("SmartDetectors.ProjectType")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

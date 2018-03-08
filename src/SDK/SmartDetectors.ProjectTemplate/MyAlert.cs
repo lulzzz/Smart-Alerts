@@ -3,7 +3,6 @@
     using Microsoft.Azure.Monitoring.SmartDetectors;
 
     /// <summary>
-    /// The base class for representing a specific Alert.
     /// A specific implementation of an <see cref="Alert"/>. 
     /// The default implementation provides an alert without any additional data - only a title.
     /// </summary>

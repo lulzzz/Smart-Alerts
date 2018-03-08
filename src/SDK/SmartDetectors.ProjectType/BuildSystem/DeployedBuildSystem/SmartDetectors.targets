@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectCapability Include="SmartSignals" />
+    <ProjectCapability Include="SmartDetectors" />
   </ItemGroup>
 
   <Import Project="$(MSBuildProjectFullPath).user" Condition="Exists('$(MSBuildProjectFullPath).user')" />

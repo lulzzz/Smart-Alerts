@@ -37,16 +37,16 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Presentation
         /// <param name="rawProperties">The raw alert properties</param>
         /// <param name="queryRunInfo">The query run information</param>
         public AlertPresentation(
-            string id, 
-            string title, 
-            string resourceId, 
-            string correlationHash, 
-            string smartDetectorId, 
-            string smartDetectorName, 
-            DateTime analysisTimestamp, 
-            int analysisWindowSizeInMinutes, 
-            List<AlertPresentationProperty> properties, 
-            IReadOnlyDictionary<string, string> rawProperties, 
+            string id,
+            string title,
+            string resourceId,
+            string correlationHash,
+            string smartDetectorId,
+            string smartDetectorName,
+            DateTime analysisTimestamp,
+            int analysisWindowSizeInMinutes,
+            List<AlertPresentationProperty> properties,
+            IReadOnlyDictionary<string, string> rawProperties,
             QueryRunInfo queryRunInfo)
         {
             this.Id = id;

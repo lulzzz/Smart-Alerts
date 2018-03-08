@@ -1,7 +1,7 @@
 ﻿{
   "id": "$safeprojectname$",
   "name": "$safeprojectname$",
-  "description": "Signal description",
+  "description": "Smart Detector description",
   "version": "1.0",
   "assemblyName": "$safeprojectname$.dll",
   "className": "$safeprojectname$.MySmartDetector",

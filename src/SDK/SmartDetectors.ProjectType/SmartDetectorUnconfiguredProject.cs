@@ -1,11 +1,11 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SmartSignalUnconfiguredProject.cs" company="Microsoft Corporation">
+// <copyright file="SmartDetectorUnconfiguredProject.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.ProjectType
+namespace Microsoft.Azure.Monitoring.SmartDetectors.ProjectType
 {
     using System;
     using System.ComponentModel.Composition;
@@ -19,10 +19,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ProjectType
     using Task = System.Threading.Tasks.Task;
 
     [Export]
-    [AppliesTo(SmartSignalUnconfiguredProject.UniqueCapability)]
-    [ProjectTypeRegistration(VsPackage.ProjectTypeGuid, "SmartSignal", "#2", ProjectExtension, Language, resourcePackageGuid: VsPackage.PackageGuid, PossibleProjectExtensions = ProjectExtension, ProjectTemplatesDir = @"..\..\Templates\Projects\MyCustomProject")]
+    [AppliesTo(SmartDetectorUnconfiguredProject.UniqueCapability)]
+    [ProjectTypeRegistration(VsPackage.ProjectTypeGuid, "SmartDetector", "#2", ProjectExtension, Language, resourcePackageGuid: VsPackage.PackageGuid, PossibleProjectExtensions = ProjectExtension, ProjectTemplatesDir = @"..\..\Templates\Projects\MyCustomProject")]
     [ProvideProjectItem(VsPackage.ProjectTypeGuid, "My Items", @"..\..\Templates\ProjectItems\MyCustomProject", 500)]
-    internal class SmartSignalUnconfiguredProject
+    internal class SmartDetectorUnconfiguredProject
     {
         /// <summary>
         /// The file extension used by your project type.
@@ -38,12 +38,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ProjectType
         /// <remarks>
         /// This value should be kept in sync with the capability as actually defined in your .targets.
         /// </remarks>
-        internal const string UniqueCapability = "SmartSignals";
+        internal const string UniqueCapability = "SmartDetectors";
 
-        internal const string Language = "SmartSignal";
+        internal const string Language = "SmartDetector";
 
         [ImportingConstructor]
-        public SmartSignalUnconfiguredProject(UnconfiguredProject unconfiguredProject)
+        public SmartDetectorUnconfiguredProject(UnconfiguredProject unconfiguredProject)
         {
             this.ProjectHierarchies = new OrderPrecedenceImportCollection<IVsHierarchy>(projectCapabilityCheckProvider: unconfiguredProject);
         }
@@ -61,7 +61,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ProjectType
         internal ActiveConfiguredProject<ConfiguredProject> ActiveConfiguredProject { get; private set; }
 
         [Import]
-        internal ActiveConfiguredProject<SmartSignalConfiguredProject> MyActiveConfiguredProject { get; private set; }
+        internal ActiveConfiguredProject<SmartDetectorConfiguredProject> MyActiveConfiguredProject { get; private set; }
 
         [ImportMany(ExportContractNames.VsTypes.IVsProject, typeof(IVsProject))]
         internal OrderPrecedenceImportCollection<IVsHierarchy> ProjectHierarchies { get; private set; }

@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.ProjectType
+namespace Microsoft.Azure.Monitoring.SmartDetectors.ProjectType
 {
     using System;
     using System.ComponentModel;
@@ -44,6 +44,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ProjectType
         /// The default namespace this project compiles with, so that manifest
         /// resource names can be calculated for embedded resources.
         /// </summary>
-        internal const string DefaultNamespace = "SmartSignal";
+        internal const string DefaultNamespace = "SmartDetector";
     }
 }

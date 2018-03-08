@@ -15,8 +15,8 @@
     <ProjectGuid>{6D361361-3A0D-4168-B934-04A303C04636}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft.Azure.Monitoring.SmartSignals.ProjectType</RootNamespace>
-    <AssemblyName>SmartSignal</AssemblyName>
+    <RootNamespace>Microsoft.Azure.Monitoring.SmartDetectors.ProjectType</RootNamespace>
+    <AssemblyName>SmartDetector</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
@@ -138,15 +138,17 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SmartSignalConfiguredProject.cs" />
-    <Compile Include="SmartSignalUnconfiguredProject.cs" />
+    <Compile Include="SmartDetectorConfiguredProject.cs" />
     <Compile Include="ProjectProperties.cs" />
-    <Compile Include="SmartSignalsDebuggerLaunchProvider.cs" />
+    <Compile Include="SmartDetectorsDebuggerLaunchProvider.cs" />
+    <Compile Include="SmartDetectorUnconfiguredProject.cs" />
     <Compile Include="VsPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="BuildSystem\DeployedBuildSystem\SmartDetectors.props" />
+    <None Include="BuildSystem\DeployedBuildSystem\SmartDetectors.targets" />
     <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
@@ -157,24 +159,11 @@
   These are the parts of the custom project system which will be deployed as part of the 
   final implementation, and provide the basic processing for handling rules in CPS.
   -->
-  <ItemGroup>
-    <None Include="BuildSystem\DeployedBuildSystem\SmartSignals.props">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="BuildSystem\DeployedBuildSystem\SmartSignals.targets">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
   <!--
   The XAML files provide buth compile-time implementations for CPS rules as well as
   runtime information for property pages.  They will also be deployed as part of the
   final package.
   -->
-  <ItemGroup>
-    <XamlPropertyRule Include="BuildSystem\Rules\SmartSignalsDebugger.xaml">
-      <SubType>Designer</SubType>
-    </XamlPropertyRule>
-  </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\packages\Microsoft.VisualStudio.ProjectSystem.Analyzers.15.3.224\analyzers\Microsoft.VisualStudio.ProjectSystem.Analyzers.dll" />
     <Analyzer Include="..\..\..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.3.83\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.dll" />
@@ -191,22 +180,27 @@
     <VSIXSourceItem Include="BuildSystem\DeployedBuildSystem\**">
       <InProject>false</InProject>
       <InstallRoot>MSBuild</InstallRoot>
-      <VSIXSubPath>CustomProjectSystems\SmartSignals</VSIXSubPath>
+      <VSIXSubPath>CustomProjectSystems\SmartDetectors</VSIXSubPath>
     </VSIXSourceItem>
     <VSIXSourceItem Include="BuildSystem\Rules\**">
       <InProject>false</InProject>
       <InstallRoot>MSBuild</InstallRoot>
-      <VSIXSubPath>CustomProjectSystems\SmartSignals\Rules</VSIXSubPath>
+      <VSIXSubPath>CustomProjectSystems\SmartDetectors\Rules</VSIXSubPath>
     </VSIXSourceItem>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SmartSignals.ProjectTemplate\SmartSignals.ProjectTemplate.csproj">
+    <ProjectReference Include="..\SmartDetectors.ProjectTemplate\SmartDetectors.ProjectTemplate.csproj">
       <Project>{F4851875-9C13-4FDB-A2E1-D9F17A5E3644}</Project>
-      <Name>SmartSignals.ProjectTemplate</Name>
+      <Name>SmartDetectors.ProjectTemplate</Name>
       <VSIXSubPath>ProjectTemplates</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <XamlPropertyRule Include="BuildSystem\Rules\SmartDetectorsDebugger.xaml">
+      <SubType>Designer</SubType>
+    </XamlPropertyRule>
   </ItemGroup>
   <!-- Although the above causes the VSIX to contain the MSBuild and rules files, the automatic deploy of the
        VSIX to the experimental instance of Visual Studio on build does not copy the files to the MSBuild
@@ -220,8 +214,8 @@
       <BuildSystemToCopy Include="BuildSystem\DeployedBuildSystem\**\*" />
       <RulesToCopy Include="BuildSystem\Rules\**\*" />
     </ItemGroup>
-    <Copy SourceFiles="@(BuildSystemToCopy)" DestinationFiles="@(BuildSystemToCopy->'$(LocalAppData)\CustomProjectSystems\SmartSignals\%(RecursiveDir)%(FileName)%(Extension)')" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="@(RulesToCopy)" DestinationFiles="@(RulesToCopy->'$(LocalAppData)\CustomProjectSystems\SmartSignals\Rules\%(RecursiveDir)%(FileName)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(BuildSystemToCopy)" DestinationFiles="@(BuildSystemToCopy->'$(LocalAppData)\CustomProjectSystems\SmartDetectors\%(RecursiveDir)%(FileName)%(Extension)')" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(RulesToCopy)" DestinationFiles="@(RulesToCopy->'$(LocalAppData)\CustomProjectSystems\SmartDetectors\Rules\%(RecursiveDir)%(FileName)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
   <Import Project="..\..\..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.33\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets" Condition="Exists('..\..\..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.33\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

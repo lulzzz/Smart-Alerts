@@ -1,11 +1,11 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SmartSignalConfiguredProject.cs" company="Microsoft Corporation">
+// <copyright file="SmartDetectorConfiguredProject.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.ProjectType
+namespace Microsoft.Azure.Monitoring.SmartDetectors.ProjectType
 {
     using System;
     using System.ComponentModel.Composition;
@@ -18,8 +18,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ProjectType
     using Task = System.Threading.Tasks.Task;
 
     [Export]
-    [AppliesTo(SmartSignalUnconfiguredProject.UniqueCapability)]
-    internal class SmartSignalConfiguredProject
+    [AppliesTo(SmartDetectorUnconfiguredProject.UniqueCapability)]
+    internal class SmartDetectorConfiguredProject
     {
         [Import, SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "MEF")]
         internal ConfiguredProject ConfiguredProject { get; private set; }

@@ -1,24 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!--Copyright, Microsoft Corporation, All rights reserved.-->
-        
+
 <Rule
-	Name="SmartSignalsDebugger"
-	DisplayName="SmartSignals Emulator"
+	Name="SmartDetectorsDebugger"
+	DisplayName="Smart Detectors Emulator"
 	PageTemplate="debugger"
-	Description="SmartSignalsDebugger options"
+	Description="Smart Detectors Debugger options"
 	xmlns="http://schemas.microsoft.com/build/2009/properties">
     <Rule.DataSource>
         <DataSource Persistence="UserFileWithXamlDefaults" HasConfigurationCondition="True"/>
     </Rule.DataSource>
 
-    <StringProperty Name="SmartSignalsDebuggerCommand" DisplayName="Command"
+    <StringProperty Name="SmartDetectorsDebuggerCommand" DisplayName="Command"
                 Default="$(_SmartDetectorsEmulatorDir)\SmartSignalsRuntimeAppEmulator.exe"
                 Description="The debug command to execute.">
     </StringProperty>
 
-    <StringProperty Name="SmartSignalsDebuggerCommandArguments" DisplayName="Command Arguments"
+    <StringProperty Name="SmartDetectorsDebuggerCommandArguments" DisplayName="Command Arguments"
                 Default="$(ProjectDir)$(OutDir)\$(ProjectName).package"
                 Description="The command line arguments to pass to the application.">
-        <Argument Property="SmartSignalsDebuggerCommand" />
+        <Argument Property="SmartDetectorsDebuggerCommand" />
     </StringProperty>
 </Rule>
