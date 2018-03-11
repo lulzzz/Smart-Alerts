@@ -5,9 +5,8 @@
 // -----------------------------------------------------------------------
 
 import baseUrlDev from './baseUrl.dev';
-import baseUrlProd from './baseUrl.prod';
 
 // Check which API url we should go by checking the environment name
-const baseUrl = process.env.NODE_ENV === 'production' ? baseUrlProd : baseUrlDev;
+const baseUrl = process.env.NODE_ENV === 'production' ? process.env.FunctionBaseUrl : baseUrlDev;
 
 export default baseUrl;
