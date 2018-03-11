@@ -22,7 +22,7 @@
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>Microsoft.Azure.Monitoring.SmartDetectors</Id>
-    <Version>0.0.1-beta</Version>
+    <Version>0.1.0.0</Version>
     <Title>Azure Smart Detectors</Title>
     <Authors>Microsoft</Authors>
     <Owners>Microsoft Corporation</Owners>
@@ -49,10 +49,10 @@
     <File Include="..\SmartDetectorsBuildTask\$(Outdir)\net461\**.*">
       <TargetPath>tools\net461\BuildTask</TargetPath>
     </File>
-    <ProjectReference Include="..\SmartSignalsRuntimeAppEmulator\SmartSignalsRuntimeAppEmulator.csproj">
+    <ProjectReference Include="..\MonitoringApplianceEmulator\MonitoringApplianceEmulator.csproj">
       <ExcludeFromNuPkg>true</ExcludeFromNuPkg>
     </ProjectReference>
-    <File Include="..\SmartSignalsRuntimeAppEmulator\$(Outdir)\net461\**.*">
+    <File Include="..\MonitoringApplianceEmulator\$(Outdir)\net461\**.*">
       <TargetPath>tools\net461\AppEmulator</TargetPath>
     </File>
   </ItemGroup>

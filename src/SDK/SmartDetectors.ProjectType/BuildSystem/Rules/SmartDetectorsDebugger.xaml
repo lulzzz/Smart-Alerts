@@ -12,7 +12,7 @@
     </Rule.DataSource>
 
     <StringProperty Name="SmartDetectorsDebuggerCommand" DisplayName="Command"
-                Default="$(_SmartDetectorsEmulatorDir)\SmartSignalsRuntimeAppEmulator.exe"
+                Default="$(_SmartDetectorsEmulatorDir)\MonitoringApplianceEmulator.exe"
                 Description="The debug command to execute.">
     </StringProperty>
 

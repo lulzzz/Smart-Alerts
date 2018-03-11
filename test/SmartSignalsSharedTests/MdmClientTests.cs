@@ -17,7 +17,7 @@ namespace SmartSignalsSharedTests
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
     using Microsoft.Azure.Monitoring.SmartDetectors.Mdm;
-    using Microsoft.Azure.Monitoring.SmartSignals.Emulator.Models;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.Models;
     using Microsoft.Rest.Azure;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
