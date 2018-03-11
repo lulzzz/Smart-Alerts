@@ -7,6 +7,6 @@
 import baseUrlDev from './baseUrl.dev';
 
 // Check which API url we should go by checking the environment name
-const baseUrl = process.env.NODE_ENV === 'production' ? process.env.APPSETTING_FunctionBaseUrl : baseUrlDev;
+const baseUrl = process.env.NODE_ENV === 'production' ? process.env.REACT_APP_FunctionBaseUrl : baseUrlDev;
 
 export default baseUrl;
