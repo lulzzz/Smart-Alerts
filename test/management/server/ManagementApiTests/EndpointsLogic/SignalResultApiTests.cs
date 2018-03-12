@@ -33,6 +33,7 @@ namespace ManagementApiTests.EndpointsLogic
         private Mock<IApplicationInsightsClientFactory> applicationInsightsFactoryMock;
         private Mock<ICloudStorageProviderFactory> storageProviderFactory;
         private Mock<ICloudBlobContainerWrapper> signalResultContainerMock;
+        private Mock<ITracer> tracer;
 
         private ISignalResultApi signalResultApi;
 
@@ -43,11 +44,12 @@ namespace ManagementApiTests.EndpointsLogic
             this.applicationInsightsFactoryMock = new Mock<IApplicationInsightsClientFactory>();
             this.storageProviderFactory = new Mock<ICloudStorageProviderFactory>();
             this.signalResultContainerMock = new Mock<ICloudBlobContainerWrapper>();
+            this.tracer = new Mock<ITracer>();
 
             this.applicationInsightsFactoryMock.Setup(factory => factory.GetApplicationInsightsClient()).Returns(this.applicationInsightClientMock.Object);
             this.storageProviderFactory.Setup(factory => factory.GetSmartSignalResultStorageContainer()).Returns(this.signalResultContainerMock.Object);
 
-            this.signalResultApi = new SignalResultApi(this.storageProviderFactory.Object, this.applicationInsightsFactoryMock.Object);
+            this.signalResultApi = new SignalResultApi(this.storageProviderFactory.Object, this.applicationInsightsFactoryMock.Object, this.tracer.Object);
         }
 
         [TestMethod]
@@ -103,7 +105,7 @@ namespace ManagementApiTests.EndpointsLogic
         }
 
         [TestMethod]
-        public async Task WhenFailedToGetResultItemsFromStorageThenThrowException()
+        public async Task WhenFailedToGetResultItemsFromStorageThenDontThrowException()
         {
             this.applicationInsightClientMock.Setup(ai => ai.GetCustomEventsAsync(It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(this.GetApplicationInsightsEvents());
@@ -115,10 +117,11 @@ namespace ManagementApiTests.EndpointsLogic
             }
             catch (SmartSignalsManagementApiException)
             {
-                return;
+                Assert.Fail("A management exception shouldn't thrown in case failing to get signals results blobs");
             }
 
-            Assert.Fail("A management exception should have been thrown in case failing to de-serialize signals results");
+            this.tracer.Verify(tracer => tracer.ReportException(It.IsAny<Exception>()), Times.Once);
+            this.tracer.Verify(tracer => tracer.TraceError(It.IsAny<string>(), null), Times.Once);
         }
 
         private List<ApplicationInsightsEvent> GetApplicationInsightsEvents()

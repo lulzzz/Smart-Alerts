@@ -12,6 +12,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
@@ -32,16 +33,19 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
 
         private readonly IApplicationInsightsClient applicationInsightsClient;
         private readonly ICloudBlobContainerWrapper signalResultStorageContainer;
+        private readonly ITracer tracer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SignalResultApi"/> class.
         /// </summary>
         /// <param name="storageProviderFactory">The storage provider factory.</param>
         /// <param name="applicationInsightsClientFactory">The Application Insights client factory.</param>
-        public SignalResultApi(ICloudStorageProviderFactory storageProviderFactory, IApplicationInsightsClientFactory applicationInsightsClientFactory)
+        /// <param name="tracer">The tracer.</param>
+        public SignalResultApi(ICloudStorageProviderFactory storageProviderFactory, IApplicationInsightsClientFactory applicationInsightsClientFactory, ITracer tracer)
         {
             this.signalResultStorageContainer = storageProviderFactory.GetSmartSignalResultStorageContainer();
             this.applicationInsightsClient = applicationInsightsClientFactory.GetApplicationInsightsClient();
+            this.tracer = tracer;
         }
 
         /// <summary>
@@ -63,9 +67,11 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
                                                                   .Select(result => result.CustomDimensions["ResultItemBlobUri"]);
 
                 // Get the blobs content (as we are getting blob uri, we are creating new CloudBlockBlob for each and extracting the blob name 
-                var blobsContent = await Task.WhenAll(signalResultsBlobsUri.Select(blobUri => this.signalResultStorageContainer
-                                                                                              .DownloadBlobContentAsync(new CloudBlockBlob(new Uri(blobUri)).Name)));
-                
+                IEnumerable<string> blobsContent = await Task.WhenAll(signalResultsBlobsUri.Select(blobUri => this.GetBlobContentWithoutThrowing(new CloudBlockBlob(new Uri(blobUri)).Name)));
+
+                // Remove blobs with empty content
+                blobsContent = blobsContent.Where(content => !string.IsNullOrWhiteSpace(content));
+
                 // Deserialize the blobs content to alert
                 IEnumerable<AlertPresentation> alerts = blobsContent.Select(JsonConvert.DeserializeObject<AlertPresentation>);
 
@@ -89,6 +95,28 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
             catch (Exception e)
             {
                 throw new SmartSignalsManagementApiException("Failed to get signals results items from storage", e, HttpStatusCode.InternalServerError);
+            }
+        }
+
+        /// <summary>
+        /// Download a blob from the signal result container without throwing in case of <see cref="StorageException"/>.
+        /// We are only logging the exception and not throwing because we don't want the user not getting any signal in case there is 
+        /// an issue with Azure Storage.
+        /// </summary>
+        /// <param name="blobName">The blob's name.</param>
+        /// <returns>The blob's content.</returns>
+        private async Task<string> GetBlobContentWithoutThrowing(string blobName)
+        {
+            try
+            {
+                return await this.signalResultStorageContainer.DownloadBlobContentAsync(blobName);
+            }
+            catch (StorageException e)
+            {
+                this.tracer.ReportException(e);
+                this.tracer.TraceError($"Failed to download blob ${blobName} due to exception: {e}");
+
+                return null;
             }
         }
     }
