@@ -1,30 +1,30 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="HighRequestCountSignalResultItem.cs" company="Microsoft Corporation">
+// <copyright file="HighRequestCountAlert.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.SampleSignal
+namespace Microsoft.Azure.Monitoring.SmartDetectors.SampleSmartDetector
 {
     using System;
     using Microsoft.Azure.Monitoring.SmartDetectors;
 
     /// <summary>
-    /// A class representing the result of a sample signal 
+    /// A class representing the alert
     /// </summary>
-    public class HighRequestCountSignalResultItem : Alert
+    public class HighRequestCountAlert : Alert
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HighRequestCountSignalResultItem" /> class with the values 
+        /// Initializes a new instance of the <see cref="HighRequestCountAlert" /> class with the values 
         /// that were fetched from the Application Insights and the log analytics
         /// </summary>
-        /// <param name="title">The title of the signal</param>
+        /// <param name="title">The title of the alert</param>
         /// <param name="appName">The name of the application with the highest number of requests (from Application Insights)</param>
         /// <param name="requestCount">The highest number of requests (from Application Insights)</param>
         /// <param name="highestProcessorTimePercent">The highest processor time percent (from Log Analytics)</param>
         /// <param name="timeOfHighestProcessorTimePercent">The time of the highest processor time percent (from Log Analytics)</param>
         /// <param name="resourceIdentifier">The resource identifier</param>
-        public HighRequestCountSignalResultItem(string title, string appName, long requestCount, double highestProcessorTimePercent, DateTime timeOfHighestProcessorTimePercent, ResourceIdentifier resourceIdentifier) : base(title, resourceIdentifier)
+        public HighRequestCountAlert(string title, string appName, long requestCount, double highestProcessorTimePercent, DateTime timeOfHighestProcessorTimePercent, ResourceIdentifier resourceIdentifier) : base(title, resourceIdentifier)
         {
             this.AppName = appName;
             this.RequestCount = requestCount;
