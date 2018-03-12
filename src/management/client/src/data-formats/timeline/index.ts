@@ -21,7 +21,7 @@ export default function timelineDataFormat(dataTable: DataTable): TimelineChart 
         }
 
         // Get all the columns which are strings
-        let stringColumns: Column[] = dataTable.columnsMetadata.filter(column => column.dataType === 'string');
+        // let stringColumns: Column[] = dataTable.columnsMetadata.filter(column => column.dataType === 'string');
 
         // Get all the columns which are numeric values
         let numericColumns: Column[] = dataTable.columnsMetadata.filter(column => column.dataType === 'int'  ||
@@ -36,7 +36,7 @@ export default function timelineDataFormat(dataTable: DataTable): TimelineChart 
         return {
             data: dataTable.data,
             timestampDataKey: timestampColumns[0].name,
-            linesDataKeys: stringColumns.map(column => column.name),
+            linesDataKeys: numericColumns.map(column => column.name),
             numericDataKeys: numericColumns.map(column => column.name)
         };
 }

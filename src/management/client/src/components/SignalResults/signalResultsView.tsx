@@ -130,6 +130,8 @@ class SignalResultView extends React.Component<SignalResultViewProps, SignalResu
                                 <option value="1">Last 1 hour</option>
                                 <option value="6">Last 6 hours</option>
                                 <option value="24">Last day</option>
+                                <option value="168">Last 7 days</option>
+                                <option value="336">Last 14 days</option>
                             </select>
                         </div>
                         <DataTable selectableRows={false} className="signal-results-table"> 
