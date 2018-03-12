@@ -1,9 +1,9 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="HighRequestCountSignal.cs" company="Microsoft Corporation">
+// <copyright file="HighRequestCountSmartDetector.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace Microsoft.Azure.Monitoring.SmartSignals.SampleSignal
+namespace Microsoft.Azure.Monitoring.SmartDetectors.SampleSmartDetector
 {
     using System;
     using System.Collections.Generic;
@@ -13,9 +13,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SampleSignal
     using Microsoft.Azure.Monitoring.SmartDetectors;
 
     /// <summary>
-    /// Sample signal logic, tests fetching from different clients and result presentation
+    /// Sample Smart Detector logic, tests fetching from different clients and alert presentation
     /// </summary>
-    public class HighRequestCountSignal : ISmartDetector
+    public class HighRequestCountSmartDetector : ISmartDetector
     {
         private const string MaximumProcessorTimeLogAnalyticsQuery =
             "Perf | where TimeGenerated  >= ago(1h) | where CounterName == '% Processor Time' | summarize arg_max(CounterValue, TimeGenerated) ";
@@ -29,7 +29,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SampleSignal
         /// <param name="analysisRequest">The analysis request object</param>
         /// <param name="tracer">used to save trace messages</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns>The smart signal result containing the result items</returns>
+        /// <returns>The alerts</returns>
         public async Task<List<Alert>> AnalyzeResourcesAsync(AnalysisRequest analysisRequest, ITracer tracer, CancellationToken cancellationToken)
         {
             List<Alert> alerts = new List<Alert>();
@@ -69,7 +69,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.SampleSignal
             }
 
             analysisRequest.TargetResources.ForEach(resourceIdentifier => alerts.Add(
-                new HighRequestCountSignalResultItem("High Processing Time Percentage(LA) and Request Count(AI)", appName, countReqByAppName, highestProcessorTimePercent, timeOfHighestProcessorTime, resourceIdentifier)));
+                new HighRequestCountAlert("High Processing Time Percentage(LA) and Request Count(AI)", appName, countReqByAppName, highestProcessorTimePercent, timeOfHighestProcessorTime, resourceIdentifier)));
             return alerts;
         }
     }
