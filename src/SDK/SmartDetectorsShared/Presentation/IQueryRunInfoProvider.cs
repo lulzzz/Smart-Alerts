@@ -10,6 +10,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Presentation
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
 
     /// <summary>
     /// An interface for a provider of <see cref="QueryRunInfo"/> instances.

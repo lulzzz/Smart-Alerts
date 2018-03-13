@@ -11,8 +11,7 @@ namespace ManagementApiTests.EndpointsLogic
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic;
@@ -22,6 +21,7 @@ namespace ManagementApiTests.EndpointsLogic
     using Microsoft.WindowsAzure.Storage;
     using Moq;
     using Newtonsoft.Json;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     [TestClass]
     public class SignalResultApiTests
@@ -141,18 +141,19 @@ namespace ManagementApiTests.EndpointsLogic
 
         private string GetSmartSignalResultItemPresentation()
         {
-            var signalResult = new AlertPresentation(
-                        id: "someId",
-                        title: "someTitle",                       
-                        resourceId: "/subscriptions/b4b7d4c1-8c25-4da3-bf1c-e50f647a8130/resourceGroups/asafst/providers/Microsoft.Insights/components/deepinsightsdailyreports",
-                        correlationHash: "93e9a62b1e1a0dca5d9d63cc7e9aae71edb9988aa6f1dfc3b85e71b0f57d2819",
-                        smartDetectorId: "SampleSignal",
-                        smartDetectorName: "SampleSignal",
-                        analysisTimestamp: DateTime.UtcNow,
-                        analysisWindowSizeInMinutes: 5,
-                        properties: new List<AlertPresentationProperty>(),
-                        rawProperties: new Dictionary<string, string>(),
-                        queryRunInfo: null);
+            var signalResult = new ContractsAlert
+            {
+                Id = "someId",
+                Title = "someTitle",
+                ResourceId = "/subscriptions/b4b7d4c1-8c25-4da3-bf1c-e50f647a8130/resourceGroups/asafst/providers/Microsoft.Insights/components/deepinsightsdailyreports",
+                CorrelationHash = "93e9a62b1e1a0dca5d9d63cc7e9aae71edb9988aa6f1dfc3b85e71b0f57d2819",
+                SmartDetectorId = "SampleSignal",
+                SmartDetectorName = "SampleSignal",
+                AnalysisTimestamp = DateTime.UtcNow,
+                AnalysisWindowSizeInMinutes = 5,
+                Properties = new List<AlertProperty>(),
+                RawProperties = new Dictionary<string, string>()
+            };
 
             return JsonConvert.SerializeObject(signalResult);
         }

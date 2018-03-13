@@ -15,8 +15,8 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
     using System.Linq;
     using System.Text;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.Models;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Unity.Attributes;
 
     /// <summary>
@@ -28,9 +28,9 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
 
         private ObservableCollection<AzureResourceProperty> essentialsSectionProperties;
 
-        private ObservableCollection<AlertPresentationProperty> propertiesSectionProperties;
+        private ObservableCollection<AlertProperty> propertiesSectionProperties;
 
-        private ObservableCollection<AlertPresentationProperty> analysisSectionProperties;
+        private ObservableCollection<AlertProperty> analysisSectionProperties;
 
         private ObservableCollection<AnalyticsQuery> analyticsQueries;
 
@@ -63,16 +63,16 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
                     new AzureResourceProperty("Resource name", this.Alert.ResourceIdentifier.ResourceName)
                 });
 
-            this.PropertiesSectionProperties = new ObservableCollection<AlertPresentationProperty>(
-                this.Alert.AlertPresentation.Properties
-                    .Where(prop => prop.DisplayCategory == AlertPresentationSection.Property).ToList());
+            this.PropertiesSectionProperties = new ObservableCollection<AlertProperty>(
+                this.Alert.ContractsAlert.Properties
+                    .Where(prop => prop.DisplayCategory.ToString() == AlertPresentationSection.Property.ToString()).ToList());
 
-            this.AnalysisSectionProperties = new ObservableCollection<AlertPresentationProperty>(
-                this.Alert.AlertPresentation.Properties
-                    .Where(prop => prop.DisplayCategory == AlertPresentationSection.Analysis).ToList());
+            this.AnalysisSectionProperties = new ObservableCollection<AlertProperty>(
+                this.Alert.ContractsAlert.Properties
+                    .Where(prop => prop.DisplayCategory.ToString() == AlertPresentationSection.Analysis.ToString()).ToList());
 
-            List<AnalyticsQuery> queries = this.Alert.AlertPresentation.Properties
-                    .Where(prop => prop.DisplayCategory == AlertPresentationSection.Chart)
+            List<AnalyticsQuery> queries = this.Alert.ContractsAlert.Properties
+                    .Where(prop => prop.DisplayCategory.ToString() == AlertPresentationSection.Chart.ToString())
                     .Select(chartItem => new AnalyticsQuery(chartItem.Name, chartItem.Value)).ToList();
 
             this.AnalyticsQuerys = new ObservableCollection<AnalyticsQuery>(queries);
@@ -124,7 +124,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
         /// <summary>
         /// Gets the properties section's properties.
         /// </summary>
-        public ObservableCollection<AlertPresentationProperty> PropertiesSectionProperties
+        public ObservableCollection<AlertProperty> PropertiesSectionProperties
         {
             get
             {
@@ -141,7 +141,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
         /// <summary>
         /// Gets the analysis section's properties.
         /// </summary>
-        public ObservableCollection<AlertPresentationProperty> AnalysisSectionProperties
+        public ObservableCollection<AlertProperty> AnalysisSectionProperties
         {
             get
             {
@@ -219,7 +219,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
             // Use the first resource ID from query run info for the query.
             // It might not work for Log Analytics results - since there might be few resources.
             // Anyway, this is temporary hack until there will be query visualizations in emulator.
-            string alertResourceId = this.Alert.AlertPresentation.QueryRunInfo.ResourceIds.First();
+            string alertResourceId = this.Alert.ContractsAlert.QueryRunInfo.ResourceIds.First();
             ResourceIdentifier alertResourceIdentifier = ResourceIdentifier.CreateFromResourceId(alertResourceId);
 
             Uri queryDeepLink =

@@ -5,11 +5,10 @@
   "parameters": {
     "basics": [
       {
-        "name": "siraPrefix",
+        "name": "monitoringAppliacnceName",
         "type": "Microsoft.Common.TextBox",
-        "label": "The prefix of The SiRA's name",
+        "label": "The monitoring appliance name",
         "defaultValue": "",
-        "toolTip": "The SiRA and all of its resources will have this prefix",
         "constraints": {
           "required": true,
           "regex": "^[a-z0-9A-Z]{1,30}$",
@@ -18,32 +17,10 @@
         "visible": true
       }
     ],
-    "steps": [
-      {
-        "name": "emailSettings",
-        "label": "Email Settings",
-        "subLabel": {
-          "preValidation": "Configure the Email settings",
-          "postValidation": "Done"
-        },
-        "bladeTitle": "Email Settings",
-        "elements": [
-          {
-            "name": "sendgridApiKey",
-            "type": "Microsoft.Common.TextBox",
-            "label": "The SendGrid API Key to be used to send Emails",
-            "defaultValue": "",
-            "toolTip": "The SendGrid API Key will be used to send Emails",
-            "constraints": { "required": false },
-            "visible": true
-          }
-        ]
-      }
-    ],
+    "steps": [ ],
     "outputs": {
-      "siraPrefix": "[basics('siraPrefix')]",
-      "sendgridApiKey": "[steps('emailSettings').sendgridApiKey]",
-      "applicationResourceName": "[concat(basics('siraPrefix'), 'SiRA')]",
+      "monitoringAppliacnceName": "[basics('monitoringAppliacnceName')]",
+      "applicationResourceName": "[basics('monitoringAppliacnceName')]",
       "functionPackageLink": "https://globalsmartsignals.blob.core.windows.net/managedapp/smartsignals.zip",
       "sitePackageLink": "https://globalsmartsignals.blob.core.windows.net/managedapp/smartsignalssite.zip"
     }

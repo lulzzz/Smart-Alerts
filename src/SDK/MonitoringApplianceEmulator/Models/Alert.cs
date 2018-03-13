@@ -7,41 +7,41 @@
 namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.Models
 {
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
     /// Represents alert.
     /// </summary>
     public class Alert : ObservableObject
     {
-        private AlertPresentation alertPresentation;
+        private ContractsAlert contractsAlert;
 
         private ResourceIdentifier resourceIdentifier;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Alert"/> class
         /// </summary>
-        /// <param name="alertPresentation">The alert presentation object</param>
+        /// <param name="contractsAlert">The alert presentation object</param>
         /// <param name="resourceIdentifier">The alert's resource identifier</param>
-        public Alert(AlertPresentation alertPresentation, ResourceIdentifier resourceIdentifier)
+        public Alert(ContractsAlert contractsAlert, ResourceIdentifier resourceIdentifier)
         {
-            this.AlertPresentation = alertPresentation;
+            this.ContractsAlert = contractsAlert;
             this.ResourceIdentifier = resourceIdentifier;
         }
 
         /// <summary>
         /// Gets the alert presentation.
         /// </summary>
-        public AlertPresentation AlertPresentation
+        public ContractsAlert ContractsAlert
         {
             get
             {
-                return this.alertPresentation;
+                return this.contractsAlert;
             }
 
             private set
             {
-                this.alertPresentation = value;
+                this.contractsAlert = value;
                 this.OnPropertyChanged();
             }
         }

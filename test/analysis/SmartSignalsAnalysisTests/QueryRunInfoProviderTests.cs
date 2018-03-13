@@ -12,6 +12,7 @@ namespace SmartSignalsAnalysisTests
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;

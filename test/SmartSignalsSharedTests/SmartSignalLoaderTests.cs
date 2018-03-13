@@ -137,8 +137,9 @@ namespace SmartSignalsSharedTests
             var resource = new ResourceIdentifier(ResourceType.VirtualMachine, "someSubscription", "someGroup", "someVM");
             var analysisRequest = new AnalysisRequest(
                 new List<ResourceIdentifier> { resource },
-                DateTime.UtcNow.AddDays(-1),
+                DateTime.UtcNow.AddMinutes(-20),
                 TimeSpan.FromDays(1),
+                null,
                 new Mock<IAnalysisServicesFactory>().Object);
             List<Alert> alerts = await detector.AnalyzeResourcesAsync(analysisRequest, this.tracerMock.Object, default(CancellationToken));
             Assert.AreEqual(1, alerts.Count, "Incorrect number of result items returned");
@@ -155,9 +156,10 @@ namespace SmartSignalsSharedTests
 
             var resource = new ResourceIdentifier(ResourceType.VirtualMachine, "someSubscription", "someGroup", "someVM");
             var analysisRequest = new AnalysisRequest(
-                new List<ResourceIdentifier> { resource }, 
-                DateTime.UtcNow.AddDays(-1), 
-                TimeSpan.FromDays(1), 
+                new List<ResourceIdentifier> { resource },
+                DateTime.UtcNow.AddMinutes(-20),
+                TimeSpan.FromDays(1),
+                null,
                 new Mock<IAnalysisServicesFactory>().Object);
             List<Alert> alerts = await detector.AnalyzeResourcesAsync(analysisRequest, this.tracerMock.Object, default(CancellationToken));
             Assert.AreEqual(1, alerts.Count, "Incorrect number of result items returned");

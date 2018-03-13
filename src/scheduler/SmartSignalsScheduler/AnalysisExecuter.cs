@@ -6,6 +6,7 @@
 
 namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
 {
+    using System;
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Text;
@@ -14,12 +15,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
     using Microsoft.Azure.Monitoring.SmartDetectors.Extensions;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Exceptions;
     using Newtonsoft.Json;
     using Polly;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
     /// This class is responsible for executing signals via the analysis flow
@@ -57,9 +58,15 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
         /// <param name="signalExecutionInfo">The signal execution information</param>
         /// <param name="resourceIds">The resource IDs used by the signal</param>
         /// <returns>A list of smart signal result items</returns>
-        public async Task<IList<AlertPresentation>> ExecuteSignalAsync(SignalExecutionInfo signalExecutionInfo, IList<string> resourceIds)
+        public async Task<IList<ContractsAlert>> ExecuteSignalAsync(SignalExecutionInfo signalExecutionInfo, IList<string> resourceIds)
         {
-            var analysisRequest = new SmartDetectorRequest(resourceIds, signalExecutionInfo.AlertRule.SignalId, signalExecutionInfo.LastExecutionTime, signalExecutionInfo.AlertRule.Cadence, null);
+            var analysisRequest = new SmartDetectorExecutionRequest
+            {
+                ResourceIds = resourceIds,
+                SmartDetectorId = signalExecutionInfo.AlertRule.SignalId,
+                Cadence = signalExecutionInfo.AlertRule.Cadence,
+                DataEndTime = DateTime.UtcNow.AddMinutes(-20)
+            };
             return await this.SendToAnalysisAsync(analysisRequest);
         }
 
@@ -68,7 +75,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
         /// </summary>
         /// <param name="analysisRequest">The request to send to the analysis function</param>
         /// <returns>A list of smart signal result items</returns>
-        private async Task<IList<AlertPresentation>> SendToAnalysisAsync(SmartDetectorRequest analysisRequest)
+        private async Task<IList<ContractsAlert>> SendToAnalysisAsync(SmartDetectorExecutionRequest analysisRequest)
         {
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, this.analysisUrl);
             string requestBody = JsonConvert.SerializeObject(analysisRequest);
@@ -87,7 +94,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
             }
 
             var httpAnalysisResult = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<IList<AlertPresentation>>(httpAnalysisResult);
+            return JsonConvert.DeserializeObject<IList<ContractsAlert>>(httpAnalysisResult);
         }
     }
 }

@@ -12,13 +12,13 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
     using Newtonsoft.Json;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
     /// This class contains the logic for the /signalResult endpoint.
@@ -67,7 +67,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
                                                                                               .DownloadBlobContentAsync(new CloudBlockBlob(new Uri(blobUri)).Name)));
                 
                 // Deserialize the blobs content to alert
-                IEnumerable<AlertPresentation> alerts = blobsContent.Select(JsonConvert.DeserializeObject<AlertPresentation>);
+                IEnumerable<ContractsAlert> alerts = blobsContent.Select(JsonConvert.DeserializeObject<ContractsAlert>);
 
                 return new ListSmartSignalsResultsResponse
                 {

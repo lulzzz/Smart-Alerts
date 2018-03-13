@@ -13,6 +13,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Clients
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
 
     /// <summary>
@@ -88,7 +89,11 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Clients
                 }
 
                 List<string> workspacesResourceIds = workspaces.Select(workspace => workspace.ToResourceId()).ToList();
-                return new QueryRunInfo(TelemetryDbType.LogAnalytics, workspacesResourceIds);
+                return new QueryRunInfo
+                {
+                    Type = TelemetryDbType.LogAnalytics,
+                    ResourceIds = workspacesResourceIds
+                };
             }
             else
             {
@@ -105,7 +110,11 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Clients
                 }
 
                 List<string> applicationsResourceIds = resources.Select(application => application.ToResourceId()).ToList();
-                return new QueryRunInfo(TelemetryDbType.ApplicationInsights, applicationsResourceIds);
+                return new QueryRunInfo
+                {
+                    Type = TelemetryDbType.ApplicationInsights,
+                    ResourceIds = applicationsResourceIds
+                };
             }
         }
     }

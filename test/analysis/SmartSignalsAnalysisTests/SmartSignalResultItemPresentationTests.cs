@@ -10,10 +10,11 @@ namespace SmartSignalsAnalysisTests
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
-    using Microsoft.Azure.Monitoring.SmartSignals;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Moq;
+    using Alert = Microsoft.Azure.Monitoring.SmartDetectors.Alert;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     [TestClass]
     public class SmartSignalResultItemPresentationTests
@@ -88,27 +89,35 @@ namespace SmartSignalsAnalysisTests
             this.CreatePresentation(new TestResultItem(), nullQueryRunInfo: true);
         }
 
-        private AlertPresentation CreatePresentation(Alert resultItem, bool nullQueryRunInfo = false)
+        private ContractsAlert CreatePresentation(Alert resultItem, bool nullQueryRunInfo = false)
         {
             QueryRunInfo queryRunInfo = null;
             if (!nullQueryRunInfo)
             {
-                queryRunInfo = new QueryRunInfo(
-                    resultItem.ResourceIdentifier.ResourceType == ResourceType.ApplicationInsights ? TelemetryDbType.ApplicationInsights : TelemetryDbType.LogAnalytics,
-                    new List<string>() { "resourceId1", "resourceId2" });
+                queryRunInfo = new QueryRunInfo
+                {
+                    Type = resultItem.ResourceIdentifier.ResourceType == ResourceType.ApplicationInsights ? TelemetryDbType.ApplicationInsights : TelemetryDbType.LogAnalytics,
+                    ResourceIds = new List<string>() { "resourceId1", "resourceId2" }
+                };
             }
 
-            DateTime lastExecutionTime = DateTime.Now.Date.AddDays(-1);
             string resourceId = "resourceId";
-            var request = new SmartDetectorRequest(new List<string>() { resourceId }, "smartDetectorId", lastExecutionTime, TimeSpan.FromDays(1), new SmartDetectorSettings());
-            return AlertPresentation.CreateFromAlert(request, SignalName, resultItem, queryRunInfo);
+            var request = new SmartDetectorExecutionRequest
+            {
+                ResourceIds = new List<string>() { resourceId },
+                SmartDetectorId = "smartDetectorId",
+                DataEndTime = DateTime.UtcNow.AddMinutes(-20),
+                Cadence = TimeSpan.FromDays(1),
+            };
+                
+            return resultItem.CreateContractsAlert(request, SignalName, queryRunInfo);
         }
 
-        private void VerifyProperty(List<AlertPresentationProperty> properties, string name, AlertPresentationSection displayCategory, string value, string infoBalloon)
+        private void VerifyProperty(List<AlertProperty> properties, string name, AlertPresentationSection displayCategory, string value, string infoBalloon)
         {
             var property = properties.SingleOrDefault(p => p.Name == name);
             Assert.IsNotNull(property, $"Property {name} not found");
-            Assert.AreEqual(displayCategory, property.DisplayCategory);
+            Assert.AreEqual(displayCategory.ToString(), property.DisplayCategory.ToString());
             Assert.AreEqual(value, property.Value);
             Assert.AreEqual(infoBalloon, property.InfoBalloon);
         }

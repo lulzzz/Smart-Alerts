@@ -13,22 +13,24 @@ namespace SmartSignalsAnalysisTests
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader;
-    using Microsoft.Azure.Monitoring.SmartSignals;
     using Microsoft.Azure.Monitoring.SmartSignals.Analysis;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Exceptions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using Alert = Microsoft.Azure.Monitoring.SmartDetectors.Alert;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     [TestClass]
     public class SmartSignalRunnerTests
     {
         private SmartDetectorPackage smartDetectorPackage;
         private List<string> resourceIds;
-        private SmartDetectorRequest request;
+        private SmartDetectorExecutionRequest request;
         private TestSignal signal;
         private Mock<ITracer> tracerMock;
         private Mock<ISmartSignalRepository> smartSignalsRepositoryMock;
@@ -48,10 +50,10 @@ namespace SmartSignalsAnalysisTests
         {
             // Run the signal and validate results
             ISmartSignalRunner runner = new SmartSignalRunner(this.smartSignalsRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
-            List<AlertPresentation> alertPresentations = await runner.RunAsync(this.request, default(CancellationToken));
-            Assert.IsNotNull(alertPresentations, "Presentation list is null");
-            Assert.AreEqual(1, alertPresentations.Count);
-            Assert.AreEqual("Test title", alertPresentations.Single().Title);
+            List<ContractsAlert> contractsAlerts = await runner.RunAsync(this.request, default(CancellationToken));
+            Assert.IsNotNull(contractsAlerts, "Presentation list is null");
+            Assert.AreEqual(1, contractsAlerts.Count);
+            Assert.AreEqual("Test title", contractsAlerts.Single().Title);
         }
 
         [TestMethod]
@@ -133,7 +135,7 @@ namespace SmartSignalsAnalysisTests
             ISmartSignalRunner runner = new SmartSignalRunner(this.smartSignalsRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
             try
             {
-                List<AlertPresentation> alertPresentations = await runner.RunAsync(this.request, default(CancellationToken));
+                List<ContractsAlert> alertPresentations = await runner.RunAsync(this.request, default(CancellationToken));
                 if (shouldFail)
                 {
                     Assert.Fail("An exception should have been thrown - resource types are not compatible");
@@ -169,7 +171,13 @@ namespace SmartSignalsAnalysisTests
             }
 
             this.resourceIds = new List<string>() { resourceId.ToResourceId() };
-            this.request = new SmartDetectorRequest(this.resourceIds, "1", DateTime.UtcNow.AddDays(-1), TimeSpan.FromDays(1), new SmartDetectorSettings());
+            this.request = new SmartDetectorExecutionRequest
+            {
+                ResourceIds = this.resourceIds,
+                Cadence = TimeSpan.FromDays(1),
+                DataEndTime = DateTime.UtcNow.AddMinutes(-20),
+                SmartDetectorId = "1"
+            };
 
             var smartDetectorManifest = new SmartDetectorManifest("1", "Test signal", "Test signal description", Version.Parse("1.0"), "assembly", "class", new List<ResourceType>() { signalResourceType }, new List<int> { 60 });
             this.smartDetectorPackage = new SmartDetectorPackage(smartDetectorManifest, new Dictionary<string, byte[]> { ["TestSignalLibrary"] = new byte[0] });

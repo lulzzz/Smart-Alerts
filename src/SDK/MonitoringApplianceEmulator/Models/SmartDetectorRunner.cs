@@ -13,8 +13,10 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
     /// An observable class that runs a Smart Detector.
@@ -122,7 +124,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
         {
             this.cancellationTokenSource = new CancellationTokenSource();
             this.Alerts.Clear();
-            var analysisRequest = new AnalysisRequest(resources, null, analysisCadence, this.analysisServicesFactory);
+            var analysisRequest = new AnalysisRequest(resources, DateTime.UtcNow.AddMinutes(-20), analysisCadence, null, this.analysisServicesFactory);
             try
             {
                 // Run Smart Detector
@@ -140,15 +142,20 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
                     // Create alert presentation 
                     var resourceIds = resources.Select(resource => resource.ResourceName).ToList();
                     var smartDetectorSettings = new SmartDetectorSettings();
-                    var smartDetectorRequest = new SmartDetectorRequest(resourceIds, this.smartDetectorManifes.Id, null, analysisCadence, smartDetectorSettings);
+                    var smartDetectorExecutionRequest = new SmartDetectorExecutionRequest
+                    {
+                        ResourceIds = resourceIds,
+                        SmartDetectorId = this.smartDetectorManifes.Id,
+                        Cadence = analysisCadence,
+                        DataEndTime = DateTime.UtcNow.AddMinutes(-20)
+                    };
                     QueryRunInfo queryRunInfo = await this.queryRunInfoProvider.GetQueryRunInfoAsync(new List<ResourceIdentifier>() { alert.ResourceIdentifier }, this.cancellationTokenSource.Token);
-                    AlertPresentation alertPresentation = AlertPresentation.CreateFromAlert(
-                        smartDetectorRequest, this.smartDetectorManifes.Name, alert, queryRunInfo);
+                    ContractsAlert contractsAlert = alert.CreateContractsAlert(smartDetectorExecutionRequest, this.smartDetectorManifes.Name, queryRunInfo);
 
                     // Create Azure resource identifier 
-                    ResourceIdentifier resourceIdentifier = ResourceIdentifier.CreateFromResourceId(alertPresentation.ResourceId);
+                    ResourceIdentifier resourceIdentifier = ResourceIdentifier.CreateFromResourceId(contractsAlert.ResourceId);
 
-                    results.Add(new Alert(alertPresentation, resourceIdentifier));
+                    results.Add(new Alert(contractsAlert, resourceIdentifier));
                 }
 
                 this.Alerts = new ObservableCollection<Alert>(results);

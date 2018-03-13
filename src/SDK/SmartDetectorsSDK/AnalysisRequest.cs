@@ -20,12 +20,11 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors
         /// Initializes a new instance of the <see cref="AnalysisRequest"/> struct.
         /// </summary>
         /// <param name="targetResources">The list of resource identifiers to analyze.</param>
-        /// <param name="lastAnalysisTime">
-        /// The date and time when the last successful analysis of the Smart Detector occurred. This can be null if the Smart Detector never ran.
-        /// </param>
+        /// <param name="dataEndTime">The data end time to query</param>
         /// <param name="analysisCadence">The analysis cadence defined in the Alert Rule which initiated the Smart Detector's analysis.</param>
+        /// <param name="alertRuleResourceId">The alert rule resource ID.</param>
         /// <param name="analysisServicesFactory">The analysis services factory to be used for querying the resources telemetry.</param>
-        public AnalysisRequest(List<ResourceIdentifier> targetResources, DateTime? lastAnalysisTime, TimeSpan analysisCadence, IAnalysisServicesFactory analysisServicesFactory)
+        public AnalysisRequest(List<ResourceIdentifier> targetResources, DateTime dataEndTime, TimeSpan analysisCadence, string alertRuleResourceId, IAnalysisServicesFactory analysisServicesFactory)
         {
             // Parameter validations
             if (targetResources == null)
@@ -37,16 +36,13 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors
                 throw new ArgumentException("Analysis request must have at least one target resource", nameof(targetResources));
             }
 
-            if (lastAnalysisTime.HasValue)
+            if (dataEndTime.Kind != DateTimeKind.Utc)
             {
-                if (lastAnalysisTime.Value.Kind != DateTimeKind.Utc)
-                {
-                    throw new ArgumentException("Last analysis time must be specified in UTC", nameof(lastAnalysisTime));
-                }
-                else if (lastAnalysisTime.Value >= DateTime.UtcNow)
-                {
-                    throw new ArgumentException("Last analysis time cannot be in the future", nameof(lastAnalysisTime));
-                }
+                throw new ArgumentException("Data end time must be specified in UTC", nameof(dataEndTime));
+            }
+            else if (dataEndTime >= DateTime.UtcNow)
+            {
+                throw new ArgumentException("Data end time cannot be in the future", nameof(dataEndTime));
             }
 
             if (analysisCadence <= TimeSpan.Zero)
@@ -60,8 +56,9 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors
             }
 
             this.TargetResources = targetResources;
-            this.LastAnalysisTime = lastAnalysisTime;
+            this.DataEndTime = dataEndTime;
             this.AnalysisCadence = analysisCadence;
+            this.AlertRuleResourceId = alertRuleResourceId;
             this.AnalysisServicesFactory = analysisServicesFactory;
         }
 
@@ -75,15 +72,19 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors
         public List<ResourceIdentifier> TargetResources { get; }
 
         /// <summary>
-        /// Gets the date and time when the last successful analysis of the Smart Detector occurred.
-        /// This can be <code>null</code> if the Smart Detector never ran.
+        /// Gets the data end time to query.
         /// </summary>
-        public DateTime? LastAnalysisTime { get; }
+        public DateTime DataEndTime { get; }
 
         /// <summary>
         /// Gets the analysis cadence defined in the Alert Rule which initiated the Smart Detector's analysis.
         /// </summary>
         public TimeSpan AnalysisCadence { get; }
+
+        /// <summary>
+        /// Gets the alert rule resource ID.
+        /// </summary>
+        public string AlertRuleResourceId { get; }
 
         /// <summary>
         /// Gets the analysis services factory to be used for querying the resources telemetry.

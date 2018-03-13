@@ -17,7 +17,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Clients
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Extensions;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Rest;
     using Newtonsoft.Json.Linq;

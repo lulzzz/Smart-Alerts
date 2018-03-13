@@ -8,7 +8,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
     /// An interface for publishing Smart Signal results
@@ -21,6 +21,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
         /// <param name="signalId">The signal ID</param>
         /// <param name="alerts">The Alerts to publish</param>
         /// <returns>A <see cref="Task"/> object, running the current operation</returns>
-        Task PublishSignalResultItemsAsync(string signalId, IList<AlertPresentation> alerts);
+        Task PublishSignalResultItemsAsync(string signalId, IList<ContractsAlert> alerts);
     }
 }

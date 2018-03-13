@@ -19,6 +19,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Management.Monitor.Fluent" Version="1.6.0" />
     <PackageReference Include="Microsoft.Azure.Management.ResourceManager.Fluent" Version="1.6.0" />
+    <PackageReference Include="Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts" Version="0.1.9" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="NuProj.Common" Version="0.11.30" />
     <PackageReference Include="Polly" Version="5.7.0" />

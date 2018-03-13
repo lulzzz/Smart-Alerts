@@ -8,15 +8,13 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
     /// This class is responsible for discovering which signal should be executed and sends them to the analysis flow
@@ -28,7 +26,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
         private readonly ISignalRunsTracker signalRunsTracker;
         private readonly IAnalysisExecuter analysisExecuter;
         private readonly ISmartSignalResultPublisher smartSignalResultPublisher;
-        private readonly IEmailSender emailSender;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleFlow"/> class.
@@ -38,21 +35,18 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
         /// <param name="signalRunsTracker">The signal run tracker</param>
         /// <param name="analysisExecuter">The analysis executer instance</param>
         /// <param name="smartSignalResultPublisher">The signal results publisher instance</param>
-        /// <param name="emailSender">The email sender</param>
         public ScheduleFlow(
             ITracer tracer,
             IAlertRuleStore alertRulesStore,
             ISignalRunsTracker signalRunsTracker,
             IAnalysisExecuter analysisExecuter,
-            ISmartSignalResultPublisher smartSignalResultPublisher,
-            IEmailSender emailSender)
+            ISmartSignalResultPublisher smartSignalResultPublisher)
         {
             this.tracer = Diagnostics.EnsureArgumentNotNull(() => tracer);
             this.alertRulesStore = Diagnostics.EnsureArgumentNotNull(() => alertRulesStore);
             this.signalRunsTracker = Diagnostics.EnsureArgumentNotNull(() => signalRunsTracker);
             this.analysisExecuter = Diagnostics.EnsureArgumentNotNull(() => analysisExecuter);
             this.smartSignalResultPublisher = Diagnostics.EnsureArgumentNotNull(() => smartSignalResultPublisher);
-            this.emailSender = Diagnostics.EnsureArgumentNotNull(() => emailSender);
         }
 
         /// <summary>
@@ -68,13 +62,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
             {
                 try
                 {
-                    IList<AlertPresentation> alerts = await this.analysisExecuter.ExecuteSignalAsync(signalExecution, new List<string> { signalExecution.AlertRule.ResourceId });
+                    IList<ContractsAlert> alerts = await this.analysisExecuter.ExecuteSignalAsync(signalExecution, new List<string> { signalExecution.AlertRule.ResourceId });
                     this.tracer.TraceInformation($"Found {alerts.Count} alerts");
                     await this.smartSignalResultPublisher.PublishSignalResultItemsAsync(signalExecution.AlertRule.SignalId, alerts);
                     await this.signalRunsTracker.UpdateSignalRunAsync(signalExecution);
-
-                    // We send the mail after we mark the run as successful so if it will fail then the signal will not run again
-                    await this.emailSender.SendSignalResultEmailAsync(signalExecution, alerts);
                 }
                 catch (Exception exception)
                 {

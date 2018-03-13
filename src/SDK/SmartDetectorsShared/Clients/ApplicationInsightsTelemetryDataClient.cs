@@ -9,7 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Clients
     using System;
     using System.Collections.Generic;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Newtonsoft.Json.Linq;
 
     /// <summary>

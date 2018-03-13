@@ -13,6 +13,7 @@ namespace SmartSignalsSharedTests
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -116,7 +117,7 @@ namespace SmartSignalsSharedTests
         {
             this.queryRunInfoProviderMock
                 .Setup(x => x.GetQueryRunInfoAsync(It.Is<IReadOnlyList<ResourceIdentifier>>(y => y.SequenceEqual(resources)), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => new QueryRunInfo(telemetryDbType, resources.Select(r => r.ToResourceId()).ToList()));
+                .ReturnsAsync(() => new QueryRunInfo { Type = telemetryDbType, ResourceIds = resources.Select(r => r.ToResourceId()).ToList() });
             if (telemetryDbType == TelemetryDbType.ApplicationInsights)
             {
                 this.azureResourceManagerClientMock

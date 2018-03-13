@@ -11,7 +11,6 @@ namespace SmartSignalSchedulerTests
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Exceptions;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
@@ -19,6 +18,7 @@ namespace SmartSignalSchedulerTests
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
     using Moq;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     [TestClass]
     public class SignalResultPublisherTest
@@ -43,7 +43,7 @@ namespace SmartSignalSchedulerTests
         [TestMethod]
         public async Task WhenNoResultsToPublishThenResultStoreIsNotCalled()
         {
-            await this.publisher.PublishSignalResultItemsAsync("signalId", new List<AlertPresentation>());
+            await this.publisher.PublishSignalResultItemsAsync("signalId", new List<ContractsAlert>());
 
             this.containerMock.Verify(m => m.UploadBlobAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
             this.tracerMock.Verify(m => m.TrackEvent(It.IsAny<string>(), It.IsAny<IDictionary<string, string>>(), It.IsAny<IDictionary<string, double>>()), Times.Never);
@@ -59,10 +59,10 @@ namespace SmartSignalSchedulerTests
             var blobName = $"{signalId}/{todayString}/id1";
             this.containerMock.Setup(m => m.UploadBlobAsync(blobName, It.IsAny<string>(), It.IsAny<CancellationToken>())).Throws(new StorageException());
 
-            var alerts = new List<AlertPresentation>
+            var alerts = new List<ContractsAlert>
             {
-                new AlertPresentation("id1", "title1", "resource1", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null),
-                new AlertPresentation("id2", "title2", "resource2", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null)
+                this.CreateContractsAlert("id1", "title1", "resource1", signalId, 10),
+                this.CreateContractsAlert("id2", "title2", "resource2", signalId, 10)
             };
             await this.publisher.PublishSignalResultItemsAsync("signalId", alerts);
         }
@@ -87,15 +87,29 @@ namespace SmartSignalSchedulerTests
             this.containerMock.Setup(m => m.UploadBlobAsync(blobName1, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(blobMock1.Object);
             this.containerMock.Setup(m => m.UploadBlobAsync(blobName2, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(blobMock2.Object);
 
-            var alerts = new List<AlertPresentation>
+            var alerts = new List<ContractsAlert>
             {
-                new AlertPresentation("id1", "title1", "resource1", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null),
-                new AlertPresentation("id2", "title2", "resource2", null, signalId, signalId, DateTime.UtcNow, 10, null, null, null)
+                this.CreateContractsAlert("id1", "title1", "resource1", signalId, 10),
+                this.CreateContractsAlert("id2", "title2", "resource2", signalId, 10)
             };
             await this.publisher.PublishSignalResultItemsAsync(signalId, alerts);
 
             this.tracerMock.Verify(m => m.TrackEvent("SmartSignalResult", It.Is<IDictionary<string, string>>(properties => properties["SignalId"] == signalId && properties["ResultItemBlobUri"] == blobUri1.AbsoluteUri), It.IsAny<IDictionary<string, double>>()), Times.Once);
             this.tracerMock.Verify(m => m.TrackEvent("SmartSignalResult", It.Is<IDictionary<string, string>>(properties => properties["SignalId"] == signalId && properties["ResultItemBlobUri"] == blobUri2.AbsoluteUri), It.IsAny<IDictionary<string, double>>()), Times.Once);
+        }
+
+        private ContractsAlert CreateContractsAlert(string id, string title, string resourceId, string detectorId, int analysisWindowSizeInMinutes)
+        {
+            return new ContractsAlert
+            {
+                Id = id,
+                Title = title,
+                ResourceId = resourceId,
+                SmartDetectorId = detectorId,
+                SmartDetectorName = detectorId,
+                AnalysisTimestamp = DateTime.UtcNow,
+                AnalysisWindowSizeInMinutes = analysisWindowSizeInMinutes
+            };
         }
     }
 }

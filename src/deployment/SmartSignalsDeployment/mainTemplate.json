@@ -12,20 +12,16 @@
         "Premium_LRS"
       ]
     },
-    "siraPrefix": { "type": "string" },
+    "monitoringAppliacnceName": { "type": "string" },
     "functionPackageLink": { "type": "string" },
     "sitePackageLink": { "type": "string" },
-    "sendgridApiKey": {
-      "type": "string",
-      "defaultValue": ""
-    },
     "logVerboseTraces": {
       "type": "string",
       "defaultValue": "true"
     }
   },
   "variables": {
-    "uniquePrefix": "[uniqueString(resourceGroup().id, subscription().subscriptionId, parameters('siraPrefix'))]",
+    "uniquePrefix": "[uniqueString(resourceGroup().id, subscription().subscriptionId, parameters('monitoringAppliacnceName'))]",
     "functionsAppName": "[concat(variables('uniquePrefix'), '-fa')]",
     "siteName": "[concat(variables('uniquePrefix'), '-site')]",
     "functionsHostingPlanName": "[concat(variables('uniquePrefix'), '-fa-sp')]",
@@ -171,7 +167,6 @@
             "SubscriptionId": "[subscription().subscriptionId]",
             "FunctionBaseUrl": "[variables('functionBaseUrl')]",
             "StorageAccountName": "[variables('storageAccountName')]",
-            "SendgridApiKey": "[parameters('sendgridApiKey')]",
             "AnalyticsQueryTimeoutInMinutes": "15",
             "GlobalSmartSignalContainerUri": "https://globalsmartsignals.blob.core.windows.net/signals"
           }

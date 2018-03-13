@@ -7,8 +7,8 @@
 namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses
 {
     using System.Collections.Generic;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Newtonsoft.Json;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
     /// This class represents the GET Management API operation for listing signals results.
@@ -19,6 +19,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses
         /// Gets or sets the smart signals results list
         /// </summary>
         [JsonProperty("signalsResults")]
-        public IList<AlertPresentation> Alerts { get; set; }
+        public IList<ContractsAlert> Alerts { get; set; }
     }
 }

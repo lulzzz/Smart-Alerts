@@ -12,14 +12,13 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Exceptions;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
     using Newtonsoft.Json;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
     /// This class is responsible for publishing Smart Signal results.
@@ -48,7 +47,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
         /// <param name="signalId">The signal ID</param>
         /// <param name="alerts">The Alerts to publish</param>
         /// <returns>A <see cref="Task"/> object, running the current operation</returns>
-        public async Task PublishSignalResultItemsAsync(string signalId, IList<AlertPresentation> alerts)
+        public async Task PublishSignalResultItemsAsync(string signalId, IList<ContractsAlert> alerts)
         {
             if (alerts == null || !alerts.Any())
             {

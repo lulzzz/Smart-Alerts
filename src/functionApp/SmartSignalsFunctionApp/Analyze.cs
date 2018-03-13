@@ -13,7 +13,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartSignals.Analysis;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
     using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Extensions;
@@ -22,6 +22,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using Microsoft.Azure.WebJobs.Host;
     using Newtonsoft.Json;
     using Unity;
+    using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
     using ExecutionContext = Microsoft.Azure.WebJobs.ExecutionContext;
 
     /// <summary>
@@ -74,13 +75,13 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
                     tracer.TraceAppCounters();
 
                     // Read the request
-                    SmartDetectorRequest smartDetectorRequest = await request.Content.ReadAsAsync<SmartDetectorRequest>(cancellationToken);
-                    tracer.AddCustomProperty("SmartDetectorId", smartDetectorRequest.SmartDetectorId);
-                    tracer.TraceInformation($"Analyze request received: {JsonConvert.SerializeObject(smartDetectorRequest)}");
+                    SmartDetectorExecutionRequest smartDetectorExecutionRequest = await request.Content.ReadAsAsync<SmartDetectorExecutionRequest>(cancellationToken);
+                    tracer.AddCustomProperty("SmartDetectorId", smartDetectorExecutionRequest.SmartDetectorId);
+                    tracer.TraceInformation($"Analyze request received: {JsonConvert.SerializeObject(smartDetectorExecutionRequest)}");
 
                     // Process the request
                     ISmartSignalRunner runner = childContainer.Resolve<ISmartSignalRunner>();
-                    List<AlertPresentation> resultPresentations = await runner.RunAsync(smartDetectorRequest, cancellationToken);
+                    List<ContractsAlert> resultPresentations = await runner.RunAsync(smartDetectorExecutionRequest, cancellationToken);
                     tracer.TraceInformation($"Analyze completed, returning {resultPresentations.Count} results");
 
                     // Return the generated presentations
