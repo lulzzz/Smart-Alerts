@@ -13,6 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\analysis\SmartSignalsAnalysis\SmartSignalsAnalysis.csproj" />
+    <ProjectReference Include="..\..\..\src\SmartDetectorsApplianceShared\SmartDetectorsApplianceShared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

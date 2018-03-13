@@ -13,28 +13,28 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
 
     /// <summary>
     /// This class is the logic for the /signal endpoint.
     /// </summary>
     public class SignalApi : ISignalApi
     {
-        private readonly ISmartSignalRepository smartSignalsRepository;
+        private readonly ISmartDetectorRepository smartDetectorRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SignalApi"/> class.
         /// </summary>
-        /// <param name="smartSignalsRepository">The smart signal repository.</param>
-        public SignalApi(ISmartSignalRepository smartSignalsRepository)
+        /// <param name="smartDetectorRepository">The Smart Detector repository.</param>
+        public SignalApi(ISmartDetectorRepository smartDetectorRepository)
         {
-            Diagnostics.EnsureArgumentNotNull(() => smartSignalsRepository);
+            Diagnostics.EnsureArgumentNotNull(() => smartDetectorRepository);
 
-            this.smartSignalsRepository = smartSignalsRepository;
+            this.smartDetectorRepository = smartDetectorRepository;
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         {
             try
             {
-                IList<SmartDetectorManifest> smartDetectorManifests = await this.smartSignalsRepository.ReadAllSignalsManifestsAsync(cancellationToken);
+                IList<SmartDetectorManifest> smartDetectorManifests = await this.smartDetectorRepository.ReadAllSmartDetectorsManifestsAsync(cancellationToken);
 
                 // Convert smart detectors to the required response
                 var signals = smartDetectorManifests.Select(manifest => new Signal

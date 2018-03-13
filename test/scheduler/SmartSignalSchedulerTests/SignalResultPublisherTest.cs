@@ -11,7 +11,7 @@ namespace SmartSignalSchedulerTests
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Exceptions;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -35,7 +35,7 @@ namespace SmartSignalSchedulerTests
             this.containerMock = new Mock<ICloudBlobContainerWrapper>();
 
             var storageProviderFactoryMock = new Mock<ICloudStorageProviderFactory>();
-            storageProviderFactoryMock.Setup(m => m.GetSmartSignalResultStorageContainer()).Returns(this.containerMock.Object);
+            storageProviderFactoryMock.Setup(m => m.GetAlertsStorageContainer()).Returns(this.containerMock.Object);
 
             this.publisher = new SmartSignalResultPublisher(this.tracerMock.Object, storageProviderFactoryMock.Object);
         }

@@ -12,8 +12,8 @@ namespace SmartSignalsRuntimeSharedTests
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.WindowsAzure.Storage.Table;
     using Moq;
@@ -31,7 +31,7 @@ namespace SmartSignalsRuntimeSharedTests
             var tableClientMock = new Mock<ICloudTableClientWrapper>();
             tableClientMock.Setup(m => m.GetTableReference(It.IsAny<string>())).Returns(this.tableMock.Object);
             var storageProviderFactoryMock = new Mock<ICloudStorageProviderFactory>();
-            storageProviderFactoryMock.Setup(m => m.GetSmartSignalStorageTableClient()).Returns(tableClientMock.Object);
+            storageProviderFactoryMock.Setup(m => m.GetSmartDetectorStorageTableClient()).Returns(tableClientMock.Object);
 
             var tracerMock = new Mock<ITracer>();
             this.alertRuleStore = new AlertRuleStore(storageProviderFactoryMock.Object, tracerMock.Object);
@@ -43,7 +43,7 @@ namespace SmartSignalsRuntimeSharedTests
             var ruleToUpdate = new AlertRule
             {
                 Id = "ruleId",
-                SignalId = "signalId",
+                SmartDetectorId = "smartDetectorId",
                 Cadence = TimeSpan.FromMinutes(1440),
                 ResourceId = "resourceId"
             };
@@ -54,7 +54,7 @@ namespace SmartSignalsRuntimeSharedTests
                 It.Is<TableOperation>(operation =>
                     operation.OperationType == TableOperationType.InsertOrReplace &&
                     operation.Entity.RowKey.Equals(ruleToUpdate.Id) &&
-                    ((AlertRuleEntity)operation.Entity).SignalId.Equals(ruleToUpdate.SignalId) &&
+                    ((AlertRuleEntity)operation.Entity).SmartDetectorId.Equals(ruleToUpdate.SmartDetectorId) &&
                     ((AlertRuleEntity)operation.Entity).CadenceInMinutes.Equals(1440) &&
                     ((AlertRuleEntity)operation.Entity).ResourceId.Equals(ruleToUpdate.ResourceId)),
                 It.IsAny<CancellationToken>()));
@@ -69,14 +69,14 @@ namespace SmartSignalsRuntimeSharedTests
                 new AlertRuleEntity
                 {
                     RowKey = "rule1",
-                    SignalId = "signal1",
+                    SmartDetectorId = "smartDetector1",
                     CadenceInMinutes = 1440,
                     ResourceId = "resourceId1"
                 },
                 new AlertRuleEntity
                 {
                     RowKey = "rule2",
-                    SignalId = "signal2",
+                    SmartDetectorId = "smartDetector2",
                     CadenceInMinutes = 60,
                     ResourceId = "resourceId2"
                 }
@@ -89,13 +89,13 @@ namespace SmartSignalsRuntimeSharedTests
 
             var firstRule = returnedRules.First();
             Assert.AreEqual("rule1", firstRule.Id);
-            Assert.AreEqual("signal1", firstRule.SignalId);
+            Assert.AreEqual("smartDetector1", firstRule.SmartDetectorId);
             Assert.AreEqual(1440, firstRule.Cadence.TotalMinutes);
             Assert.AreEqual("resourceId1", firstRule.ResourceId);
 
             var lastRule = returnedRules.Last();
             Assert.AreEqual("rule2", lastRule.Id);
-            Assert.AreEqual("signal2", lastRule.SignalId);
+            Assert.AreEqual("smartDetector2", lastRule.SmartDetectorId);
             Assert.AreEqual(60, lastRule.Cadence.TotalMinutes);
             Assert.AreEqual("resourceId2", lastRule.ResourceId);
         }

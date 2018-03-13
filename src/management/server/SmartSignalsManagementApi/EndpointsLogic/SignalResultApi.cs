@@ -12,9 +12,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
     using Newtonsoft.Json;
@@ -31,7 +31,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         private const string EventName = "SmartSignalResult";
 
         private readonly IApplicationInsightsClient applicationInsightsClient;
-        private readonly ICloudBlobContainerWrapper signalResultStorageContainer;
+        private readonly ICloudBlobContainerWrapper alertsStorageContainer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SignalResultApi"/> class.
@@ -40,7 +40,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         /// <param name="applicationInsightsClientFactory">The Application Insights client factory.</param>
         public SignalResultApi(ICloudStorageProviderFactory storageProviderFactory, IApplicationInsightsClientFactory applicationInsightsClientFactory)
         {
-            this.signalResultStorageContainer = storageProviderFactory.GetSmartSignalResultStorageContainer();
+            this.alertsStorageContainer = storageProviderFactory.GetAlertsStorageContainer();
             this.applicationInsightsClient = applicationInsightsClientFactory.GetApplicationInsightsClient();
         }
 
@@ -63,7 +63,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
                                                                   .Select(result => result.CustomDimensions["ResultItemBlobUri"]);
 
                 // Get the blobs content (as we are getting blob uri, we are creating new CloudBlockBlob for each and extracting the blob name 
-                var blobsContent = await Task.WhenAll(signalResultsBlobsUri.Select(blobUri => this.signalResultStorageContainer
+                var blobsContent = await Task.WhenAll(signalResultsBlobsUri.Select(blobUri => this.alertsStorageContainer
                                                                                               .DownloadBlobContentAsync(new CloudBlockBlob(new Uri(blobUri)).Name)));
                 
                 // Deserialize the blobs content to alert

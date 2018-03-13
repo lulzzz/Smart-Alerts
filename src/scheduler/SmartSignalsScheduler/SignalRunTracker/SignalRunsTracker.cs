@@ -12,8 +12,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler;
     using Microsoft.WindowsAzure.Storage.Table;
 
@@ -39,7 +39,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker
             this.tracer = tracer;
 
             // create the cloud table instance
-            ICloudTableClientWrapper tableClient = storageProviderFactory.GetSmartSignalStorageTableClient();
+            ICloudTableClientWrapper tableClient = storageProviderFactory.GetSmartDetectorStorageTableClient();
             this.trackingTable = tableClient.GetTableReference(TableName);
             this.trackingTable.CreateIfNotExists();
         }
@@ -68,7 +68,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker
                 DateTime signalNextRun = lastExecutionTime.Add(alertRule.Cadence);
                 if (signalNextRun <= DateTime.UtcNow)
                 {
-                    this.tracer.TraceInformation($"rule {alertRule.Id} for signal {alertRule.SignalId} is marked to run");
+                    this.tracer.TraceInformation($"rule {alertRule.Id} for smart detector {alertRule.SmartDetectorId} is marked to run");
                     signalsToRun.Add(new SignalExecutionInfo
                     {
                         AlertRule = alertRule,
@@ -94,7 +94,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker
             {
                 PartitionKey = PartitionKey,
                 RowKey = signalExecutionInfo.AlertRule.Id,
-                SignalId = signalExecutionInfo.AlertRule.SignalId,
+                SignalId = signalExecutionInfo.AlertRule.SmartDetectorId,
                 LastSuccessfulExecutionTime = signalExecutionInfo.CurrentExecutionTime
             });
             await this.trackingTable.ExecuteAsync(operation, CancellationToken.None);

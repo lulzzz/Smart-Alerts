@@ -14,14 +14,14 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.FunctionApp.Authorization;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Azure.WebJobs.Host;
@@ -128,7 +128,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
                     List<AlertRuleApiEntity> alertRuleApiEntities = alertRules.Select(alertRule => new AlertRuleApiEntity
                     {
                         ResourceId = alertRule.ResourceId,
-                        SignalId = alertRule.SignalId,
+                        SignalId = alertRule.SmartDetectorId,
                         Name = alertRule.Name,
                         Description = alertRule.Description,
                         CadenceInMinutes = (int)alertRule.Cadence.TotalMinutes,

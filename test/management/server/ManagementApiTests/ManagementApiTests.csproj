@@ -16,7 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\management\server\SmartSignalsManagementApi\SmartSignalsManagementApi.csproj" />
     <ProjectReference Include="..\..\..\..\src\SDK\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
-    <ProjectReference Include="..\..\..\..\src\SmartSignalsRuntimeShared\SmartSignalsRuntimeShared.csproj" />
+    <ProjectReference Include="..\..\..\..\src\SmartDetectorsApplianceShared\SmartDetectorsApplianceShared.csproj" />
     <ProjectReference Include="..\..\..\SmartSignalsSharedTests\SmartSignalsSharedTests.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -168,7 +168,7 @@
             "FunctionBaseUrl": "[variables('functionBaseUrl')]",
             "StorageAccountName": "[variables('storageAccountName')]",
             "AnalyticsQueryTimeoutInMinutes": "15",
-            "GlobalSmartSignalContainerUri": "https://globalsmartsignals.blob.core.windows.net/signals"
+            "GlobalSmartDetectorContainerUri": "https://globalsmartsignals.blob.core.windows.net/signals"
           }
         },
         {

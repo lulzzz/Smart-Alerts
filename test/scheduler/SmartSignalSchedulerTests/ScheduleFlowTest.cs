@@ -11,7 +11,7 @@ namespace SmartSignalSchedulerTests
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker;
@@ -54,7 +54,7 @@ namespace SmartSignalSchedulerTests
             {
                 AlertRule = new AlertRule
                 {
-                    SignalId = "s1",
+                    SmartDetectorId = "s1",
                     Id = "r1",
                     ResourceId = "1",
                 },
@@ -64,7 +64,7 @@ namespace SmartSignalSchedulerTests
             {
                 AlertRule = new AlertRule
                 {
-                    SignalId = "s2",
+                    SmartDetectorId = "s2",
                     Id = "r2",
                     ResourceId = "2",
                 },
@@ -99,7 +99,7 @@ namespace SmartSignalSchedulerTests
                 AlertRule = new AlertRule
                 {
                     Id = "r1",
-                    SignalId = "s1",
+                    SmartDetectorId = "s1",
                     ResourceId = "1",
                 },
                 LastExecutionTime = DateTime.UtcNow.AddHours(-1)
@@ -109,7 +109,7 @@ namespace SmartSignalSchedulerTests
                 AlertRule = new AlertRule
                 {
                     Id = "r2",
-                    SignalId = "s2",
+                    SmartDetectorId = "s2",
                     ResourceId = "2",
                 },
                 LastExecutionTime = DateTime.UtcNow.AddHours(-1)

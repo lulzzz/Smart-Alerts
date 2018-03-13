@@ -8,10 +8,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
 {
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ChildProcess;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader;
     using Microsoft.Azure.Monitoring.SmartDetectors.Trace;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.ChildProcess;
     using Unity;
 
     /// <summary>

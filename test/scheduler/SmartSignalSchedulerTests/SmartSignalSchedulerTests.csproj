@@ -19,6 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\scheduler\SmartSignalsScheduler\SmartSignalScheduler.csproj" />
-    <ProjectReference Include="..\..\..\src\SmartSignalsRuntimeShared\SmartSignalsRuntimeShared.csproj" />
+    <ProjectReference Include="..\..\..\src\SmartDetectorsApplianceShared\SmartDetectorsApplianceShared.csproj" />
   </ItemGroup>
 </Project>

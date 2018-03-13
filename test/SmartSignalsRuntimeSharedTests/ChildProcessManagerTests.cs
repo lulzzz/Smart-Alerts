@@ -12,8 +12,8 @@ namespace SmartSignalsRuntimeSharedTests
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.ChildProcess;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Exceptions;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ChildProcess;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using TestChildProcess;
@@ -115,7 +115,7 @@ namespace SmartSignalsRuntimeSharedTests
                 await this.childProcessManager.RunChildProcessAsync<TestChildProcessOutput>(ChildProcessName, this.GetInput(RunMode.Exception), default(CancellationToken));
                 Assert.Fail("Child process did not throw an exception");
             }
-            catch (ChildProcessException e) when (e.InnerException is SmartSignalRepositoryException)
+            catch (ChildProcessException e) when (e.InnerException is SmartDetectorRepositoryException)
             {
             }
 

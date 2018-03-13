@@ -12,8 +12,8 @@ namespace SmartSignalSchedulerTests
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,7 +33,7 @@ namespace SmartSignalSchedulerTests
             var tableClientMock = new Mock<ICloudTableClientWrapper>();
             tableClientMock.Setup(m => m.GetTableReference(It.IsAny<string>())).Returns(this.tableMock.Object);
             var storageProviderFactoryMock = new Mock<ICloudStorageProviderFactory>();
-            storageProviderFactoryMock.Setup(m => m.GetSmartSignalStorageTableClient()).Returns(tableClientMock.Object);
+            storageProviderFactoryMock.Setup(m => m.GetSmartDetectorStorageTableClient()).Returns(tableClientMock.Object);
 
             var tracerMock = new Mock<ITracer>();
             this.signalRunsTracker = new SignalRunsTracker(storageProviderFactoryMock.Object, tracerMock.Object);
@@ -47,7 +47,7 @@ namespace SmartSignalSchedulerTests
                 AlertRule = new AlertRule
                 {
                     Id = "some_rule",
-                    SignalId = "some_signal",
+                    SmartDetectorId = "some_smart_detector",
                 },
                 LastExecutionTime = DateTime.UtcNow.AddHours(-1),
                 CurrentExecutionTime = DateTime.UtcNow.AddMinutes(-1)
@@ -57,7 +57,7 @@ namespace SmartSignalSchedulerTests
                 It.Is<TableOperation>(operation =>
                     operation.OperationType == TableOperationType.InsertOrReplace &&
                     operation.Entity.RowKey.Equals(signalExecution.AlertRule.Id) &&
-                    ((TrackSignalRunEntity)operation.Entity).SignalId.Equals(signalExecution.AlertRule.SignalId) &&
+                    ((TrackSignalRunEntity)operation.Entity).SignalId.Equals(signalExecution.AlertRule.SmartDetectorId) &&
                     ((TrackSignalRunEntity)operation.Entity).LastSuccessfulExecutionTime.Equals(signalExecution.CurrentExecutionTime)),
                 It.IsAny<CancellationToken>()));
         }
@@ -70,19 +70,19 @@ namespace SmartSignalSchedulerTests
                 new AlertRule
                 {
                     Id = "should_not_run_rule",
-                    SignalId = "should_not_run_signal",
+                    SmartDetectorId = "should_not_run_smart_detector",
                     Cadence = TimeSpan.FromMinutes(1440) // once a day
                 },
                 new AlertRule
                 {
                     Id = "should_run_rule",
-                    SignalId = "should_run_signal",
+                    SmartDetectorId = "should_run_smart_detector",
                     Cadence = TimeSpan.FromMinutes(60) // once every hour
                 },
                 new AlertRule
                 {
                     Id = "should_run_rule2",
-                    SignalId = "should_run_signal2",
+                    SmartDetectorId = "should_run_smart_detector2",
                     Cadence = TimeSpan.FromMinutes(1440) // once a day
                 }
             };
@@ -94,13 +94,13 @@ namespace SmartSignalSchedulerTests
                 new TrackSignalRunEntity
                 {
                     RowKey = "should_not_run_rule",
-                    SignalId = "should_not_run_signal",
+                    SignalId = "should_not_run_smart_detector",
                     LastSuccessfulExecutionTime = new DateTime(now.Year, now.Month, now.Day, 0, 5, 0)
                 },
                 new TrackSignalRunEntity
                 {
                     RowKey = "should_run_rule",
-                    SignalId = "should_run_signal",
+                    SignalId = "should_run_smart_detector",
                     LastSuccessfulExecutionTime = now.AddHours(-2)
                 }
             };
@@ -109,8 +109,8 @@ namespace SmartSignalSchedulerTests
 
             var signalsToRun = await this.signalRunsTracker.GetSignalsToRunAsync(rules);
             Assert.AreEqual(2, signalsToRun.Count);
-            Assert.AreEqual("should_run_signal", signalsToRun.First().AlertRule.SignalId);
-            Assert.AreEqual("should_run_signal2", signalsToRun.Last().AlertRule.SignalId);
+            Assert.AreEqual("should_run_smart_detector", signalsToRun.First().AlertRule.SmartDetectorId);
+            Assert.AreEqual("should_run_smart_detector2", signalsToRun.Last().AlertRule.SmartDetectorId);
         }
     }
 }

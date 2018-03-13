@@ -63,7 +63,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
             var analysisRequest = new SmartDetectorExecutionRequest
             {
                 ResourceIds = resourceIds,
-                SmartDetectorId = signalExecutionInfo.AlertRule.SignalId,
+                SmartDetectorId = signalExecutionInfo.AlertRule.SmartDetectorId,
                 Cadence = signalExecutionInfo.AlertRule.Cadence,
                 DataEndTime = DateTime.UtcNow.AddMinutes(-20)
             };

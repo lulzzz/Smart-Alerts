@@ -10,8 +10,8 @@ namespace TestChildProcess
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.ChildProcess;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Exceptions;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ChildProcess;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
     using Moq;
 
     public static class TestChildProcessMain
@@ -43,7 +43,7 @@ namespace TestChildProcess
                 case RunMode.Null:
                     return null;
                 case RunMode.Exception:
-                    throw new SmartSignalRepositoryException("abc");
+                    throw new SmartDetectorRepositoryException("abc");
                 case RunMode.Cancellation:
                     await Task.Delay(int.MaxValue, cancellationToken);
                     break;

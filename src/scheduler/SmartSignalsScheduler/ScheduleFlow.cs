@@ -10,8 +10,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
@@ -64,12 +64,12 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
                 {
                     IList<ContractsAlert> alerts = await this.analysisExecuter.ExecuteSignalAsync(signalExecution, new List<string> { signalExecution.AlertRule.ResourceId });
                     this.tracer.TraceInformation($"Found {alerts.Count} alerts");
-                    await this.smartSignalResultPublisher.PublishSignalResultItemsAsync(signalExecution.AlertRule.SignalId, alerts);
+                    await this.smartSignalResultPublisher.PublishSignalResultItemsAsync(signalExecution.AlertRule.SmartDetectorId, alerts);
                     await this.signalRunsTracker.UpdateSignalRunAsync(signalExecution);
                 }
                 catch (Exception exception)
                 {
-                    this.tracer.TraceError($"Failed executing signal {signalExecution.AlertRule.SignalId} with exception: {exception}");
+                    this.tracer.TraceError($"Failed executing smart detector {signalExecution.AlertRule.SmartDetectorId} with exception: {exception}");
                     this.tracer.ReportException(exception);
                 }
             }

@@ -11,10 +11,10 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AlertRules;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Exceptions;
 
     /// <summary>
     /// This class is the logic for the /alertRule endpoint.
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
                         Id = Guid.NewGuid().ToString(),
                         Name = addAlertRule.Name,
                         Description = addAlertRule.Description,
-                        SignalId = addAlertRule.SignalId,
+                        SmartDetectorId = addAlertRule.SignalId,
                         ResourceId = addAlertRule.ResourceId,
                         Cadence = TimeSpan.FromMinutes(addAlertRule.CadenceInMinutes),
                         EmailRecipients = addAlertRule.EmailRecipients

@@ -13,10 +13,10 @@ namespace SmartSignalsRuntimeSharedTests
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Exceptions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
@@ -26,7 +26,7 @@ namespace SmartSignalsRuntimeSharedTests
     [TestClass]
     public class SmartSignalRepositoryTest
     {
-        private SmartSignalRepository smartSignalRepository;
+        private SmartDetectorRepository smartDetectorRepository;
         private Mock<ICloudBlobContainerWrapper> blobContainerMock;
 
         [TestInitialize]
@@ -34,10 +34,10 @@ namespace SmartSignalsRuntimeSharedTests
         {
             this.blobContainerMock = new Mock<ICloudBlobContainerWrapper>();
             var storageProviderFactoryMock = new Mock<ICloudStorageProviderFactory>();
-            storageProviderFactoryMock.Setup(m => m.GetSmartSignalGlobalStorageContainer()).Returns(this.blobContainerMock.Object);
+            storageProviderFactoryMock.Setup(m => m.GetSmartDetectorGlobalStorageContainer()).Returns(this.blobContainerMock.Object);
 
             var tracerMock = new Mock<ITracer>();
-            this.smartSignalRepository = new SmartSignalRepository(tracerMock.Object, storageProviderFactoryMock.Object);
+            this.smartDetectorRepository = new SmartDetectorRepository(tracerMock.Object, storageProviderFactoryMock.Object);
         }
 
         [TestMethod]
@@ -47,9 +47,9 @@ namespace SmartSignalsRuntimeSharedTests
 
             try
             {
-                await this.smartSignalRepository.ReadAllSignalsManifestsAsync(CancellationToken.None);
+                await this.smartDetectorRepository.ReadAllSmartDetectorsManifestsAsync(CancellationToken.None);
             }
-            catch (SmartSignalRepositoryException e)
+            catch (SmartDetectorRepositoryException e)
             {
                 if (e.InnerException is StorageException)
                 {
@@ -70,9 +70,9 @@ namespace SmartSignalsRuntimeSharedTests
 
             try
             {
-                await this.smartSignalRepository.ReadSignalPackageAsync(SignalId, CancellationToken.None);
+                await this.smartDetectorRepository.ReadSmartDetectorPackageAsync(SignalId, CancellationToken.None);
             }
-            catch (SmartSignalRepositoryException e)
+            catch (SmartDetectorRepositoryException e)
             {
                 if (e.InnerException is StorageException)
                 {
@@ -118,11 +118,11 @@ namespace SmartSignalsRuntimeSharedTests
 
             this.blobContainerMock.Setup(m => m.ListBlobsAsync(string.Empty, true, BlobListingDetails.Metadata, It.IsAny<CancellationToken>())).ReturnsAsync(blobs);
 
-            var signalsManifests = await this.smartSignalRepository.ReadAllSignalsManifestsAsync(CancellationToken.None);
-            Assert.AreEqual(2, signalsManifests.Count);
+            var smartDetectorsManifests = await this.smartDetectorRepository.ReadAllSmartDetectorsManifestsAsync(CancellationToken.None);
+            Assert.AreEqual(2, smartDetectorsManifests.Count);
 
-            this.AssertMetadata(signalsManifests.First(), firstSignalNewVersionMetadata);
-            this.AssertMetadata(signalsManifests.Last(), secondSignalNewMetadata);
+            this.AssertMetadata(smartDetectorsManifests.First(), firstSignalNewVersionMetadata);
+            this.AssertMetadata(smartDetectorsManifests.Last(), secondSignalNewMetadata);
         }
 
         private void AssignBlobMetadata(CloudBlockBlob blockBlob, Dictionary<string, string> metadata)

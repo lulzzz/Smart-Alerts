@@ -13,13 +13,13 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Exceptions;
     using Alert = Microsoft.Azure.Monitoring.SmartDetectors.Alert;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
@@ -28,7 +28,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
     /// </summary>
     public class SmartSignalRunner : ISmartSignalRunner
     {
-        private readonly ISmartSignalRepository smartSignalRepository;
+        private readonly ISmartDetectorRepository smartDetectorRepository;
         private readonly ISmartDetectorLoader smartDetectorLoader;
         private readonly IAnalysisServicesFactory analysisServicesFactory;
         private readonly IAzureResourceManagerClient azureResourceManagerClient;
@@ -38,21 +38,21 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
         /// <summary>
         /// Initializes a new instance of the <see cref="SmartSignalRunner"/> class
         /// </summary>
-        /// <param name="smartSignalRepository">The smart signals repository</param>
-        /// <param name="smartDetectorLoader">The smart detector loader</param>
+        /// <param name="smartDetectorRepository">The Smart Detector repository</param>
+        /// <param name="smartDetectorLoader">The Smart Detector loader</param>
         /// <param name="analysisServicesFactory">The analysis services factory</param>
         /// <param name="azureResourceManagerClient">The azure resource manager client</param>
         /// <param name="queryRunInfoProvider">The query run information provider</param>
         /// <param name="tracer">The tracer</param>
         public SmartSignalRunner(
-            ISmartSignalRepository smartSignalRepository,
+            ISmartDetectorRepository smartDetectorRepository,
             ISmartDetectorLoader smartDetectorLoader,
             IAnalysisServicesFactory analysisServicesFactory,
             IAzureResourceManagerClient azureResourceManagerClient,
             IQueryRunInfoProvider queryRunInfoProvider,
             ITracer tracer)
         {
-            this.smartSignalRepository = Diagnostics.EnsureArgumentNotNull(() => smartSignalRepository);
+            this.smartDetectorRepository = Diagnostics.EnsureArgumentNotNull(() => smartDetectorRepository);
             this.smartDetectorLoader = Diagnostics.EnsureArgumentNotNull(() => smartDetectorLoader);
             this.analysisServicesFactory = Diagnostics.EnsureArgumentNotNull(() => analysisServicesFactory);
             this.azureResourceManagerClient = Diagnostics.EnsureArgumentNotNull(() => azureResourceManagerClient);
@@ -72,7 +72,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
         {
             // Read the signal's package
             this.tracer.TraceInformation($"Loading signal package for signal ID {request.SmartDetectorId}");
-            SmartDetectorPackage smartDetectorPackage = await this.smartSignalRepository.ReadSignalPackageAsync(request.SmartDetectorId, cancellationToken);
+            SmartDetectorPackage smartDetectorPackage = await this.smartDetectorRepository.ReadSmartDetectorPackageAsync(request.SmartDetectorId, cancellationToken);
             SmartDetectorManifest smartDetectorManifest = smartDetectorPackage.Manifest;
             this.tracer.TraceInformation($"Read signal package, ID {smartDetectorManifest.Id}, Version {smartDetectorManifest.Version}");
 
@@ -95,7 +95,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
             catch (Exception e)
             {
                 this.tracer.TraceInformation($"Failed running signal ID {smartDetectorManifest.Id}, Name {smartDetectorManifest.Name}: {e.Message}");
-                throw new SmartSignalCustomException(e.GetType().ToString(), e.Message, e.StackTrace);
+                throw new SmartDetectorCustomException(e.GetType().ToString(), e.Message, e.StackTrace);
             }
 
             // Verify that each result item belongs to one of the types declared in the signal manifest

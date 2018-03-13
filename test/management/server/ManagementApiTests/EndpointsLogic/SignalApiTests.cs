@@ -12,27 +12,27 @@ namespace ManagementApiTests.EndpointsLogic
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.Exceptions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
     [TestClass]
     public class SignalApiTests
     {
-        private Mock<ISmartSignalRepository> smartSignalsRepository;
+        private Mock<ISmartDetectorRepository> smartDetectorRepository;
 
         private ISignalApi signalsLogic;
 
         [TestInitialize]
         public void Initialize()
         {
-            this.smartSignalsRepository = new Mock<ISmartSignalRepository>();
-            this.signalsLogic = new SignalApi(this.smartSignalsRepository.Object);
+            this.smartDetectorRepository = new Mock<ISmartDetectorRepository>();
+            this.signalsLogic = new SignalApi(this.smartDetectorRepository.Object);
         }
 
         #region Getting Signals Tests
@@ -40,7 +40,7 @@ namespace ManagementApiTests.EndpointsLogic
         [TestMethod]
         public async Task WhenGettingAllSignalsHappyFlow()
         {
-            this.smartSignalsRepository.Setup(repository => repository.ReadAllSignalsManifestsAsync(It.IsAny<CancellationToken>()))
+            this.smartDetectorRepository.Setup(repository => repository.ReadAllSmartDetectorsManifestsAsync(It.IsAny<CancellationToken>()))
                                        .ReturnsAsync(() => new List<SmartDetectorManifest>()
                 {
                     new SmartDetectorManifest("someId", "someName", "someDescription", Version.Parse("1.0"), "someAssemblyName", "someClassName", new List<ResourceType> { ResourceType.ResourceGroup }, new List<int> { 60 })
@@ -56,7 +56,7 @@ namespace ManagementApiTests.EndpointsLogic
         [TestMethod]
         public async Task WhenGettingAllSignalsButSignalsRepositoryThrowsExceptionThenThrowsWrappedException()
         {
-            this.smartSignalsRepository.Setup(repository => repository.ReadAllSignalsManifestsAsync(It.IsAny<CancellationToken>()))
+            this.smartDetectorRepository.Setup(repository => repository.ReadAllSmartDetectorsManifestsAsync(It.IsAny<CancellationToken>()))
                                        .ThrowsAsync(new AlertRuleStoreException("some message", new Exception()));
 
             try

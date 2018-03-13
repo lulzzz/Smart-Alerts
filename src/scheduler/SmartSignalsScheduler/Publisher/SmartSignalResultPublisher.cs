@@ -12,8 +12,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
-    using Microsoft.Azure.Monitoring.SmartSignals.RuntimeShared.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Exceptions;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
@@ -38,7 +38,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher
         public SmartSignalResultPublisher(ITracer tracer, ICloudStorageProviderFactory storageProviderFactory)
         {
             this.tracer = Diagnostics.EnsureArgumentNotNull(() => tracer);
-            this.containerClient = storageProviderFactory.GetSmartSignalResultStorageContainer();
+            this.containerClient = storageProviderFactory.GetAlertsStorageContainer();
         }
 
         /// <summary>

@@ -9,6 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
     using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models;
 
     /// <summary>
@@ -30,6 +31,6 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         /// </summary>
         /// <returns>The alert rules list.</returns>
         /// <exception cref="SmartSignalsManagementApiException">This exception is thrown when we failed to get the alert rules.</exception>
-        Task<IList<RuntimeShared.AlertRules.AlertRule>> GetAlertRulesAsync();
+        Task<IList<AlertRule>> GetAlertRulesAsync();
     }
 }
