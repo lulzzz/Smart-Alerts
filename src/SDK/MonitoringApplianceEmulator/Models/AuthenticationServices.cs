@@ -66,9 +66,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
                 ResourceId,
                 ClientId,
                 RedirectUri,
-                PromptBehavior.Auto,
-                UserIdentifier.AnyUser,
-                "prompt=consent");
+                PromptBehavior.Auto);
         }
 
         /// <summary>
