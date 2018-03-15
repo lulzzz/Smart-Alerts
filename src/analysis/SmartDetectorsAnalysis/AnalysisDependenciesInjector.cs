@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis
 {
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
@@ -23,7 +23,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
         /// Registers common analysis dependencies to the specified unity container
         /// </summary>
         /// <param name="container">The unity container</param>
-        /// <param name="withChildProcessRunner">Whether to run signals in a child process</param>
+        /// <param name="withChildProcessRunner">Whether to run Smart Detectors in a child process</param>
         /// <returns>The unity container, after registering the analysis dependencies</returns>
         public static IUnityContainer InjectAnalysisDependencies(this IUnityContainer container, bool withChildProcessRunner)
         {
@@ -34,11 +34,11 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
 
             if (withChildProcessRunner)
             {
-                container = container.RegisterType<ISmartSignalRunner, SmartSignalRunnerInChildProcess>();
+                container = container.RegisterType<ISmartDetectorRunner, SmartDetectorRunnerInChildProcess>();
             }
             else
             {
-                container = container.RegisterType<ISmartSignalRunner, SmartSignalRunner>();
+                container = container.RegisterType<ISmartDetectorRunner, SmartDetectorRunner>();
             }
 
             return container;

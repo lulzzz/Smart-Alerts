@@ -14,12 +14,12 @@ namespace SmartSignalsAnalysisTests
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader;
-    using Microsoft.Azure.Monitoring.SmartSignals.Analysis;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using Alert = Microsoft.Azure.Monitoring.SmartDetectors.Alert;
@@ -49,7 +49,7 @@ namespace SmartSignalsAnalysisTests
         public async Task WhenRunningSignalThenTheCorrectResultItemIsReturned()
         {
             // Run the signal and validate results
-            ISmartSignalRunner runner = new SmartSignalRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
+            ISmartDetectorRunner runner = new SmartDetectorRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
             List<ContractsAlert> contractsAlerts = await runner.RunAsync(this.request, default(CancellationToken));
             Assert.IsNotNull(contractsAlerts, "Presentation list is null");
             Assert.AreEqual(1, contractsAlerts.Count);
@@ -63,7 +63,7 @@ namespace SmartSignalsAnalysisTests
             this.signal.ShouldStuck = true;
 
             // Run the Smart Detector asynchronously
-            ISmartSignalRunner runner = new SmartSignalRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
+            ISmartDetectorRunner runner = new SmartDetectorRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             Task t = runner.RunAsync(this.request, cancellationTokenSource.Token);
             SpinWait.SpinUntil(() => this.signal.IsRunning);
@@ -87,7 +87,7 @@ namespace SmartSignalsAnalysisTests
             this.signal.ShouldThrow = true;
 
             // Run the Smart Detector
-            ISmartSignalRunner runner = new SmartSignalRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
+            ISmartDetectorRunner runner = new SmartDetectorRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
             try
             {
                 await runner.RunAsync(this.request, default(CancellationToken));
@@ -106,7 +106,7 @@ namespace SmartSignalsAnalysisTests
             this.signal.ShouldThrowCustom = true;
 
             // Run the Smart Detector
-            ISmartSignalRunner runner = new SmartSignalRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
+            ISmartDetectorRunner runner = new SmartDetectorRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
             await runner.RunAsync(this.request, default(CancellationToken));
         }
 
@@ -132,7 +132,7 @@ namespace SmartSignalsAnalysisTests
         private async Task RunSignalWithResourceTypes(ResourceType requestResourceType, ResourceType signalResourceType, bool shouldFail)
         {
             this.TestInitialize(requestResourceType, signalResourceType);
-            ISmartSignalRunner runner = new SmartSignalRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
+            ISmartDetectorRunner runner = new SmartDetectorRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
             try
             {
                 List<ContractsAlert> alertPresentations = await runner.RunAsync(this.request, default(CancellationToken));

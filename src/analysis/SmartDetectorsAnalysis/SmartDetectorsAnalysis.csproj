@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RootNamespace>Microsoft.Azure.Monitoring.SmartSignals.Analysis</RootNamespace>
+    <RootNamespace>Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis</RootNamespace>
     <TargetFramework>net461</TargetFramework>
 	<StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AssemblyName>SmartSignalsAnalysis</AssemblyName>
+    <AssemblyName>SmartDetectorsAnalysis</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Polly" Version="5.7.0" />

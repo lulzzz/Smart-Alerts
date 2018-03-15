@@ -14,9 +14,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Extensions;
-    using Microsoft.Azure.Monitoring.SmartSignals.Analysis;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Azure.WebJobs.Host;
@@ -80,7 +80,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
                     tracer.TraceInformation($"Analyze request received: {JsonConvert.SerializeObject(smartDetectorExecutionRequest)}");
 
                     // Process the request
-                    ISmartSignalRunner runner = childContainer.Resolve<ISmartSignalRunner>();
+                    ISmartDetectorRunner runner = childContainer.Resolve<ISmartDetectorRunner>();
                     List<ContractsAlert> resultPresentations = await runner.RunAsync(smartDetectorExecutionRequest, cancellationToken);
                     tracer.TraceInformation($"Analyze completed, returning {resultPresentations.Count} results");
 

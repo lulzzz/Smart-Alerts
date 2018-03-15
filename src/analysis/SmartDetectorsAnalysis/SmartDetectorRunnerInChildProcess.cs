@@ -1,10 +1,10 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SmartSignalRunnerInChildProcess.cs" company="Microsoft Corporation">
+// <copyright file="SmartDetectorRunnerInChildProcess.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis
 {
     using System;
     using System.Collections.Generic;
@@ -17,36 +17,36 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Analysis
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
-    /// An implementation of <see cref="ISmartSignalRunner"/>, that runs the analysis in a separate process
+    /// An implementation of <see cref="ISmartDetectorRunner"/>, that runs the analysis in a separate process
     /// </summary>
-    public class SmartSignalRunnerInChildProcess : ISmartSignalRunner
+    public class SmartDetectorRunnerInChildProcess : ISmartDetectorRunner
     {
-        private const string ChildProcessName = "SmartSignalRunnerChildProcess.exe";
+        private const string ChildProcessName = "SmartDetectorRunnerChildProcess.exe";
 
         private readonly IChildProcessManager childProcessManager;
         private readonly ITracer tracer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SmartSignalRunnerInChildProcess"/> class
+        /// Initializes a new instance of the <see cref="SmartDetectorRunnerInChildProcess"/> class
         /// </summary>
         /// <param name="childProcessManager">The child process manager</param>
         /// <param name="tracer">The tracer</param>
-        public SmartSignalRunnerInChildProcess(IChildProcessManager childProcessManager, ITracer tracer)
+        public SmartDetectorRunnerInChildProcess(IChildProcessManager childProcessManager, ITracer tracer)
         {
             this.childProcessManager = childProcessManager;
             this.tracer = tracer;
         }
 
         /// <summary>
-        /// Runs the signal analysis, in a separate process
+        /// Runs the Smart Detector analysis, in a separate process
         /// </summary>
         /// <param name="request">The request</param>
         /// <param name="cancellationToken">The cancellation token</param>
-        /// <returns>A <see cref="Task{TResult}"/>, returning the generated result items presentations</returns>
+        /// <returns>A <see cref="Task{TResult}"/>, returning the generated alerts presentations</returns>
         public async Task<List<ContractsAlert>> RunAsync(SmartDetectorExecutionRequest request, CancellationToken cancellationToken)
         {
             // Find the executable location
-            string currentDllPath = new Uri(typeof(SmartSignalRunnerInChildProcess).Assembly.CodeBase).AbsolutePath;
+            string currentDllPath = new Uri(typeof(SmartDetectorRunnerInChildProcess).Assembly.CodeBase).AbsolutePath;
             string exePath = Path.Combine(Path.GetDirectoryName(currentDllPath) ?? string.Empty, ChildProcessName);
             if (!File.Exists(exePath))
             {
