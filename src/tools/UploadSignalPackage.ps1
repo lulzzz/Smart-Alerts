@@ -19,10 +19,14 @@ function Get-Manifest
     $archive = [System.IO.Compression.ZipFile]::OpenRead($PackageFilePath)
     try 
     {
-        $manifestEntry = $archive.GetEntry("manifest.json")
+        $manifestEntry = $archive.GetEntry("Manifest.json")
         if (!$manifestEntry) 
         {
-            Throw New-Object System.ArgumentException -ArgumentList "Package file does not contain manifest.json file"
+            $manifestEntry = $archive.GetEntry("manifest.json")
+            if (!$manifestEntry) 
+            {
+                Throw New-Object System.ArgumentException -ArgumentList "Package file does not contain Manifest.json file"
+            }
         }
         
         $manifestStream = $manifestEntry.Open()
