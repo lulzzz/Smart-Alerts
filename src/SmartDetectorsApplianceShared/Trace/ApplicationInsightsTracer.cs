@@ -15,7 +15,6 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Trace
     using Microsoft.ApplicationInsights.Extensibility;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
 
     /// <summary>
     /// Implementation of the <see cref="ITracer"/> interface that traces to AppInsights.

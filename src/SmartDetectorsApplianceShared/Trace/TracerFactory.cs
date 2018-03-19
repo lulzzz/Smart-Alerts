@@ -11,7 +11,6 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Trace
     using Microsoft.ApplicationInsights.Extensibility;
     using Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel;
     using Microsoft.Azure.Monitoring.SmartDetectors;
-    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartDetectors.Trace;
     using Microsoft.Azure.WebJobs.Host;
 

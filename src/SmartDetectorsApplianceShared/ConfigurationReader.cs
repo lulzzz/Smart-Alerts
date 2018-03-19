@@ -4,10 +4,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartDetectors.Tools
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance
 {
     using System;
     using System.Collections.Generic;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Newtonsoft.Json;
 
     /// <summary>

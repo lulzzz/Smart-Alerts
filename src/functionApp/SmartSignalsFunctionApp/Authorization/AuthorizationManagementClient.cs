@@ -15,6 +15,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp.Authorization
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
     using Microsoft.Azure.Monitoring.SmartDetectors.Extensions;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Newtonsoft.Json;
     using Polly;
