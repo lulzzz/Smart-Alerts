@@ -4,49 +4,50 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler.Publisher;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler.SmartDetectorRunTracker;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
-    using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
-    using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
-    /// This class is responsible for discovering which signal should be executed and sends them to the analysis flow
+    /// This class is responsible for discovering which Smart Detector should be executed and sends them to the analysis flow
     /// </summary>
     public class ScheduleFlow
     {
         private readonly ITracer tracer;
         private readonly IAlertRuleStore alertRulesStore;
-        private readonly ISignalRunsTracker signalRunsTracker;
+        private readonly ISmartDetectorRunsTracker smartDetectorRunsTracker;
         private readonly IAnalysisExecuter analysisExecuter;
-        private readonly ISmartSignalResultPublisher smartSignalResultPublisher;
+        private readonly IAlertsPublisher alertsPublisher;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleFlow"/> class.
         /// </summary>
         /// <param name="tracer">Log wrapper</param>
         /// <param name="alertRulesStore">The alert rules store repository</param>
-        /// <param name="signalRunsTracker">The signal run tracker</param>
+        /// <param name="smartDetectorRunsTracker">The Smart Detector run tracker</param>
         /// <param name="analysisExecuter">The analysis executer instance</param>
-        /// <param name="smartSignalResultPublisher">The signal results publisher instance</param>
+        /// <param name="alertsPublisher">The Alerts publisher instance</param>
         public ScheduleFlow(
             ITracer tracer,
             IAlertRuleStore alertRulesStore,
-            ISignalRunsTracker signalRunsTracker,
+            ISmartDetectorRunsTracker smartDetectorRunsTracker,
             IAnalysisExecuter analysisExecuter,
-            ISmartSignalResultPublisher smartSignalResultPublisher)
+            IAlertsPublisher alertsPublisher)
         {
             this.tracer = Diagnostics.EnsureArgumentNotNull(() => tracer);
             this.alertRulesStore = Diagnostics.EnsureArgumentNotNull(() => alertRulesStore);
-            this.signalRunsTracker = Diagnostics.EnsureArgumentNotNull(() => signalRunsTracker);
+            this.smartDetectorRunsTracker = Diagnostics.EnsureArgumentNotNull(() => smartDetectorRunsTracker);
             this.analysisExecuter = Diagnostics.EnsureArgumentNotNull(() => analysisExecuter);
-            this.smartSignalResultPublisher = Diagnostics.EnsureArgumentNotNull(() => smartSignalResultPublisher);
+            this.alertsPublisher = Diagnostics.EnsureArgumentNotNull(() => alertsPublisher);
         }
 
         /// <summary>
@@ -56,20 +57,20 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
         public async Task RunAsync()
         {
             IList<AlertRule> alertRules = await this.alertRulesStore.GetAllAlertRulesAsync();
-            IList<SignalExecutionInfo> signalsToRun = await this.signalRunsTracker.GetSignalsToRunAsync(alertRules);
+            IList<SmartDetectorExecutionInfo> smartDetectorsToRun = await this.smartDetectorRunsTracker.GetSmartDetectorsToRunAsync(alertRules);
 
-            foreach (SignalExecutionInfo signalExecution in signalsToRun)
+            foreach (SmartDetectorExecutionInfo smartDetectorExecution in smartDetectorsToRun)
             {
                 try
                 {
-                    IList<ContractsAlert> alerts = await this.analysisExecuter.ExecuteSignalAsync(signalExecution, new List<string> { signalExecution.AlertRule.ResourceId });
+                    IList<ContractsAlert> alerts = await this.analysisExecuter.ExecuteSmartDetectorAsync(smartDetectorExecution, new List<string> { smartDetectorExecution.AlertRule.ResourceId });
                     this.tracer.TraceInformation($"Found {alerts.Count} alerts");
-                    await this.smartSignalResultPublisher.PublishSignalResultItemsAsync(signalExecution.AlertRule.SmartDetectorId, alerts);
-                    await this.signalRunsTracker.UpdateSignalRunAsync(signalExecution);
+                    await this.alertsPublisher.PublishAlertsAsync(smartDetectorExecution.AlertRule.SmartDetectorId, alerts);
+                    await this.smartDetectorRunsTracker.UpdateSmartDetectorRunAsync(smartDetectorExecution);
                 }
                 catch (Exception exception)
                 {
-                    this.tracer.TraceError($"Failed executing smart detector {signalExecution.AlertRule.SmartDetectorId} with exception: {exception}");
+                    this.tracer.TraceError($"Failed executing smart detector {smartDetectorExecution.AlertRule.SmartDetectorId} with exception: {exception}");
                     this.tracer.ReportException(exception);
                 }
             }

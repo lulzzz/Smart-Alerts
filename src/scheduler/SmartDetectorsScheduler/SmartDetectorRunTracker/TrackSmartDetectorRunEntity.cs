@@ -1,24 +1,24 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="TrackSignalRunEntity.cs" company="Microsoft Corporation">
+// <copyright file="TrackSmartDetectorRunEntity.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler.SmartDetectorRunTracker
 {
     using System;
     using Microsoft.WindowsAzure.Storage.Table;
 
     /// <summary>
-    /// A row holds the last successful run of a signal job.
+    /// A row holds the last successful run of a Smart Detector job.
     /// The rule ID is the row key.
     /// </summary>
-    public class TrackSignalRunEntity : TableEntity
+    public class TrackSmartDetectorRunEntity : TableEntity
     {
         /// <summary>
-        /// Gets or sets the signal ID
+        /// Gets or sets the Smart Detector ID
         /// </summary>
-        public string SignalId { get; set; }
+        public string SmartDetectorId { get; set; }
 
         /// <summary>
         /// Gets or sets the last successful run execution time

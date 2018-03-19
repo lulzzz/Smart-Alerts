@@ -4,13 +4,13 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Exceptions
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler.Exceptions
 {
     using System;
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// This exception is thrown when we failed execute the signal when invoking the analysis flow.
+    /// This exception is thrown when we failed execute the Smart Detector when invoking the analysis flow.
     /// </summary>
     [Serializable]
     public class AnalysisExecutionException : Exception

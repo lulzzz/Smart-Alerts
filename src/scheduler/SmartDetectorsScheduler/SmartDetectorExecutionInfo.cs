@@ -1,19 +1,19 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SignalExecutionInfo.cs" company="Microsoft Corporation">
+// <copyright file="SmartDetectorExecutionInfo.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler
 {
     using System;
     using System.Collections.Generic;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
 
     /// <summary>
-    /// Signal execution information
+    /// Smart Detector execution information
     /// </summary>
-    public class SignalExecutionInfo
+    public class SmartDetectorExecutionInfo
     {
         /// <summary>
         /// Gets or sets the alert rule of the execution

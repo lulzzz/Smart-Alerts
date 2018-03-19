@@ -12,8 +12,8 @@ namespace SmartSignalSchedulerTests
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
-    using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Exceptions;
-    using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler.Exceptions;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler.Publisher;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
@@ -26,7 +26,7 @@ namespace SmartSignalSchedulerTests
         private Mock<ITracer> tracerMock;
         private Mock<ICloudBlobContainerWrapper> containerMock;
 
-        private SmartSignalResultPublisher publisher;
+        private AlertsPublisher publisher;
 
         [TestInitialize]
         public void Setup()
@@ -37,20 +37,20 @@ namespace SmartSignalSchedulerTests
             var storageProviderFactoryMock = new Mock<ICloudStorageProviderFactory>();
             storageProviderFactoryMock.Setup(m => m.GetAlertsStorageContainer()).Returns(this.containerMock.Object);
 
-            this.publisher = new SmartSignalResultPublisher(this.tracerMock.Object, storageProviderFactoryMock.Object);
+            this.publisher = new AlertsPublisher(this.tracerMock.Object, storageProviderFactoryMock.Object);
         }
 
         [TestMethod]
         public async Task WhenNoResultsToPublishThenResultStoreIsNotCalled()
         {
-            await this.publisher.PublishSignalResultItemsAsync("signalId", new List<ContractsAlert>());
+            await this.publisher.PublishAlertsAsync("signalId", new List<ContractsAlert>());
 
             this.containerMock.Verify(m => m.UploadBlobAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
             this.tracerMock.Verify(m => m.TrackEvent(It.IsAny<string>(), It.IsAny<IDictionary<string, string>>(), It.IsAny<IDictionary<string, double>>()), Times.Never);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(SignalResultPublishException))]
+        [ExpectedException(typeof(AlertsPublishException))]
         public async Task WhenStorageExceptionIsThrownThenPublisherExceptionIsThrown()
         {
             // Setup mock to throw storage exception when correct blob name is specified
@@ -64,7 +64,7 @@ namespace SmartSignalSchedulerTests
                 this.CreateContractsAlert("id1", "title1", "resource1", signalId, 10),
                 this.CreateContractsAlert("id2", "title2", "resource2", signalId, 10)
             };
-            await this.publisher.PublishSignalResultItemsAsync("signalId", alerts);
+            await this.publisher.PublishAlertsAsync("signalId", alerts);
         }
 
         [TestMethod]
@@ -92,10 +92,10 @@ namespace SmartSignalSchedulerTests
                 this.CreateContractsAlert("id1", "title1", "resource1", signalId, 10),
                 this.CreateContractsAlert("id2", "title2", "resource2", signalId, 10)
             };
-            await this.publisher.PublishSignalResultItemsAsync(signalId, alerts);
+            await this.publisher.PublishAlertsAsync(signalId, alerts);
 
-            this.tracerMock.Verify(m => m.TrackEvent("SmartSignalResult", It.Is<IDictionary<string, string>>(properties => properties["SignalId"] == signalId && properties["ResultItemBlobUri"] == blobUri1.AbsoluteUri), It.IsAny<IDictionary<string, double>>()), Times.Once);
-            this.tracerMock.Verify(m => m.TrackEvent("SmartSignalResult", It.Is<IDictionary<string, string>>(properties => properties["SignalId"] == signalId && properties["ResultItemBlobUri"] == blobUri2.AbsoluteUri), It.IsAny<IDictionary<string, double>>()), Times.Once);
+            this.tracerMock.Verify(m => m.TrackEvent("Alerts", It.Is<IDictionary<string, string>>(properties => properties["SmartDetectorId"] == signalId && properties["AlertBlobUri"] == blobUri1.AbsoluteUri), It.IsAny<IDictionary<string, double>>()), Times.Once);
+            this.tracerMock.Verify(m => m.TrackEvent("Alerts", It.Is<IDictionary<string, string>>(properties => properties["SmartDetectorId"] == signalId && properties["AlertBlobUri"] == blobUri2.AbsoluteUri), It.IsAny<IDictionary<string, double>>()), Times.Once);
         }
 
         private ContractsAlert CreateContractsAlert(string id, string title, string resourceId, string detectorId, int analysisWindowSizeInMinutes)

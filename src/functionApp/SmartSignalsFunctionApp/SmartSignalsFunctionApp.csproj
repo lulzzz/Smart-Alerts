@@ -16,7 +16,7 @@
     <ProjectReference Include="..\..\analysis\SmartDetectorRunnerChildProcess\SmartDetectorRunnerChildProcess.csproj" />
     <ProjectReference Include="..\..\analysis\SmartDetectorsAnalysis\SmartDetectorsAnalysis.csproj" />
     <ProjectReference Include="..\..\management\server\SmartSignalsManagementApi\SmartSignalsManagementApi.csproj" />
-    <ProjectReference Include="..\..\scheduler\SmartSignalsScheduler\SmartSignalScheduler.csproj" />
+    <ProjectReference Include="..\..\scheduler\SmartDetectorsScheduler\SmartDetectorScheduler.csproj" />
     <ProjectReference Include="..\..\SmartDetectorsApplianceShared\SmartDetectorsApplianceShared.csproj" />
   </ItemGroup>
   <ItemGroup>

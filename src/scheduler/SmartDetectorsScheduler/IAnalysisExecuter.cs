@@ -4,23 +4,23 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.Scheduler
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
-    /// An interface responsible for executing signals via the analysis flow
+    /// An interface responsible for executing Smart Detectors via the analysis flow
     /// </summary>
     public interface IAnalysisExecuter
     {
         /// <summary>
-        /// Executes the signal via the analysis flow
+        /// Executes the Smart Detector via the analysis flow
         /// </summary>
-        /// <param name="signalExecutionInfo">The signal execution information</param>
-        /// <param name="resourceIds">The resource IDs used by the signal</param>
-        /// <returns>A list of smart signal result items</returns>
-        Task<IList<ContractsAlert>> ExecuteSignalAsync(SignalExecutionInfo signalExecutionInfo, IList<string> resourceIds);
+        /// <param name="smartDetectorExecutionInfo">The Smart Detector execution information</param>
+        /// <param name="resourceIds">The resource IDs used by the Smart Detector</param>
+        /// <returns>A list of Alerts</returns>
+        Task<IList<ContractsAlert>> ExecuteSmartDetectorAsync(SmartDetectorExecutionInfo smartDetectorExecutionInfo, IList<string> resourceIds);
     }
 }

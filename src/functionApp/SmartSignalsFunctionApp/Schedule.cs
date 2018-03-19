@@ -12,9 +12,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
-    using Microsoft.Azure.Monitoring.SmartSignals.Scheduler;
-    using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.Publisher;
-    using Microsoft.Azure.Monitoring.SmartSignals.Scheduler.SignalRunTracker;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler.Publisher;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Scheduler.SmartDetectorRunTracker;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Host;
     using Unity;
@@ -37,9 +37,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
 
             Container = DependenciesInjector.GetContainer()
                 .RegisterType<IAlertRuleStore, AlertRuleStore>()
-                .RegisterType<ISignalRunsTracker, SignalRunsTracker>()
+                .RegisterType<ISmartDetectorRunsTracker, SmartDetectorRunsTracker>()
                 .RegisterType<IAnalysisExecuter, AnalysisExecuter>()
-                .RegisterType<ISmartSignalResultPublisher, SmartSignalResultPublisher>();
+                .RegisterType<IAlertsPublisher, AlertsPublisher>();
         }
 
         /// <summary>

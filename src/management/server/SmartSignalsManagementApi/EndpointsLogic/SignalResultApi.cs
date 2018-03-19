@@ -28,7 +28,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         /// <summary>
         /// The event name in the Signal Result store (Application Insights) that contains the signal result
         /// </summary>
-        private const string EventName = "SmartSignalResult";
+        private const string EventName = "Alerts";
 
         private readonly IApplicationInsightsClient applicationInsightsClient;
         private readonly ICloudBlobContainerWrapper alertsStorageContainer;
@@ -59,8 +59,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
                 IEnumerable<ApplicationInsightsEvent> events = await this.applicationInsightsClient.GetCustomEventsAsync(EventName, startTime, endTime, cancellationToken);
 
                 // Take all the blobs uris that contains the signals results items
-                IEnumerable<string> signalResultsBlobsUri = events.Where(result => result.CustomDimensions.ContainsKey("ResultItemBlobUri"))
-                                                                  .Select(result => result.CustomDimensions["ResultItemBlobUri"]);
+                IEnumerable<string> signalResultsBlobsUri = events.Where(result => result.CustomDimensions.ContainsKey("AlertBlobUri"))
+                                                                  .Select(result => result.CustomDimensions["AlertBlobUri"]);
 
                 // Get the blobs content (as we are getting blob uri, we are creating new CloudBlockBlob for each and extracting the blob name 
                 var blobsContent = await Task.WhenAll(signalResultsBlobsUri.Select(blobUri => this.alertsStorageContainer

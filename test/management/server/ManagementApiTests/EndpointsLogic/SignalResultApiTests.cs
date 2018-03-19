@@ -132,7 +132,7 @@ namespace ManagementApiTests.EndpointsLogic
                     CustomDimensions = new Dictionary<string, string>()
                     {
                         {
-                            "ResultItemBlobUri", "https://storagename.blob.core.windows.net/signalresult/signalName/2018-01-24/037635a40da413daafe528b7399eb5574581091d704097dd67bc7c63ddde8882"
+                            "AlertBlobUri", "https://storagename.blob.core.windows.net/signalresult/signalName/2018-01-24/037635a40da413daafe528b7399eb5574581091d704097dd67bc7c63ddde8882"
                         }
                     }
                 }
