@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp
 {
     using System;
     using System.Collections.Generic;
@@ -16,9 +16,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp.Authorization;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Models;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
-    using Microsoft.Azure.Monitoring.SmartSignals.FunctionApp.Authorization;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Azure.WebJobs.Host;

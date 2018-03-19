@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp
 {
     using System;
     using System.Threading;
@@ -20,7 +20,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using Unity;
 
     /// <summary>
-    /// A class responsible for scheduling the signals execution
+    /// A class responsible for scheduling the Smart Detectors execution
     /// </summary>
     public static class Schedule
     {
@@ -43,7 +43,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
         }
 
         /// <summary>
-        /// The starting point for the smart signal scheduler
+        /// The starting point for the Smart Detector scheduler
         /// </summary>
         /// <param name="myTimer">The timer information of the timer trigger used by Azure to trigger the function</param>
         /// <param name="log">The function's logger</param>

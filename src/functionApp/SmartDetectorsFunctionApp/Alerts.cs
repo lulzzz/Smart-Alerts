@@ -1,10 +1,10 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SignalResult.cs" company="Microsoft Corporation">
+// <copyright file="Alerts.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp
 {
     using System;
     using System.Collections.Specialized;
@@ -16,27 +16,27 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp.Authorization;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.AIClient;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
-    using Microsoft.Azure.Monitoring.SmartSignals.FunctionApp.Authorization;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Azure.WebJobs.Host;
     using Unity;
 
     /// <summary>
-    /// This class is the entry point for the signal result endpoint.
+    /// This class is the entry point for the Alerts endpoint.
     /// </summary>
-    public static class SignalResult
+    public static class Alerts
     {
         private static readonly IUnityContainer Container;
 
         /// <summary>
-        /// Initializes static members of the <see cref="SignalResult"/> class.
+        /// Initializes static members of the <see cref="Alerts"/> class.
         /// </summary>
-        static SignalResult()
+        static Alerts()
         {
             // To increase Azure calls performance we increase default connection limit (default is 2) and ThreadPool minimum threads to allow more open connections
             ServicePointManager.DefaultConnectionLimit = 100;
@@ -50,19 +50,19 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
         }
 
         /// <summary>
-        /// Gets all the signal results.
+        /// Gets all the Alerts.
         /// </summary>
         /// <param name="req">The incoming request.</param>
         /// <param name="log">The logger.</param>
         /// <param name="cancellationToken">A cancellation token to control the function's execution.</param>
-        /// <returns>The signal results.</returns>
-        [FunctionName("GetSignalResult")]
-        public static async Task<HttpResponseMessage> GetAllSmartSignalResults([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "signalResult")]HttpRequestMessage req, TraceWriter log, CancellationToken cancellationToken)
+        /// <returns>The Alerts.</returns>
+        [FunctionName("GetAlerts")]
+        public static async Task<HttpResponseMessage> GetAllAlerts([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "alerts")]HttpRequestMessage req, TraceWriter log, CancellationToken cancellationToken)
         {
             using (IUnityContainer childContainer = Container.CreateChildContainer().WithTracer(log, true))
             {
                 ITracer tracer = childContainer.Resolve<ITracer>();
-                var signalResultApi = childContainer.Resolve<IAlertsApi>();
+                var alertsApi = childContainer.Resolve<IAlertsApi>();
                 var authorizationManagementClient = childContainer.Resolve<IAuthorizationManagementClient>();
 
                 try
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
                         return req.CreateErrorResponse(HttpStatusCode.Forbidden, "The client is not authorized to perform this action");
                     }
 
-                    ListAlertsResponse smartSignalsResultsResponse;
+                    ListAlertsResponse alertsResponse;
 
                     // Extract the url parameters
                     NameValueCollection queryParameters = req.RequestUri.ParseQueryString();
@@ -102,29 +102,29 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
                         hasEndTime = true;
                     }
 
-                    // Get all the smart signal results based on the given time range
+                    // Get all the Alerts based on the given time range
                     if (hasEndTime)
                     {
-                        smartSignalsResultsResponse = await signalResultApi.GetAllAlertsAsync(startTime, endTime, cancellationToken);
+                        alertsResponse = await alertsApi.GetAllAlertsAsync(startTime, endTime, cancellationToken);
                     }
                     else
                     {
-                        smartSignalsResultsResponse = await signalResultApi.GetAllAlertsAsync(startTime, cancellationToken: cancellationToken);
+                        alertsResponse = await alertsApi.GetAllAlertsAsync(startTime, cancellationToken: cancellationToken);
                     }
 
-                    return req.CreateResponse(smartSignalsResultsResponse);
+                    return req.CreateResponse(alertsResponse);
                 }
                 catch (SmartDetectorsManagementApiException e)
                 {
-                    tracer.TraceError($"Failed to get smart signals results due to managed exception: {e}");
+                    tracer.TraceError($"Failed to get Alerts due to managed exception: {e}");
 
-                    return req.CreateErrorResponse(e.StatusCode, "Failed to get smart signals", e);
+                    return req.CreateErrorResponse(e.StatusCode, "Failed to get Smart Detectors", e);
                 }
                 catch (Exception e)
                 {
-                    tracer.TraceError($"Failed to get smart signals results due to un-managed exception: {e}");
+                    tracer.TraceError($"Failed to get Alerts due to un-managed exception: {e}");
 
-                    return req.CreateErrorResponse(HttpStatusCode.InternalServerError, "Failed to get smart signals", e);
+                    return req.CreateErrorResponse(HttpStatusCode.InternalServerError, "Failed to get Smart Detectors", e);
                 }
             }
         }

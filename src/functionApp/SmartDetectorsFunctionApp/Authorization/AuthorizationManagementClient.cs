@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp.Authorization
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp.Authorization
 {
     using System.Linq;
     using System.Net;
@@ -21,7 +21,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp.Authorization
     using Polly;
 
     /// <summary>
-    /// This class is responsible to manage authorization for the SiRA
+    /// This class is responsible to manage authorization for the Smart Detectors Monitoring Appliance
     /// </summary>
     public class AuthorizationManagementClient : IAuthorizationManagementClient
     {
@@ -47,11 +47,11 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp.Authorization
         }
 
         /// <summary>
-        /// Verifying if the HTTP request message is authorized to access the SiRA
+        /// Verifying if the HTTP request message is authorized to access the Smart Detectors Monitoring Appliance
         /// </summary>
         /// <param name="req">The HTTP request message</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>True if the client is authorized to access the SiRA, false otherwise</returns>
+        /// <returns>True if the client is authorized to access the Smart Detectors Monitoring Appliance, false otherwise</returns>
         public async Task<bool> IsAuthorizedAsync(HttpRequestMessage req, CancellationToken cancellationToken)
         {
             string jwtToken = req.Headers.Authorization?.Parameter;
@@ -96,7 +96,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp.Authorization
                 return false;
             }
 
-            // For now, for every permission action allowed on the resource group we allow accessing the SiRA.
+            // For now, for every permission action allowed on the resource group we allow accessing the Smart Detectors Monitoring Appliance.
             return true;
         }
     }

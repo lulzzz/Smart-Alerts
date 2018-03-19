@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-	<RootNamespace>Microsoft.Azure.Monitoring.SmartSignals.FunctionApp</RootNamespace>
+	<RootNamespace>Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp</RootNamespace>
 	<StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AssemblyName>Microsoft.Azure.Monitoring.SmartSignals.FunctionApp</AssemblyName>
+    <AssemblyName>Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp</AssemblyName>
   </PropertyGroup>
   <ItemGroup>    
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.7" />

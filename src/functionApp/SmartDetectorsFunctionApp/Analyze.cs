@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp
 {
     using System;
     using System.Collections.Generic;
@@ -46,7 +46,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
         }
 
         /// <summary>
-        /// Runs the analysis flow for the requested signal.
+        /// Runs the analysis flow for the requested Smart Detector.
         /// </summary>
         /// <param name="request">The request which initiated the analysis.</param>
         /// <param name="log">The Azure Function log writer.</param>
@@ -81,11 +81,11 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
 
                     // Process the request
                     ISmartDetectorRunner runner = childContainer.Resolve<ISmartDetectorRunner>();
-                    List<ContractsAlert> resultPresentations = await runner.RunAsync(smartDetectorExecutionRequest, cancellationToken);
-                    tracer.TraceInformation($"Analyze completed, returning {resultPresentations.Count} results");
+                    List<ContractsAlert> alertPresentations = await runner.RunAsync(smartDetectorExecutionRequest, cancellationToken);
+                    tracer.TraceInformation($"Analyze completed, returning {alertPresentations.Count} Alerts");
 
                     // Return the generated presentations
-                    return request.CreateResponse(HttpStatusCode.OK, resultPresentations);
+                    return request.CreateResponse(HttpStatusCode.OK, alertPresentations);
                 }
                 catch (Exception e)
                 {
