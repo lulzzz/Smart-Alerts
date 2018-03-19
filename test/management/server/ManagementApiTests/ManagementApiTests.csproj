@@ -14,7 +14,7 @@
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\management\server\SmartSignalsManagementApi\SmartSignalsManagementApi.csproj" />
+    <ProjectReference Include="..\..\..\..\src\management\server\SmartDetectorsManagementApi\SmartDetectorsManagementApi.csproj" />
     <ProjectReference Include="..\..\..\..\src\SDK\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
     <ProjectReference Include="..\..\..\..\src\SmartDetectorsApplianceShared\SmartDetectorsApplianceShared.csproj" />
     <ProjectReference Include="..\..\..\SmartSignalsSharedTests\SmartSignalsSharedTests.csproj" />

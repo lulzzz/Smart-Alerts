@@ -14,8 +14,8 @@ namespace ManagementApiTests.AIClient
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Extensions;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.AIClient;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Extensions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
     using SmartSignalsSharedTests;

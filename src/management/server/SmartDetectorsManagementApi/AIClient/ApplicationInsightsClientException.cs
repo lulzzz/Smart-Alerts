@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.AIClient
 {
     using System;
 
@@ -14,7 +14,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient
     public class ApplicationInsightsClientException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient.ApplicationInsightsClientException" /> class
+        /// Initializes a new instance of the <see cref="T:Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.AIClient.ApplicationInsightsClientException" /> class
         /// with the specified error message and inner exception.
         /// </summary>
         /// <param name="message">The error message</param>
@@ -23,7 +23,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient.ApplicationInsightsClientException" /> class
+        /// Initializes a new instance of the <see cref="T:Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.AIClient.ApplicationInsightsClientException" /> class
         /// with the specified error message and exception.
         /// </summary>
         /// <param name="message">The error message</param>

@@ -14,10 +14,10 @@ namespace ManagementApiTests.EndpointsLogic
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -26,13 +26,13 @@ namespace ManagementApiTests.EndpointsLogic
     {
         private Mock<ISmartDetectorRepository> smartDetectorRepository;
 
-        private ISignalApi signalsLogic;
+        private ISmartDetectorApi signalsLogic;
 
         [TestInitialize]
         public void Initialize()
         {
             this.smartDetectorRepository = new Mock<ISmartDetectorRepository>();
-            this.signalsLogic = new SignalApi(this.smartDetectorRepository.Object);
+            this.signalsLogic = new SmartDetectorApi(this.smartDetectorRepository.Object);
         }
 
         #region Getting Signals Tests
@@ -46,11 +46,11 @@ namespace ManagementApiTests.EndpointsLogic
                     new SmartDetectorManifest("someId", "someName", "someDescription", Version.Parse("1.0"), "someAssemblyName", "someClassName", new List<ResourceType> { ResourceType.ResourceGroup }, new List<int> { 60 })
                 });
 
-            ListSmartSignalsResponse response = await this.signalsLogic.GetAllSmartSignalsAsync(CancellationToken.None);
+            ListSmartDetectorsResponse response = await this.signalsLogic.GetAllSmartDetectorsAsync(CancellationToken.None);
 
-            Assert.AreEqual(1, response.Signals.Count);
-            Assert.AreEqual("someId", response.Signals.First().Id);
-            Assert.AreEqual("someName", response.Signals.First().Name);
+            Assert.AreEqual(1, response.SmartDetectors.Count);
+            Assert.AreEqual("someId", response.SmartDetectors.First().Id);
+            Assert.AreEqual("someName", response.SmartDetectors.First().Name);
         }
 
         [TestMethod]
@@ -61,9 +61,9 @@ namespace ManagementApiTests.EndpointsLogic
 
             try
             {
-                await this.signalsLogic.GetAllSmartSignalsAsync(CancellationToken.None);
+                await this.signalsLogic.GetAllSmartDetectorsAsync(CancellationToken.None);
             }
-            catch (SmartSignalsManagementApiException)
+            catch (SmartDetectorsManagementApiException)
             {
                 return;
             }

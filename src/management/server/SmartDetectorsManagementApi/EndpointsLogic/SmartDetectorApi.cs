@@ -1,10 +1,10 @@
 //-----------------------------------------------------------------------
-// <copyright file="SignalApi.cs" company="Microsoft Corporation">
+// <copyright file="SmartDetectorApi.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic
 {
     using System;
     using System.Collections.Generic;
@@ -14,23 +14,23 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Models;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
 
     /// <summary>
-    /// This class is the logic for the /signal endpoint.
+    /// This class is the logic for the /smartDetector endpoint.
     /// </summary>
-    public class SignalApi : ISignalApi
+    public class SmartDetectorApi : ISmartDetectorApi
     {
         private readonly ISmartDetectorRepository smartDetectorRepository;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SignalApi"/> class.
+        /// Initializes a new instance of the <see cref="SmartDetectorApi"/> class.
         /// </summary>
         /// <param name="smartDetectorRepository">The Smart Detector repository.</param>
-        public SignalApi(ISmartDetectorRepository smartDetectorRepository)
+        public SmartDetectorApi(ISmartDetectorRepository smartDetectorRepository)
         {
             Diagnostics.EnsureArgumentNotNull(() => smartDetectorRepository);
 
@@ -38,35 +38,35 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         }
 
         /// <summary>
-        /// List all the smart signals.
+        /// List all the Smart Detectors.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The smart signals.</returns>
-        /// <exception cref="SmartSignalsManagementApiException">This exception is thrown when we failed to retrieve smart signals.</exception>
-        public async Task<ListSmartSignalsResponse> GetAllSmartSignalsAsync(CancellationToken cancellationToken)
+        /// <returns>The Smart Detectors.</returns>
+        /// <exception cref="SmartDetectorsManagementApiException">This exception is thrown when we failed to retrieve Smart Detectors.</exception>
+        public async Task<ListSmartDetectorsResponse> GetAllSmartDetectorsAsync(CancellationToken cancellationToken)
         {
             try
             {
                 IList<SmartDetectorManifest> smartDetectorManifests = await this.smartDetectorRepository.ReadAllSmartDetectorsManifestsAsync(cancellationToken);
 
-                // Convert smart detectors to the required response
-                var signals = smartDetectorManifests.Select(manifest => new Signal
+                // Convert Smart Detectors to the required response
+                var detectors = smartDetectorManifests.Select(manifest => new SmartDetector
                 {
                    Id = manifest.Id,
                    Name = manifest.Name,
                    SupportedCadences = new List<int>(manifest.SupportedCadencesInMinutes),
                    SupportedResourceTypes = new List<ResourceType>(manifest.SupportedResourceTypes),
-                   Configurations = new List<SignalConfiguration>()
+                   Configurations = new List<SmartDetectorConfiguration>()
                 }).ToList();
 
-                return new ListSmartSignalsResponse()
+                return new ListSmartDetectorsResponse()
                 {
-                    Signals = signals
+                    SmartDetectors = detectors
                 };
             }
             catch (Exception e) 
             {
-                throw new SmartSignalsManagementApiException("Failed to get smart signals", e, HttpStatusCode.InternalServerError);
+                throw new SmartDetectorsManagementApiException("Failed to get Smart Detectors", e, HttpStatusCode.InternalServerError);
             }
         }
     }

@@ -13,10 +13,10 @@ namespace ManagementApiTests.EndpointsLogic
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.AIClient;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.WindowsAzure.Storage;
     using Moq;
@@ -34,7 +34,7 @@ namespace ManagementApiTests.EndpointsLogic
         private Mock<ICloudStorageProviderFactory> storageProviderFactory;
         private Mock<ICloudBlobContainerWrapper> signalResultContainerMock;
 
-        private ISignalResultApi signalResultApi;
+        private IAlertsApi signalResultApi;
 
         [TestInitialize]
         public void Initialize()
@@ -47,7 +47,7 @@ namespace ManagementApiTests.EndpointsLogic
             this.applicationInsightsFactoryMock.Setup(factory => factory.GetApplicationInsightsClient()).Returns(this.applicationInsightClientMock.Object);
             this.storageProviderFactory.Setup(factory => factory.GetAlertsStorageContainer()).Returns(this.signalResultContainerMock.Object);
 
-            this.signalResultApi = new SignalResultApi(this.storageProviderFactory.Object, this.applicationInsightsFactoryMock.Object);
+            this.signalResultApi = new AlertsApi(this.storageProviderFactory.Object, this.applicationInsightsFactoryMock.Object);
         }
 
         [TestMethod]
@@ -57,7 +57,7 @@ namespace ManagementApiTests.EndpointsLogic
                                              .ReturnsAsync(this.GetApplicationInsightsEvents());
             this.signalResultContainerMock.Setup(src => src.DownloadBlobContentAsync(It.IsAny<string>())).ReturnsAsync(this.GetSmartSignalResultItemPresentation());
 
-            ListSmartSignalsResultsResponse response = await this.signalResultApi.GetAllSmartSignalResultsAsync(this.startTime, this.endTime, CancellationToken.None);
+            ListAlertsResponse response = await this.signalResultApi.GetAllAlertsAsync(this.startTime, this.endTime, CancellationToken.None);
 
             this.signalResultContainerMock.Verify(src => src.DownloadBlobContentAsync(It.IsAny<string>()), Times.Once);
             Assert.AreEqual(1, response.Alerts.Count);
@@ -73,9 +73,9 @@ namespace ManagementApiTests.EndpointsLogic
 
             try
             {
-                await this.signalResultApi.GetAllSmartSignalResultsAsync(this.startTime, this.endTime, CancellationToken.None);
+                await this.signalResultApi.GetAllAlertsAsync(this.startTime, this.endTime, CancellationToken.None);
             }
-            catch (SmartSignalsManagementApiException)
+            catch (SmartDetectorsManagementApiException)
             {
                 return;
             }
@@ -92,9 +92,9 @@ namespace ManagementApiTests.EndpointsLogic
 
             try
             {
-                await this.signalResultApi.GetAllSmartSignalResultsAsync(this.startTime, this.endTime, CancellationToken.None);
+                await this.signalResultApi.GetAllAlertsAsync(this.startTime, this.endTime, CancellationToken.None);
             }
-            catch (SmartSignalsManagementApiException)
+            catch (SmartDetectorsManagementApiException)
             {
                 return;
             }
@@ -111,9 +111,9 @@ namespace ManagementApiTests.EndpointsLogic
 
             try
             {
-                await this.signalResultApi.GetAllSmartSignalResultsAsync(this.startTime, this.endTime, CancellationToken.None);
+                await this.signalResultApi.GetAllAlertsAsync(this.startTime, this.endTime, CancellationToken.None);
             }
-            catch (SmartSignalsManagementApiException)
+            catch (SmartDetectorsManagementApiException)
             {
                 return;
             }

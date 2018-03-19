@@ -1,10 +1,10 @@
 //-----------------------------------------------------------------------
-// <copyright file="SignalResultApi.cs" company="Microsoft Corporation">
+// <copyright file="AlertsApi.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic
 {
     using System;
     using System.Collections.Generic;
@@ -13,20 +13,20 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.AIClient;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
     using Newtonsoft.Json;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
-    /// This class contains the logic for the /signalResult endpoint.
+    /// This class contains the logic for the /alerts endpoint.
     /// </summary>
-    public class SignalResultApi : ISignalResultApi
+    public class AlertsApi : IAlertsApi
     {
         /// <summary>
-        /// The event name in the Signal Result store (Application Insights) that contains the signal result
+        /// The event name in the Alerts store (Application Insights) that contains the Alerts
         /// </summary>
         private const string EventName = "Alerts";
 
@@ -34,61 +34,61 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         private readonly ICloudBlobContainerWrapper alertsStorageContainer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SignalResultApi"/> class.
+        /// Initializes a new instance of the <see cref="AlertsApi"/> class.
         /// </summary>
         /// <param name="storageProviderFactory">The storage provider factory.</param>
         /// <param name="applicationInsightsClientFactory">The Application Insights client factory.</param>
-        public SignalResultApi(ICloudStorageProviderFactory storageProviderFactory, IApplicationInsightsClientFactory applicationInsightsClientFactory)
+        public AlertsApi(ICloudStorageProviderFactory storageProviderFactory, IApplicationInsightsClientFactory applicationInsightsClientFactory)
         {
             this.alertsStorageContainer = storageProviderFactory.GetAlertsStorageContainer();
             this.applicationInsightsClient = applicationInsightsClientFactory.GetApplicationInsightsClient();
         }
 
         /// <summary>
-        /// Gets all the Smart Signals results.
+        /// Gets all the Alerts.
         /// </summary>
         /// <param name="startTime">The query start time.</param>
         /// <param name="endTime">The query end time.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The Smart Signals results response.</returns>
-        public async Task<ListSmartSignalsResultsResponse> GetAllSmartSignalResultsAsync(DateTime startTime, DateTime? endTime = null, CancellationToken cancellationToken = default(CancellationToken))
+        /// <returns>The Alerts response.</returns>
+        public async Task<ListAlertsResponse> GetAllAlertsAsync(DateTime startTime, DateTime? endTime = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             try
             {
                 // Get the custom events from 
                 IEnumerable<ApplicationInsightsEvent> events = await this.applicationInsightsClient.GetCustomEventsAsync(EventName, startTime, endTime, cancellationToken);
 
-                // Take all the blobs uris that contains the signals results items
-                IEnumerable<string> signalResultsBlobsUri = events.Where(result => result.CustomDimensions.ContainsKey("AlertBlobUri"))
+                // Take all the blobs uris that contains the Alerts
+                IEnumerable<string> alertsBlobsUri = events.Where(result => result.CustomDimensions.ContainsKey("AlertBlobUri"))
                                                                   .Select(result => result.CustomDimensions["AlertBlobUri"]);
 
                 // Get the blobs content (as we are getting blob uri, we are creating new CloudBlockBlob for each and extracting the blob name 
-                var blobsContent = await Task.WhenAll(signalResultsBlobsUri.Select(blobUri => this.alertsStorageContainer
+                var blobsContent = await Task.WhenAll(alertsBlobsUri.Select(blobUri => this.alertsStorageContainer
                                                                                               .DownloadBlobContentAsync(new CloudBlockBlob(new Uri(blobUri)).Name)));
                 
                 // Deserialize the blobs content to alert
                 IEnumerable<ContractsAlert> alerts = blobsContent.Select(JsonConvert.DeserializeObject<ContractsAlert>);
 
-                return new ListSmartSignalsResultsResponse
+                return new ListAlertsResponse
                 {
                     Alerts = alerts.ToList()
                 };
             }
             catch (ApplicationInsightsClientException e)
             {
-                throw new SmartSignalsManagementApiException("Failed to query smart signals results due to an exception from Application Insights", e, HttpStatusCode.InternalServerError);
+                throw new SmartDetectorsManagementApiException("Failed to query Alerts due to an exception from Application Insights", e, HttpStatusCode.InternalServerError);
             }
             catch (JsonException e)
             {
-                throw new SmartSignalsManagementApiException("Failed to de-serialize signals results items", e, HttpStatusCode.InternalServerError);
+                throw new SmartDetectorsManagementApiException("Failed to de-serialize Alerts", e, HttpStatusCode.InternalServerError);
             }
             catch (StorageException e)
             {
-                throw new SmartSignalsManagementApiException("Failed to get signals results items from storage", e, HttpStatusCode.InternalServerError);
+                throw new SmartDetectorsManagementApiException("Failed to get Alerts from storage", e, HttpStatusCode.InternalServerError);
             }
             catch (Exception e)
             {
-                throw new SmartSignalsManagementApiException("Failed to get signals results items from storage", e, HttpStatusCode.InternalServerError);
+                throw new SmartDetectorsManagementApiException("Failed to get Alerts from storage", e, HttpStatusCode.InternalServerError);
             }
         }
     }

@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <RootNamespace>Microsoft.Azure.Monitoring.SmartSignals.ManagementApi</RootNamespace>
+    <RootNamespace>Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi</RootNamespace>
     <StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AssemblyName>Microsoft.Azure.Monitoring.SmartSignals.ManagementApi</AssemblyName>
+    <AssemblyName>Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>

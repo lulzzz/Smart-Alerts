@@ -16,11 +16,11 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.AIClient;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
     using Microsoft.Azure.Monitoring.SmartSignals.FunctionApp.Authorization;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.AIClient;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Azure.WebJobs.Host;
@@ -46,7 +46,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
                 .RegisterType<IAuthorizationManagementClient, AuthorizationManagementClient>()
                 .RegisterType<ICloudStorageProviderFactory, CloudStorageProviderFactory>()
                 .RegisterType<IApplicationInsightsClientFactory, ApplicationInsightsClientFactory>()
-                .RegisterType<ISignalResultApi, SignalResultApi>();
+                .RegisterType<IAlertsApi, AlertsApi>();
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
             using (IUnityContainer childContainer = Container.CreateChildContainer().WithTracer(log, true))
             {
                 ITracer tracer = childContainer.Resolve<ITracer>();
-                var signalResultApi = childContainer.Resolve<ISignalResultApi>();
+                var signalResultApi = childContainer.Resolve<IAlertsApi>();
                 var authorizationManagementClient = childContainer.Resolve<IAuthorizationManagementClient>();
 
                 try
@@ -74,7 +74,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
                         return req.CreateErrorResponse(HttpStatusCode.Forbidden, "The client is not authorized to perform this action");
                     }
 
-                    ListSmartSignalsResultsResponse smartSignalsResultsResponse;
+                    ListAlertsResponse smartSignalsResultsResponse;
 
                     // Extract the url parameters
                     NameValueCollection queryParameters = req.RequestUri.ParseQueryString();
@@ -105,16 +105,16 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
                     // Get all the smart signal results based on the given time range
                     if (hasEndTime)
                     {
-                        smartSignalsResultsResponse = await signalResultApi.GetAllSmartSignalResultsAsync(startTime, endTime, cancellationToken);
+                        smartSignalsResultsResponse = await signalResultApi.GetAllAlertsAsync(startTime, endTime, cancellationToken);
                     }
                     else
                     {
-                        smartSignalsResultsResponse = await signalResultApi.GetAllSmartSignalResultsAsync(startTime, cancellationToken: cancellationToken);
+                        smartSignalsResultsResponse = await signalResultApi.GetAllAlertsAsync(startTime, cancellationToken: cancellationToken);
                     }
 
                     return req.CreateResponse(smartSignalsResultsResponse);
                 }
-                catch (SmartSignalsManagementApiException e)
+                catch (SmartDetectorsManagementApiException e)
                 {
                     tracer.TraceError($"Failed to get smart signals results due to managed exception: {e}");
 

@@ -17,11 +17,11 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Models;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
     using Microsoft.Azure.Monitoring.SmartSignals.FunctionApp.Authorization;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Azure.WebJobs.Host;
@@ -82,7 +82,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
 
                     return req.CreateResponse(HttpStatusCode.OK);
                 }
-                catch (SmartSignalsManagementApiException e)
+                catch (SmartDetectorsManagementApiException e)
                 {
                     tracer.TraceError($"Failed to add alert rule due to managed exception: {e}");
 
@@ -128,7 +128,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
                     List<AlertRuleApiEntity> alertRuleApiEntities = alertRules.Select(alertRule => new AlertRuleApiEntity
                     {
                         ResourceId = alertRule.ResourceId,
-                        SignalId = alertRule.SmartDetectorId,
+                        SmartDetectorId = alertRule.SmartDetectorId,
                         Name = alertRule.Name,
                         Description = alertRule.Description,
                         CadenceInMinutes = (int)alertRule.Cadence.TotalMinutes,
@@ -140,7 +140,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
                         AlertRules = alertRuleApiEntities
                     });
                 }
-                catch (SmartSignalsManagementApiException e)
+                catch (SmartDetectorsManagementApiException e)
                 {
                     tracer.TraceError($"Failed to get alert rules due to managed exception: {e}");
 

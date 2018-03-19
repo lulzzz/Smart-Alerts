@@ -1,48 +1,48 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Signal.cs" company="Microsoft Corporation">
+// <copyright file="SmartDetector.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Models
 {
     using System.Collections.Generic;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Newtonsoft.Json;
 
     /// <summary>
-    /// This class represents a signal model for the Management API responses.
+    /// This class represents a Smart Detector model for the Management API responses.
     /// </summary>
-    public class Signal
+    public class SmartDetector
     {
         /// <summary>
-        /// Gets or sets the signal id.
+        /// Gets or sets the Smart Detector id.
         /// </summary>
         [JsonProperty("id")]
         public string Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the signal name.
+        /// Gets or sets the Smart Detector name.
         /// </summary>
         [JsonProperty("name")]
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the signal supported cadences (in minutes).
+        /// Gets or sets the Smart Detector supported cadences (in minutes).
         /// </summary>
         [JsonProperty("supportedCadences")]
         public List<int> SupportedCadences { get; set; }
 
         /// <summary>
-        /// Gets or sets the signal supported resource types.
+        /// Gets or sets the Smart Detector supported resource types.
         /// </summary>
         [JsonProperty("supportedResourceTypes")]
         public List<ResourceType> SupportedResourceTypes { get; set; }
 
         /// <summary>
-        /// Gets or sets the signal configurations.
+        /// Gets or sets the Smart Detector configurations.
         /// </summary>
         [JsonProperty("configurations")]
-        public List<SignalConfiguration> Configurations { get; set; }
+        public List<SmartDetectorConfiguration> Configurations { get; set; }
     }
 }

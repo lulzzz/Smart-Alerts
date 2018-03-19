@@ -13,9 +13,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Azure.WebJobs.Host;
@@ -38,9 +38,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
             ThreadPool.SetMinThreads(100, 100);
 
             Container = DependenciesInjector.GetContainer()
-                .RegisterType<ISignalApi, SignalApi>()
+                .RegisterType<ISmartDetectorApi, SmartDetectorApi>()
                 .RegisterType<IAlertRuleApi, AlertRuleApi>()
-                .RegisterType<ISignalResultApi, SignalResultApi>();
+                .RegisterType<IAlertsApi, AlertsApi>();
         }
 
         /// <summary>
@@ -57,15 +57,15 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.FunctionApp
             using (IUnityContainer childContainer = Container.CreateChildContainer().WithTracer(log, true))
             {
                 ITracer tracer = childContainer.Resolve<ITracer>();
-                var signalApi = childContainer.Resolve<ISignalApi>();
+                var signalApi = childContainer.Resolve<ISmartDetectorApi>();
 
                 try
                 {
-                    ListSmartSignalsResponse smartSignals = await signalApi.GetAllSmartSignalsAsync(cancellationToken);
+                    ListSmartDetectorsResponse smartSignals = await signalApi.GetAllSmartDetectorsAsync(cancellationToken);
 
                     return req.CreateResponse(smartSignals);
                 }
-                catch (SmartSignalsManagementApiException e)
+                catch (SmartDetectorsManagementApiException e)
                 {
                     tracer.TraceError($"Failed to get smart signals due to managed exception: {e}");
 

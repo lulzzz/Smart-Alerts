@@ -1,24 +1,24 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ListSmartSignalsResultsResponse.cs" company="Microsoft Corporation">
+// <copyright file="ListAlertsResponse.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Responses
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses
 {
     using System.Collections.Generic;
     using Newtonsoft.Json;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
-    /// This class represents the GET Management API operation for listing signals results.
+    /// This class represents the GET Management API operation for listing alerts.
     /// </summary>
-    public class ListSmartSignalsResultsResponse
+    public class ListAlertsResponse
     {
         /// <summary>
-        /// Gets or sets the smart signals results list
+        /// Gets or sets the alerts list
         /// </summary>
-        [JsonProperty("signalsResults")]
+        [JsonProperty("alerts")]
         public IList<ContractsAlert> Alerts { get; set; }
     }
 }

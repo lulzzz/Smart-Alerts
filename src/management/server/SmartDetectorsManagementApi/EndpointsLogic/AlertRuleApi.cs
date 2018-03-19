@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic
 {
     using System;
     using System.Collections.Generic;
@@ -13,8 +13,8 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Models;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models;
 
     /// <summary>
     /// This class is the logic for the /alertRule endpoint.
@@ -40,7 +40,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         /// <returns>A task represents this operation.</returns>
         /// <param name="addAlertRule">The model that contains all the require parameters for adding alert rule.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <exception cref="SmartSignalsManagementApiException">This exception is thrown when we failed to add the alert rule.</exception>
+        /// <exception cref="SmartDetectorsManagementApiException">This exception is thrown when we failed to add the alert rule.</exception>
         public async Task AddAlertRuleAsync(AlertRuleApiEntity addAlertRule, CancellationToken cancellationToken)
         {
             Diagnostics.EnsureArgumentNotNull(() => addAlertRule);
@@ -48,7 +48,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
             // Verify given input model is valid
             if (!IsAddAlertRuleModelValid(addAlertRule, out var validationError))
             {
-                throw new SmartSignalsManagementApiException(validationError, HttpStatusCode.BadRequest);
+                throw new SmartDetectorsManagementApiException(validationError, HttpStatusCode.BadRequest);
             }
 
             try
@@ -59,7 +59,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
                         Id = Guid.NewGuid().ToString(),
                         Name = addAlertRule.Name,
                         Description = addAlertRule.Description,
-                        SmartDetectorId = addAlertRule.SignalId,
+                        SmartDetectorId = addAlertRule.SmartDetectorId,
                         ResourceId = addAlertRule.ResourceId,
                         Cadence = TimeSpan.FromMinutes(addAlertRule.CadenceInMinutes),
                         EmailRecipients = addAlertRule.EmailRecipients
@@ -68,7 +68,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
             }
             catch (AlertRuleStoreException e)
             {
-                throw new SmartSignalsManagementApiException("Failed to add the given alert rule", e, HttpStatusCode.InternalServerError);
+                throw new SmartDetectorsManagementApiException("Failed to add the given alert rule", e, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -76,7 +76,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         /// Get the alert rules from the alert rules store.
         /// </summary>
         /// <returns>The alert rules list.</returns>
-        /// <exception cref="SmartSignalsManagementApiException">This exception is thrown when we failed to get the alert rules.</exception>
+        /// <exception cref="SmartDetectorsManagementApiException">This exception is thrown when we failed to get the alert rules.</exception>
         public async Task<IList<AlertRule>> GetAlertRulesAsync()
         {
             try
@@ -85,7 +85,7 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
             }
             catch (AlertRuleStoreException e)
             {
-                throw new SmartSignalsManagementApiException("Failed to get alert rules", e, HttpStatusCode.InternalServerError);
+                throw new SmartDetectorsManagementApiException("Failed to get alert rules", e, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -97,9 +97,9 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic
         /// <returns>True in case model is valid, else false.</returns>
         private static bool IsAddAlertRuleModelValid(AlertRuleApiEntity model, out string errorInformation)
         {
-            if (string.IsNullOrWhiteSpace(model.SignalId))
+            if (string.IsNullOrWhiteSpace(model.SmartDetectorId))
             {
-                errorInformation = "Signal ID can't be empty";
+                errorInformation = "Smart Detector ID can't be empty";
                 return false;
             }
 

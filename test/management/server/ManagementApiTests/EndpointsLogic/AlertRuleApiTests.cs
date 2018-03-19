@@ -12,9 +12,9 @@ namespace ManagementApiTests.EndpointsLogic
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.EndpointsLogic;
-    using Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Models;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -39,7 +39,7 @@ namespace ManagementApiTests.EndpointsLogic
         {
             var addSignalModel = new AlertRuleApiEntity()
             {
-                SignalId = Guid.NewGuid().ToString(),
+                SmartDetectorId = Guid.NewGuid().ToString(),
                 ResourceId = "resourceId",
                 CadenceInMinutes = 1440
             };
@@ -55,7 +55,7 @@ namespace ManagementApiTests.EndpointsLogic
         {
             var addSignalModel = new AlertRuleApiEntity()
             {
-                SignalId = string.Empty,
+                SmartDetectorId = string.Empty,
                 ResourceId = "resourceId",
                 CadenceInMinutes = 1440
             };
@@ -64,7 +64,7 @@ namespace ManagementApiTests.EndpointsLogic
             {
                 await this.alertRuleApi.AddAlertRuleAsync(addSignalModel, CancellationToken.None);
             }
-            catch (SmartSignalsManagementApiException e)
+            catch (SmartDetectorsManagementApiException e)
             {
                 Assert.AreEqual(HttpStatusCode.BadRequest, e.StatusCode);
                 return;
@@ -78,7 +78,7 @@ namespace ManagementApiTests.EndpointsLogic
         {
             var addSignalModel = new AlertRuleApiEntity()
             {
-                SignalId = Guid.NewGuid().ToString(),
+                SmartDetectorId = Guid.NewGuid().ToString(),
                 ResourceId = "resourceId",
                 CadenceInMinutes = 0
             };
@@ -87,7 +87,7 @@ namespace ManagementApiTests.EndpointsLogic
             {
                 await this.alertRuleApi.AddAlertRuleAsync(addSignalModel, CancellationToken.None);
             }
-            catch (SmartSignalsManagementApiException e)
+            catch (SmartDetectorsManagementApiException e)
             {
                 Assert.AreEqual(HttpStatusCode.BadRequest, e.StatusCode);
                 return;
@@ -101,7 +101,7 @@ namespace ManagementApiTests.EndpointsLogic
         {
             var addSignalModel = new AlertRuleApiEntity()
             {
-                SignalId = Guid.NewGuid().ToString(),
+                SmartDetectorId = Guid.NewGuid().ToString(),
                 ResourceId = "resourceId",
                 CadenceInMinutes = 1440
             };
@@ -113,7 +113,7 @@ namespace ManagementApiTests.EndpointsLogic
             {
                 await this.alertRuleApi.AddAlertRuleAsync(addSignalModel, CancellationToken.None);
             }
-            catch (SmartSignalsManagementApiException e)
+            catch (SmartDetectorsManagementApiException e)
             {
                 Assert.AreEqual(HttpStatusCode.InternalServerError, e.StatusCode);
                 return;

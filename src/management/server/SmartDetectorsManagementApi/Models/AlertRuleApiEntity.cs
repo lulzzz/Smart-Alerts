@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models
+namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Models
 {
     using System.Collections.Generic;
     using Newtonsoft.Json;
@@ -27,25 +27,25 @@ namespace Microsoft.Azure.Monitoring.SmartSignals.ManagementApi.Models
         public string Description { get; set; }
 
         /// <summary>
-        /// Gets or sets the signal ID.
+        /// Gets or sets the Smart Detector ID.
         /// </summary>
-        [JsonProperty("signalId")]
-        public string SignalId { get; set; }
+        [JsonProperty("smartDetectorId")]
+        public string SmartDetectorId { get; set; }
 
         /// <summary>
-        /// Gets or sets the resource to be analyzed by the signal.
+        /// Gets or sets the resource to be analyzed by the Smart Detector.
         /// </summary>
         [JsonProperty("resourceId")]
         public string ResourceId { get; set; }
 
         /// <summary>
-        /// Gets or sets the signal's execution cadence in minutes.
+        /// Gets or sets the Smart Detector's execution cadence in minutes.
         /// </summary>
         [JsonProperty("cadenceInMinutes")]
         public int CadenceInMinutes { get; set; }
 
         /// <summary>
-        /// Gets or sets the email recipients for the signal result
+        /// Gets or sets the email recipients for the Alerts
         /// </summary>
         [JsonProperty("emailRecipients")]
         public IList<string> EmailRecipients { get; set; }
