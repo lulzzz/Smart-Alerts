@@ -51,9 +51,9 @@ $nettaDirectGroupId = (Get-AzureRmADGroup -SearchString "netta direct").Id.ToStr
 $ownerID = (Get-AzureRmRoleDefinition -Name Owner).Id
 
 Set-AzureRmManagedApplicationDefinition `
-  -Id "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Solutions/applicationDefinitions/SiRA" `
-  -DisplayName "Smart Signals Runtime Application" `
-  -Description "This application will execute and manage the Smart Signals" `
+  -Id "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Solutions/applicationDefinitions/SmartDetectorsMonitoringAppliance" `
+  -DisplayName "Smart Detectors Monitoring Appliance" `
+  -Description "This application will execute and manage the Smart Detectors" `
   -Authorization "${nettaDirectGroupId}:$ownerID" `
   -PackageFileUri $blob.ICloudBlob.StorageUri.PrimaryUri.AbsoluteUri
 
