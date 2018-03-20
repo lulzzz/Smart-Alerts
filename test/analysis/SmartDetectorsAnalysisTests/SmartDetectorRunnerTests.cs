@@ -20,8 +20,10 @@ namespace SmartDetectorsAnalysisTests
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader;
+    using Microsoft.Azure.Monitoring.SmartDetectors.State;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using Unity;
     using Alert = Microsoft.Azure.Monitoring.SmartDetectors.Alert;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
@@ -32,12 +34,7 @@ namespace SmartDetectorsAnalysisTests
         private List<string> resourceIds;
         private SmartDetectorExecutionRequest request;
         private TestSmartDetector smartDetector;
-        private Mock<ITracer> tracerMock;
-        private Mock<ISmartDetectorRepository> smartDetectorRepositoryMock;
-        private Mock<ISmartDetectorLoader> smartDetectorLoaderMock;
-        private Mock<IAnalysisServicesFactory> analysisServicesFactoryMock;
-        private Mock<IAzureResourceManagerClient> azureResourceManagerClientMock;
-        private Mock<IQueryRunInfoProvider> queryRunInfoProviderMock;
+        private IUnityContainer testContainer;
 
         [TestInitialize]
         public void TestInitialize()
@@ -49,7 +46,7 @@ namespace SmartDetectorsAnalysisTests
         public async Task WhenRunningSmartDetectorThenTheCorrectAlertIsReturned()
         {
             // Run the Smart Detector and validate results
-            ISmartDetectorRunner runner = new SmartDetectorRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
+            ISmartDetectorRunner runner = this.testContainer.Resolve<ISmartDetectorRunner>();
             List<ContractsAlert> contractsAlerts = await runner.RunAsync(this.request, default(CancellationToken));
             Assert.IsNotNull(contractsAlerts, "Presentation list is null");
             Assert.AreEqual(1, contractsAlerts.Count);
@@ -63,7 +60,7 @@ namespace SmartDetectorsAnalysisTests
             this.smartDetector.ShouldStuck = true;
 
             // Run the Smart Detector asynchronously
-            ISmartDetectorRunner runner = new SmartDetectorRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
+            ISmartDetectorRunner runner = this.testContainer.Resolve<ISmartDetectorRunner>();
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             Task t = runner.RunAsync(this.request, cancellationTokenSource.Token);
             SpinWait.SpinUntil(() => this.smartDetector.IsRunning);
@@ -87,7 +84,7 @@ namespace SmartDetectorsAnalysisTests
             this.smartDetector.ShouldThrow = true;
 
             // Run the Smart Detector
-            ISmartDetectorRunner runner = new SmartDetectorRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
+            ISmartDetectorRunner runner = this.testContainer.Resolve<ISmartDetectorRunner>();
             try
             {
                 await runner.RunAsync(this.request, default(CancellationToken));
@@ -106,7 +103,7 @@ namespace SmartDetectorsAnalysisTests
             this.smartDetector.ShouldThrowCustom = true;
 
             // Run the Smart Detector
-            ISmartDetectorRunner runner = new SmartDetectorRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
+            ISmartDetectorRunner runner = this.testContainer.Resolve<ISmartDetectorRunner>();
             await runner.RunAsync(this.request, default(CancellationToken));
         }
 
@@ -129,10 +126,30 @@ namespace SmartDetectorsAnalysisTests
             await this.RunSmartDetectorWithResourceTypes(ResourceType.VirtualMachine, ResourceType.ResourceGroup, true);
         }
 
+        [TestMethod]
+        public async Task WhenRunningSmartDetectorThenStateRepositoryIsCreatedAndPassedToSmartDetector()
+        {
+            // Setup mocks
+            var stateRepositoryMock = new Mock<IStateRepository>();
+            var stateRepositoryFactoryMock = new Mock<IStateRepositoryFactory>();
+            stateRepositoryFactoryMock.Setup(m => m.Create(It.IsAny<string>())).Returns(stateRepositoryMock.Object);
+            this.testContainer.RegisterInstance<IStateRepositoryFactory>(stateRepositoryFactoryMock.Object);
+
+            // Run the Smart Detector
+            ISmartDetectorRunner runner = this.testContainer.Resolve<ISmartDetectorRunner>();
+            List<ContractsAlert> contractsAlerts = await runner.RunAsync(this.request, default(CancellationToken));
+
+            // Assert
+            stateRepositoryFactoryMock.Verify(
+                m => m.Create(It.IsAny<string>()));
+            stateRepositoryMock.Verify(
+                m => m.StoreStateAsync("test key", "test state", It.IsAny<CancellationToken>()));
+        }
+
         private async Task RunSmartDetectorWithResourceTypes(ResourceType requestResourceType, ResourceType smartDetectorResourceType, bool shouldFail)
         {
             this.TestInitialize(requestResourceType, smartDetectorResourceType);
-            ISmartDetectorRunner runner = new SmartDetectorRunner(this.smartDetectorRepositoryMock.Object, this.smartDetectorLoaderMock.Object, this.analysisServicesFactoryMock.Object, this.azureResourceManagerClientMock.Object, this.queryRunInfoProviderMock.Object, this.tracerMock.Object);
+            ISmartDetectorRunner runner = this.testContainer.Resolve<ISmartDetectorRunner>();
             try
             {
                 List<ContractsAlert> alertPresentations = await runner.RunAsync(this.request, default(CancellationToken));
@@ -154,7 +171,11 @@ namespace SmartDetectorsAnalysisTests
 
         private void TestInitialize(ResourceType requestResourceType, ResourceType smartDetectorResourceType)
         {
-            this.tracerMock = new Mock<ITracer>();
+            this.testContainer = new UnityContainer();
+
+            this.testContainer.RegisterType<ISmartDetectorRunner, SmartDetectorRunner>();
+
+            this.testContainer.RegisterInstance<ITracer>(new Mock<ITracer>().Object);
 
             ResourceIdentifier resourceId;
             switch (requestResourceType)
@@ -182,32 +203,40 @@ namespace SmartDetectorsAnalysisTests
             var smartDetectorManifest = new SmartDetectorManifest("1", "Test Smart Detector", "Test Smart Detector description", Version.Parse("1.0"), "assembly", "class", new List<ResourceType>() { smartDetectorResourceType }, new List<int> { 60 });
             this.smartDetectorPackage = new SmartDetectorPackage(smartDetectorManifest, new Dictionary<string, byte[]> { ["TestSmartDetectorLibrary"] = new byte[0] });
 
-            this.smartDetectorRepositoryMock = new Mock<ISmartDetectorRepository>();
-            this.smartDetectorRepositoryMock
+            var smartDetectorRepositoryMock = new Mock<ISmartDetectorRepository>();
+            smartDetectorRepositoryMock
                 .Setup(x => x.ReadSmartDetectorPackageAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => this.smartDetectorPackage);
+            this.testContainer.RegisterInstance<ISmartDetectorRepository>(smartDetectorRepositoryMock.Object);
 
-            this.analysisServicesFactoryMock = new Mock<IAnalysisServicesFactory>();
+            this.testContainer.RegisterInstance<IAnalysisServicesFactory>(new Mock<IAnalysisServicesFactory>().Object);
 
             this.smartDetector = new TestSmartDetector { ExpectedResourceType = smartDetectorResourceType };
 
-            this.smartDetectorLoaderMock = new Mock<ISmartDetectorLoader>();
-            this.smartDetectorLoaderMock
+            var smartDetectorLoaderMock = new Mock<ISmartDetectorLoader>();
+            smartDetectorLoaderMock
                 .Setup(x => x.LoadSmartDetector(this.smartDetectorPackage))
                 .Returns(this.smartDetector);
+            this.testContainer.RegisterInstance<ISmartDetectorLoader>(smartDetectorLoaderMock.Object);
 
-            this.azureResourceManagerClientMock = new Mock<IAzureResourceManagerClient>();
-            this.azureResourceManagerClientMock
+            var azureResourceManagerClientMock = new Mock<IAzureResourceManagerClient>();
+            azureResourceManagerClientMock
                 .Setup(x => x.GetAllResourceGroupsInSubscriptionAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((string subscriptionId, CancellationToken cancellationToken) => new List<ResourceIdentifier>() { new ResourceIdentifier(ResourceType.ResourceGroup, subscriptionId, "resourceGroupName", string.Empty) });
-            this.azureResourceManagerClientMock
+            azureResourceManagerClientMock
                 .Setup(x => x.GetAllResourcesInSubscriptionAsync(It.IsAny<string>(), It.IsAny<IEnumerable<ResourceType>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((string subscriptionId, IEnumerable<ResourceType> resourceTypes, CancellationToken cancellationToken) => new List<ResourceIdentifier>() { new ResourceIdentifier(ResourceType.VirtualMachine, subscriptionId, "resourceGroupName", "resourceName") });
-            this.azureResourceManagerClientMock
+            azureResourceManagerClientMock
                 .Setup(x => x.GetAllResourcesInResourceGroupAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IEnumerable<ResourceType>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((string subscriptionId, string resourceGroupName, IEnumerable<ResourceType> resourceTypes, CancellationToken cancellationToken) => new List<ResourceIdentifier>() { new ResourceIdentifier(ResourceType.VirtualMachine, subscriptionId, resourceGroupName, "resourceName") });
+            this.testContainer.RegisterInstance<IAzureResourceManagerClient>(azureResourceManagerClientMock.Object);
 
-            this.queryRunInfoProviderMock = new Mock<IQueryRunInfoProvider>();
+            this.testContainer.RegisterInstance<IQueryRunInfoProvider>(new Mock<IQueryRunInfoProvider>().Object);
+
+            var stateRepositoryMock = new Mock<IStateRepository>();
+            var stateRepositoryFactoryMock = new Mock<IStateRepositoryFactory>();
+            stateRepositoryFactoryMock.Setup(m => m.Create(It.IsAny<string>())).Returns(stateRepositoryMock.Object);
+            this.testContainer.RegisterInstance<IStateRepositoryFactory>(stateRepositoryFactoryMock.Object);
         }
 
         private class TestSmartDetector : ISmartDetector
@@ -231,6 +260,8 @@ namespace SmartDetectorsAnalysisTests
                 Assert.IsNotNull(analysisRequest.TargetResources, "Resources list is null");
                 Assert.AreEqual(1, analysisRequest.TargetResources.Count);
                 Assert.AreEqual(this.ExpectedResourceType, analysisRequest.TargetResources.Single().ResourceType);
+
+                await analysisRequest.StateRepository.StoreStateAsync("test key", "test state", cancellationToken);
 
                 if (this.ShouldStuck)
                 {

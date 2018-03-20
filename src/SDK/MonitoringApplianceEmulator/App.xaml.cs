@@ -6,14 +6,15 @@
 
 namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator
 {
-    using System;
     using System.IO;
     using System.Windows;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
+    using Microsoft.Azure.Monitoring.SmartDetectors.Emulator.State;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.Models;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader;
+    using Microsoft.Azure.Monitoring.SmartDetectors.State;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Microsoft.Azure.Monitoring.SmartDetectors.Trace;
     using Microsoft.Win32;
@@ -66,7 +67,10 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator
             var httpClientWrapper = new HttpClientWrapper();
             IAnalysisServicesFactory analysisServicesFactory = new AnalysisServicesFactory(consoleTracer, httpClientWrapper, credentialsFactory, azureResourceManagerClient, queryRunInroProvider);
 
-            var smartDetectorRunner = new SmartDetectorRunner(detector, analysisServicesFactory, queryRunInroProvider, smartDetectorManifest, stringTracer);
+            // Create state repository factory
+            IStateRepositoryFactory stateRepositoryFactory = new InMemoryStateRepositoryFactory();
+
+            var smartDetectorRunner = new SmartDetectorRunner(detector, analysisServicesFactory, queryRunInroProvider, smartDetectorManifest, stateRepositoryFactory, smartDetectorManifest.Id, stringTracer);
 
             // Create a Unity container with all the required models and view models registrations
             Container = new UnityContainer();
@@ -78,7 +82,8 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator
                 .RegisterInstance(detector)
                 .RegisterInstance(smartDetectorManifest)
                 .RegisterInstance(analysisServicesFactory)
-                .RegisterInstance(smartDetectorRunner);
+                .RegisterInstance(smartDetectorRunner)
+                .RegisterInstance(stateRepositoryFactory);
         }
 
         /// <summary>

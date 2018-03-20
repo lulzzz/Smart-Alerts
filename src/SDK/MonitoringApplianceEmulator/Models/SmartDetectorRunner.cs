@@ -16,6 +16,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using Microsoft.Azure.Monitoring.SmartDetectors.State;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
@@ -39,6 +40,10 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
 
         private CancellationTokenSource cancellationTokenSource;
 
+        private IStateRepositoryFactory stateRepositoryFactory;
+
+        private string smartDetectorId;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SmartDetectorRunner"/> class.
         /// </summary>
@@ -46,12 +51,16 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
         /// <param name="analysisServicesFactory">The analysis services factory.</param>
         /// <param name="queryRunInfoProvider">The query run information provider.</param>
         /// <param name="smartDetectorManifes">The Smart Detector manifest.</param>
+        /// <param name="stateRepositoryFactory">The state repository factory</param>
+        /// <param name="smartDetectorId">The id of the Smart Detector</param>
         /// <param name="tracer">The tracer.</param>
         public SmartDetectorRunner(
             ISmartDetector smartDetector, 
             IAnalysisServicesFactory analysisServicesFactory,
             IQueryRunInfoProvider queryRunInfoProvider,
             SmartDetectorManifest smartDetectorManifes,
+            IStateRepositoryFactory stateRepositoryFactory,
+            string smartDetectorId,
             ITracer tracer)
         {
             this.smartDetector = smartDetector;
@@ -61,6 +70,8 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
             this.Tracer = tracer;
             this.IsSmartDetectorRunning = false;
             this.Alerts = new ObservableCollection<Alert>();
+            this.stateRepositoryFactory = stateRepositoryFactory;
+            this.smartDetectorId = smartDetectorId;
         }
 
         /// <summary>
@@ -124,7 +135,10 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
         {
             this.cancellationTokenSource = new CancellationTokenSource();
             this.Alerts.Clear();
-            var analysisRequest = new AnalysisRequest(resources, DateTime.UtcNow.AddMinutes(-20), analysisCadence, null, this.analysisServicesFactory);
+            IStateRepository stateRepository = this.stateRepositoryFactory.Create(this.smartDetectorId);
+
+            var analysisRequest = new AnalysisRequest(resources, DateTime.UtcNow.AddMinutes(-20), analysisCadence, null, this.analysisServicesFactory, stateRepository);
+
             try
             {
                 // Run Smart Detector

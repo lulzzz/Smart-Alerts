@@ -19,6 +19,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader;
+    using Microsoft.Azure.Monitoring.SmartDetectors.State;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Alert = Microsoft.Azure.Monitoring.SmartDetectors.Alert;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
@@ -33,6 +34,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis
         private readonly IAnalysisServicesFactory analysisServicesFactory;
         private readonly IAzureResourceManagerClient azureResourceManagerClient;
         private readonly IQueryRunInfoProvider queryRunInfoProvider;
+        private readonly IStateRepositoryFactory stateRepositoryFactory;
         private readonly ITracer tracer;
 
         /// <summary>
@@ -43,6 +45,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis
         /// <param name="analysisServicesFactory">The analysis services factory</param>
         /// <param name="azureResourceManagerClient">The azure resource manager client</param>
         /// <param name="queryRunInfoProvider">The query run information provider</param>
+        /// <param name="stateRepositoryFactory">The state repository factory</param>
         /// <param name="tracer">The tracer</param>
         public SmartDetectorRunner(
             ISmartDetectorRepository smartDetectorRepository,
@@ -50,6 +53,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis
             IAnalysisServicesFactory analysisServicesFactory,
             IAzureResourceManagerClient azureResourceManagerClient,
             IQueryRunInfoProvider queryRunInfoProvider,
+            IStateRepositoryFactory stateRepositoryFactory,
             ITracer tracer)
         {
             this.smartDetectorRepository = Diagnostics.EnsureArgumentNotNull(() => smartDetectorRepository);
@@ -57,6 +61,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis
             this.analysisServicesFactory = Diagnostics.EnsureArgumentNotNull(() => analysisServicesFactory);
             this.azureResourceManagerClient = Diagnostics.EnsureArgumentNotNull(() => azureResourceManagerClient);
             this.queryRunInfoProvider = Diagnostics.EnsureArgumentNotNull(() => queryRunInfoProvider);
+            this.stateRepositoryFactory = Diagnostics.EnsureArgumentNotNull(() => stateRepositoryFactory);
             this.tracer = tracer;
         }
 
@@ -83,12 +88,15 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis
             // Get the resources on which to run the Smart Detector
             List<ResourceIdentifier> resources = await this.GetResourcesForSmartDetector(request.ResourceIds, smartDetectorManifest, cancellationToken);
 
+            // Create state repository
+            IStateRepository stateRepository = this.stateRepositoryFactory.Create(request.SmartDetectorId);
+
             // Run the Smart Detector
             this.tracer.TraceInformation($"Started running Smart Detector ID {smartDetectorManifest.Id}, Name {smartDetectorManifest.Name}");
             List<Alert> alerts;
             try
             {
-                var analysisRequest = new AnalysisRequest(resources, request.DataEndTime, request.Cadence, request.AlertRuleResourceId, this.analysisServicesFactory);
+                var analysisRequest = new AnalysisRequest(resources, request.DataEndTime, request.Cadence, request.AlertRuleResourceId, this.analysisServicesFactory, stateRepository);
                 alerts = await smartDetector.AnalyzeResourcesAsync(analysisRequest, this.tracer, cancellationToken);
                 this.tracer.TraceInformation($"Completed running Smart Detector ID {smartDetectorManifest.Id}, Name {smartDetectorManifest.Name}, returning {alerts.Count} alerts");
             }

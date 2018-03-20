@@ -55,11 +55,11 @@ namespace ManagementApiTests.EndpointsLogic
         {
             this.applicationInsightClientMock.Setup(ai => ai.GetCustomEventsAsync(It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()))
                                              .ReturnsAsync(this.GetApplicationInsightsEvents());
-            this.alertsContainerMock.Setup(src => src.DownloadBlobContentAsync(It.IsAny<string>())).ReturnsAsync(this.GetAlertPresentation());
+            this.alertsContainerMock.Setup(src => src.DownloadBlobContentAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(this.GetAlertPresentation());
 
             ListAlertsResponse response = await this.alertsApi.GetAllAlertsAsync(this.startTime, this.endTime, CancellationToken.None);
 
-            this.alertsContainerMock.Verify(src => src.DownloadBlobContentAsync(It.IsAny<string>()), Times.Once);
+            this.alertsContainerMock.Verify(src => src.DownloadBlobContentAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
             Assert.AreEqual(1, response.Alerts.Count);
             Assert.AreEqual("someId", response.Alerts.First().Id);
             Assert.AreEqual("someTitle", response.Alerts.First().Title);
@@ -88,7 +88,7 @@ namespace ManagementApiTests.EndpointsLogic
         {
             this.applicationInsightClientMock.Setup(ai => ai.GetCustomEventsAsync(It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(this.GetApplicationInsightsEvents());
-            this.alertsContainerMock.Setup(src => src.DownloadBlobContentAsync(It.IsAny<string>())).ReturnsAsync("someCorruptedData");
+            this.alertsContainerMock.Setup(src => src.DownloadBlobContentAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync("someCorruptedData");
 
             try
             {
@@ -107,7 +107,7 @@ namespace ManagementApiTests.EndpointsLogic
         {
             this.applicationInsightClientMock.Setup(ai => ai.GetCustomEventsAsync(It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()))
                                  .ReturnsAsync(this.GetApplicationInsightsEvents());
-            this.alertsContainerMock.Setup(src => src.DownloadBlobContentAsync(It.IsAny<string>())).ThrowsAsync(new StorageException());
+            this.alertsContainerMock.Setup(src => src.DownloadBlobContentAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ThrowsAsync(new StorageException());
 
             try
             {

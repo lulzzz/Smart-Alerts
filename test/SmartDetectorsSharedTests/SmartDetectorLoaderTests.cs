@@ -16,6 +16,7 @@ namespace SmartDetectorsSharedTests
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader;
+    using Microsoft.Azure.Monitoring.SmartDetectors.State;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -140,7 +141,8 @@ namespace SmartDetectorsSharedTests
                 DateTime.UtcNow.AddMinutes(-20),
                 TimeSpan.FromDays(1),
                 null,
-                new Mock<IAnalysisServicesFactory>().Object);
+                new Mock<IAnalysisServicesFactory>().Object,
+                new Mock<IStateRepository>().Object);
             List<Alert> alerts = await detector.AnalyzeResourcesAsync(analysisRequest, this.tracerMock.Object, default(CancellationToken));
             Assert.AreEqual(1, alerts.Count, "Incorrect number of alerts returned");
             Assert.AreEqual(expectedTitle, alerts.Single().Title, "Alert title is wrong");
@@ -156,11 +158,12 @@ namespace SmartDetectorsSharedTests
 
             var resource = new ResourceIdentifier(ResourceType.VirtualMachine, "someSubscription", "someGroup", "someVM");
             var analysisRequest = new AnalysisRequest(
-                new List<ResourceIdentifier> { resource },
-                DateTime.UtcNow.AddMinutes(-20),
-                TimeSpan.FromDays(1),
+                new List<ResourceIdentifier> { resource }, 
+                DateTime.UtcNow.AddDays(-1), 
+                TimeSpan.FromDays(1), 
                 null,
-                new Mock<IAnalysisServicesFactory>().Object);
+                new Mock<IAnalysisServicesFactory>().Object,
+                new Mock<IStateRepository>().Object);
             List<Alert> alerts = await detector.AnalyzeResourcesAsync(analysisRequest, this.tracerMock.Object, default(CancellationToken));
             Assert.AreEqual(1, alerts.Count, "Incorrect number of alerts returned");
             Assert.AreEqual(expectedTitle, alerts.Single().Title, "Alert title is wrong");

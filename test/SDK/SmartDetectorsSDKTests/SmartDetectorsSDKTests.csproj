@@ -11,6 +11,7 @@
     <PackageReference Include="StyleCop.MSBuild" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\SDK\MonitoringApplianceEmulator\MonitoringApplianceEmulator.csproj" />
     <ProjectReference Include="..\..\..\src\SDK\SmartDetectorsSDK\SmartDetectorsSDK.csproj" />
   </ItemGroup>
   <ItemGroup>

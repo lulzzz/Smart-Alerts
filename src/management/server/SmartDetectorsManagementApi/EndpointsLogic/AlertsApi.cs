@@ -64,7 +64,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Manageme
 
                 // Get the blobs content (as we are getting blob uri, we are creating new CloudBlockBlob for each and extracting the blob name 
                 var blobsContent = await Task.WhenAll(alertsBlobsUri.Select(blobUri => this.alertsStorageContainer
-                                                                                              .DownloadBlobContentAsync(new CloudBlockBlob(new Uri(blobUri)).Name)));
+                                                                                              .DownloadBlobContentAsync(new CloudBlockBlob(new Uri(blobUri)).Name, cancellationToken)));
                 
                 // Deserialize the blobs content to alert
                 IEnumerable<ContractsAlert> alerts = blobsContent.Select(JsonConvert.DeserializeObject<ContractsAlert>);

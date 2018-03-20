@@ -9,6 +9,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Azure.Monitoring.SmartDetectors.State;
 
     /// <summary>
     /// Represents a single analysis request sent to the Smart Detector. This is the main parameter sent to the 
@@ -24,7 +25,8 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors
         /// <param name="analysisCadence">The analysis cadence defined in the Alert Rule which initiated the Smart Detector's analysis.</param>
         /// <param name="alertRuleResourceId">The alert rule resource ID.</param>
         /// <param name="analysisServicesFactory">The analysis services factory to be used for querying the resources telemetry.</param>
-        public AnalysisRequest(List<ResourceIdentifier> targetResources, DateTime dataEndTime, TimeSpan analysisCadence, string alertRuleResourceId, IAnalysisServicesFactory analysisServicesFactory)
+        /// <param name="stateRepository">The persistent state repository for storing state between analysis runs</param>
+        public AnalysisRequest(List<ResourceIdentifier> targetResources, DateTime dataEndTime, TimeSpan analysisCadence, string alertRuleResourceId, IAnalysisServicesFactory analysisServicesFactory, IStateRepository stateRepository)
         {
             // Parameter validations
             if (targetResources == null)
@@ -60,6 +62,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors
             this.AnalysisCadence = analysisCadence;
             this.AlertRuleResourceId = alertRuleResourceId;
             this.AnalysisServicesFactory = analysisServicesFactory;
+            this.StateRepository = stateRepository;
         }
 
         /// <summary>
@@ -90,5 +93,10 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors
         /// Gets the analysis services factory to be used for querying the resources telemetry.
         /// </summary>
         public IAnalysisServicesFactory AnalysisServicesFactory { get; }
+
+        /// <summary>
+        /// Gets the persistent state repository for storing state between analysis runs.
+        /// </summary>
+        public IStateRepository StateRepository { get; }
     }
 }

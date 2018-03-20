@@ -34,12 +34,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureSto
         /// <returns>A <see cref="ICloudBlobContainerWrapper"/> for the Alerts storage container</returns>
         public ICloudBlobContainerWrapper GetAlertsStorageContainer()
         {
-            var storageConnectionString = ConfigurationReader.ReadConfigConnectionString("StorageConnectionString", true);
-            CloudBlobClient cloudBlobClient = CloudStorageAccount.Parse(storageConnectionString).CreateCloudBlobClient();
-            CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference("alerts");
-            cloudBlobContainer.CreateIfNotExists();
-
-            return new CloudBlobContainerWrapper(cloudBlobContainer);
+            return this.GetLocalStorageContainer("alerts");
         }
 
         /// <summary>
@@ -50,6 +45,30 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureSto
         {
             var cloudBlobContainerUri = new Uri(ConfigurationReader.ReadConfig("GlobalSmartDetectorContainerUri", required: true));
             var cloudBlobContainer = new CloudBlobContainer(cloudBlobContainerUri);
+
+            return new CloudBlobContainerWrapper(cloudBlobContainer);
+        }
+
+        /// <summary>
+        /// Creates an Azure Storage container client for the Smart Detector state storage container
+        /// </summary>
+        /// <returns>A <see cref="ICloudBlobContainerWrapper"/> for the Smart Detector state storage container</returns>
+        public ICloudBlobContainerWrapper GetSmartDetectorStateStorageContainer()
+        {
+            return this.GetLocalStorageContainer("state");
+        }
+
+        /// <summary>
+        /// Creates an Azure Storage container client for a local Monitoring Appliance container
+        /// </summary>
+        /// <param name="containerName">The name of the container to create.</param>
+        /// <returns>A <see cref="ICloudBlobContainerWrapper"/> for the container</returns>
+        private ICloudBlobContainerWrapper GetLocalStorageContainer(string containerName)
+        {
+            var storageConnectionString = ConfigurationReader.ReadConfigConnectionString("StorageConnectionString", true);
+            CloudBlobClient cloudBlobClient = CloudStorageAccount.Parse(storageConnectionString).CreateCloudBlobClient();
+            CloudBlobContainer cloudBlobContainer = cloudBlobClient.GetContainerReference(containerName);
+            cloudBlobContainer.CreateIfNotExists();
 
             return new CloudBlobContainerWrapper(cloudBlobContainer);
         }

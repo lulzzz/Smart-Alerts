@@ -39,7 +39,16 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureSto
         /// Downloads the content of a given blob name.
         /// </summary>
         /// <param name="blobName">The blob name.</param>
-        /// <returns>The blob's content.</returns>
-        Task<string> DownloadBlobContentAsync(string blobName);
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A <see cref="Task"/> object that represents the asynchronous operation, returning the blob's content.</returns>
+        Task<string> DownloadBlobContentAsync(string blobName, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Deletes blob by name and does not throw if the blob does not exist.
+        /// </summary>
+        /// <param name="blobName">The name of the blob to delete.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A <see cref="Task"/> object that represents the asynchronous operation.</returns>
+        Task DeleteBlobIfExistsAsync(string blobName, CancellationToken cancellationToken);
     }
 }

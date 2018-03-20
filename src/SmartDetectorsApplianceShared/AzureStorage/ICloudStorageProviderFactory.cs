@@ -28,5 +28,11 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureSto
         /// </summary>
         /// <returns>A <see cref="ICloudBlobContainerWrapper"/> for the Smart Detector storage container</returns>
         ICloudBlobContainerWrapper GetSmartDetectorGlobalStorageContainer();
+        
+        /// <summary>
+        /// Creates an Azure Storage container client for the Smart Detector state container
+        /// </summary>
+        /// <returns>A <see cref="ICloudBlobContainerWrapper"/> for the Smart Detector state container</returns>
+        ICloudBlobContainerWrapper GetSmartDetectorStateStorageContainer();
     }
 }
