@@ -18,7 +18,7 @@ namespace ManagementApiTests.AIClient
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Extensions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using SmartSignalsSharedTests;
+    using SmartDetectorsSharedTests;
 
     [TestClass]
     public class ApplicationInsightsClientTests

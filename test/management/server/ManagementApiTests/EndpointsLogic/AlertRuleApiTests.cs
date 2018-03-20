@@ -35,9 +35,9 @@ namespace ManagementApiTests.EndpointsLogic
         #region Adding New Alert Rule Tests
 
         [TestMethod]
-        public async Task WhenAddingSignalHappyFlow()
+        public async Task WhenAddingSmartDetectorHappyFlow()
         {
-            var addSignalModel = new AlertRuleApiEntity()
+            var addSmartDetectorModel = new AlertRuleApiEntity()
             {
                 SmartDetectorId = Guid.NewGuid().ToString(),
                 ResourceId = "resourceId",
@@ -47,13 +47,13 @@ namespace ManagementApiTests.EndpointsLogic
             this.alertRuleStoreMock.Setup(s => s.AddOrReplaceAlertRuleAsync(It.IsAny<AlertRule>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
             // This shouldn't throw any exception
-            await this.alertRuleApi.AddAlertRuleAsync(addSignalModel, CancellationToken.None);
+            await this.alertRuleApi.AddAlertRuleAsync(addSmartDetectorModel, CancellationToken.None);
         }
 
         [TestMethod]
-        public async Task WhenAddingSignalButModelIsInvalidBecauseSignalIdIsEmptyThenThrowException()
+        public async Task WhenAddingSmartDetectorButModelIsInvalidBecauseSmartDetectorIdIsEmptyThenThrowException()
         {
-            var addSignalModel = new AlertRuleApiEntity()
+            var addSmartDetectorModel = new AlertRuleApiEntity()
             {
                 SmartDetectorId = string.Empty,
                 ResourceId = "resourceId",
@@ -62,7 +62,7 @@ namespace ManagementApiTests.EndpointsLogic
 
             try
             {
-                await this.alertRuleApi.AddAlertRuleAsync(addSignalModel, CancellationToken.None);
+                await this.alertRuleApi.AddAlertRuleAsync(addSmartDetectorModel, CancellationToken.None);
             }
             catch (SmartDetectorsManagementApiException e)
             {
@@ -74,9 +74,9 @@ namespace ManagementApiTests.EndpointsLogic
         }
 
         [TestMethod]
-        public async Task WhenAddingSignalButCadenceValueIsInvalidCronValueThenThrowException()
+        public async Task WhenAddingSmartDetectorButCadenceValueIsInvalidCronValueThenThrowException()
         {
-            var addSignalModel = new AlertRuleApiEntity()
+            var addSmartDetectorModel = new AlertRuleApiEntity()
             {
                 SmartDetectorId = Guid.NewGuid().ToString(),
                 ResourceId = "resourceId",
@@ -85,7 +85,7 @@ namespace ManagementApiTests.EndpointsLogic
 
             try
             {
-                await this.alertRuleApi.AddAlertRuleAsync(addSignalModel, CancellationToken.None);
+                await this.alertRuleApi.AddAlertRuleAsync(addSmartDetectorModel, CancellationToken.None);
             }
             catch (SmartDetectorsManagementApiException e)
             {
@@ -97,9 +97,9 @@ namespace ManagementApiTests.EndpointsLogic
         }
 
         [TestMethod]
-        public async Task WhenAddingSignalButStoreThrowsExceptionThenThrowTheWrappedException()
+        public async Task WhenAddingSmartDetectorButStoreThrowsExceptionThenThrowTheWrappedException()
         {
-            var addSignalModel = new AlertRuleApiEntity()
+            var addSmartDetectorModel = new AlertRuleApiEntity()
             {
                 SmartDetectorId = Guid.NewGuid().ToString(),
                 ResourceId = "resourceId",
@@ -111,7 +111,7 @@ namespace ManagementApiTests.EndpointsLogic
 
             try
             {
-                await this.alertRuleApi.AddAlertRuleAsync(addSignalModel, CancellationToken.None);
+                await this.alertRuleApi.AddAlertRuleAsync(addSmartDetectorModel, CancellationToken.None);
             }
             catch (SmartDetectorsManagementApiException e)
             {
@@ -119,7 +119,7 @@ namespace ManagementApiTests.EndpointsLogic
                 return;
             }
 
-            Assert.Fail("Exception coming from the Signals store should cause to an exception from the controller");
+            Assert.Fail("Exception coming from the Smart Detectors store should cause to an exception from the controller");
         }
 
         #endregion
