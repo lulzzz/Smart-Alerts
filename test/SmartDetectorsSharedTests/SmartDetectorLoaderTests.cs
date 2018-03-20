@@ -48,25 +48,25 @@ namespace SmartDetectorsSharedTests
 
             this.manifests = new Dictionary<string, SmartDetectorManifest>()
             {
-                ["1"] = new SmartDetectorManifest("1", "Test Smart Detector", "Test Smart Detector description", Version.Parse("1.0"), "TestSmartDetectorLibrary", "TestSmartDetectorLibrary.TestSmartDetector", new List<ResourceType>() { ResourceType.Subscription }, new List<int> { 60 }),
-                ["2"] = new SmartDetectorManifest("2", "Test Smart Detector with dependency", "Test Smart Detector with dependency description", Version.Parse("1.0"), "TestSmartDetectorLibrary", "TestSmartDetectorLibrary.TestSmartDetectorWithDependency", new List<ResourceType>() { ResourceType.Subscription }, new List<int> { 60 })
+                ["1"] = new SmartDetectorManifest("1", "Test Smart Detector", "Test Smart Detector description", Version.Parse("1.0"), "TestSmartDetectorLibrary.dll", "TestSmartDetectorLibrary.TestSmartDetector", new List<ResourceType>() { ResourceType.Subscription }, new List<int> { 60 }),
+                ["2"] = new SmartDetectorManifest("2", "Test Smart Detector with dependency", "Test Smart Detector with dependency description", Version.Parse("1.0"), "TestSmartDetectorLibrary.dll", "TestSmartDetectorLibrary.TestSmartDetectorWithDependency", new List<ResourceType>() { ResourceType.Subscription }, new List<int> { 60 })
             };
 
             this.assemblies = new Dictionary<string, Dictionary<string, byte[]>>
             {
                 ["1"] = new Dictionary<string, byte[]>()
                 {
-                    ["TestSmartDetectorLibrary"] = this.dllInfos["TestSmartDetectorLibrary"].Bytes
+                    ["TestSmartDetectorLibrary.dll"] = this.dllInfos["TestSmartDetectorLibrary"].Bytes
                 },
                 ["2"] = new Dictionary<string, byte[]>()
                 {
-                    ["TestSmartDetectorLibrary"] = this.dllInfos["TestSmartDetectorLibrary"].Bytes,
-                    ["TestSmartDetectorDependentLibrary"] = this.dllInfos["TestSmartDetectorDependentLibrary"].Bytes,
-                    ["Newtonsoft.Json"] = this.dllInfos["Newtonsoft.Json"].Bytes
+                    ["TestSmartDetectorLibrary.dll"] = this.dllInfos["TestSmartDetectorLibrary"].Bytes,
+                    ["TestSmartDetectorDependentLibrary.dll"] = this.dllInfos["TestSmartDetectorDependentLibrary"].Bytes,
+                    ["Newtonsoft.Json.dll"] = this.dllInfos["Newtonsoft.Json"].Bytes
                 },
                 ["3"] = new Dictionary<string, byte[]>()
                 {
-                    [currentAssembly.GetName().Name] = File.ReadAllBytes(currentAssembly.Location)
+                    [currentAssembly.GetName().Name + ".dll"] = File.ReadAllBytes(currentAssembly.Location)
                 }
             };
         }
@@ -116,6 +116,23 @@ namespace SmartDetectorsSharedTests
             await this.TestLoadSmartDetectorSimple(typeof(TestSmartDetectorGeneric<string>), typeof(string).Name);
         }
 
+        [TestMethod]
+        public async Task WhenLoadingSmartDetectorFromPackageThenItWorks()
+        {
+            // Create the detector package from the detector's folder (instead of from the current folder),
+            // and check that it can be loaded correctly, with its dependencies.
+            DirectoryInfo currentFolder = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            string flavor = Path.Combine(currentFolder.Parent.Name, currentFolder.Name);
+            while (currentFolder.Name.ToLower() != "test")
+            {
+                currentFolder = currentFolder.Parent;
+            }
+
+            string packageFolder = Path.Combine(currentFolder.FullName, @"testSmartDetector\TestSmartDetectorLibrary\bin", flavor);
+            SmartDetectorPackage package = SmartDetectorPackage.CreateFromFolder(packageFolder);
+            await this.TestLoadSmartDetectorSimple(package, "test title - with dependency - [1,2,3]");
+        }
+
         [TestCleanup]
         public void TestCleanup()
         {
@@ -129,9 +146,14 @@ namespace SmartDetectorsSharedTests
 
         private async Task TestLoadSmartDetectorSimple(Type smartDetectorType, string expectedTitle = "test test test")
         {
-            ISmartDetectorLoader loader = new SmartDetectorLoader(this.tracerMock.Object);
             SmartDetectorManifest manifest = new SmartDetectorManifest("3", "simple", "description", Version.Parse("1.0"), smartDetectorType.Assembly.GetName().Name, smartDetectorType.FullName, new List<ResourceType>() { ResourceType.Subscription }, new List<int> { 60 });
             SmartDetectorPackage package = new SmartDetectorPackage(manifest, this.assemblies["3"]);
+            await this.TestLoadSmartDetectorSimple(package, expectedTitle);
+        }
+
+        private async Task TestLoadSmartDetectorSimple(SmartDetectorPackage package, string expectedTitle)
+        {
+            ISmartDetectorLoader loader = new SmartDetectorLoader(this.tracerMock.Object);
             ISmartDetector detector = loader.LoadSmartDetector(package);
             Assert.IsNotNull(detector, "Smart Detector is NULL");
 

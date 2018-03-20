@@ -175,5 +175,31 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Package
                 }
             }
         }
+
+        /// <summary>
+        /// Finds and returns the bytes of the specified assembly.
+        /// </summary>
+        /// <param name="name">Can be either the assembly name of the assembly filename</param>
+        /// <param name="bytes">The assembly bytes</param>
+        /// <returns>The assembly bytes, or null if not found</returns>
+        public bool TryGetAssemblyBytes(string name, out byte[] bytes)
+        {
+            if (this.Content.TryGetValue(name, out bytes))
+            {
+                return true;
+            }
+
+            if (this.Content.TryGetValue(name + ".dll", out bytes))
+            {
+                return true;
+            }
+
+            if (this.Content.TryGetValue(name + ".exe", out bytes))
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

@@ -45,10 +45,10 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader
         public ISmartDetector LoadSmartDetector(SmartDetectorPackage smartDetectorPackage)
         {
             SmartDetectorManifest smartDetectorManifest = smartDetectorPackage.Manifest;
-            IReadOnlyDictionary<string, byte[]> smartDetectorAssemblies = smartDetectorPackage.Content;
+
             try
             {
-                this.tracer.TraceInformation($"Read {smartDetectorAssemblies.Count} assemblies for Smart Detector ID {smartDetectorManifest.Id}");
+                this.tracer.TraceInformation($"Read {smartDetectorPackage.Content.Count} assemblies for Smart Detector ID {smartDetectorManifest.Id}");
 
                 // Add assembly resolver, that uses the Smart Detector's assemblies
                 AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
@@ -60,7 +60,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader
                     string name = assemblyName.Name;
 
                     // Try to find the assembly bytes in the Smart Detector's assemblies
-                    if (smartDetectorAssemblies.TryGetValue(name, out byte[] assemblyBytes))
+                    if (smartDetectorPackage.TryGetAssemblyBytes(name, out byte[] assemblyBytes))
                     {
                         // Load the assembly from its bytes
                         return Assembly.Load(assemblyBytes);
@@ -70,7 +70,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.SmartDetectorLoader
                 };
 
                 // Find the main Smart Detector assembly
-                if (!smartDetectorAssemblies.TryGetValue(smartDetectorManifest.AssemblyName, out byte[] smartDetectorMainAssemblyBytes))
+                if (!smartDetectorPackage.TryGetAssemblyBytes(smartDetectorManifest.AssemblyName, out byte[] smartDetectorMainAssemblyBytes))
                 {
                     throw new SmartDetectorLoadException($"Unable to find main Smart Detector assembly: {smartDetectorManifest.AssemblyName}");
                 }
