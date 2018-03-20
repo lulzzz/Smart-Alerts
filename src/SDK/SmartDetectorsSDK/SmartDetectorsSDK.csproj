@@ -6,6 +6,12 @@
 	  <StyleCopTreatErrorsAsWarnings>False</StyleCopTreatErrorsAsWarnings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\net461\Microsoft.Azure.Monitoring.SmartDetectors.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\net461\Microsoft.Azure.Monitoring.SmartDetectors.xml</DocumentationFile>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="NuProj" Version="0.11.30" />
@@ -23,5 +29,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mdm\" />
+    <Folder Include="TelemetryDataClient\" />
   </ItemGroup>
 </Project>
