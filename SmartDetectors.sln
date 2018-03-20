@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementApiTests", "test\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{04E5BEF7-CA4E-44C4-85C8-B9F7477FD205}"
 	ProjectSection(SolutionItems) = preProject
-		src\tools\UploadSignalPackage.ps1 = src\tools\UploadSignalPackage.ps1
+		src\tools\UploadSmartDetectorPackage.ps1 = src\tools\UploadSmartDetectorPackage.ps1
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartDetectorsSDK", "src\SDK\SmartDetectorsSDK\SmartDetectorsSDK.csproj", "{FF996092-23C7-4AA5-AD0D-5E78C97F818B}"

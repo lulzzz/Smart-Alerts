@@ -10,7 +10,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Mdm
     using Newtonsoft.Json.Converters;
 
     /// <summary>
-    /// An enumeration of all resource services supported by Smart Signals.
+    /// An enumeration of all resource services supported by Smart Detectors.
     /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
     public enum ServiceType

@@ -53,7 +53,7 @@ function Validate-CorrectPackageVersion
 {
     param(
         [Parameter(Mandatory=$true)]
-        [string]$SignalId,
+        [string]$SmartDetectorId,
         
         [Parameter(Mandatory=$true)]
         [System.Version]$CurrentPackageVersion,
@@ -65,7 +65,7 @@ function Validate-CorrectPackageVersion
         [Microsoft.Azure.Commands.Management.Storage.Models.PSStorageAccount]$StorageAccount
     )
     
-    $blobs = Get-AzureStorageBlob -Container $ContainerName -Context $StorageAccount.Context -Prefix "$SignalId/"
+    $blobs = Get-AzureStorageBlob -Container $ContainerName -Context $StorageAccount.Context -Prefix "$SmartDetectorId/"
 	if (!$blobs) {
 		# No older versions found
 		return
@@ -81,7 +81,7 @@ function Validate-CorrectPackageVersion
     $latestBlob = [System.Linq.Enumerable]::FirstOrDefault($blobsOrederedByVersion)
     if ($latestBlob)
     {
-        # Verifiying that current package is a later version of the latest existing signal version
+        # Verifiying that current package is a later version of the latest existing Smart Detector version
         $latestVersion = [System.Version]::Parse($latestBlob.ICloudBlob.Metadata["version"])
         if ($latestVersion -ge $CurrentPackageVersion)
         {
@@ -94,12 +94,12 @@ function Validate-CorrectPackageVersion
 # 		 MAIN           #
 #########################
 
-# Get the manifest and signal ID
+# Get the manifest and Smart Detector ID
 $manifestHashtable = Get-Manifest -PackageFilePath $PackageFilePath
-$signalId = $manifestHashtable['id']
-if (!$signalId)
+$smartDetectorId = $manifestHashtable['id']
+if (!$smartDetectorId)
 {
-    Throw New-Object System.ArgumentException -ArgumentList "manifest file does not contain signal ID"
+    Throw New-Object System.ArgumentException -ArgumentList "manifest file does not contain Smart Detector ID"
 }
 
 $currentPackageVersion = [System.Version]::Parse($manifestHashtable['version'])
@@ -120,16 +120,16 @@ else
     Set-AzureRmContext -SubscriptionId $subscriptionId
 }
 
-# Get signals storage account
+# Get Smart Detectors storage account
 $resourceGroup = 'SmartSignalsDev'
 $storageAccountName = 'globalsmartsignals'
 $containerName = 'signals'
 $storageAccount = Get-AzureRmStorageAccount -ResourceGroupName $resourceGroup -Name $storageAccountName
 
 # Verify current package has a greater version
-Validate-CorrectPackageVersion -SignalId $signalId -CurrentPackageVersion $currentPackageVersion -ContainerName $containerName -StorageAccount $storageAccount
+Validate-CorrectPackageVersion -SmartDetectorId $smartDetectorId -CurrentPackageVersion $currentPackageVersion -ContainerName $containerName -StorageAccount $storageAccount
 
 # Upload blob
 $fileName = [System.IO.Path]::GetFileName($PackageFilePath)
-$blobName = "$signalId/$fileName.v$currentPackageVersion"
+$blobName = "$smartDetectorId/$fileName.v$currentPackageVersion"
 Set-AzureStorageBlobContent -Container $containerName -Context $storageAccount.Context -Blob $blobName -BlobType Block -Metadata $manifestHashtable -File $PackageFilePath
