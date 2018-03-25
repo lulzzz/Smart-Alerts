@@ -16,7 +16,6 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
-    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp.Authorization;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.AIClient;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic;
@@ -43,7 +42,6 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
             ThreadPool.SetMinThreads(100, 100);
 
             Container = DependenciesInjector.GetContainer()
-                .RegisterType<IAuthorizationManagementClient, AuthorizationManagementClient>()
                 .RegisterType<ICloudStorageProviderFactory, CloudStorageProviderFactory>()
                 .RegisterType<IApplicationInsightsClientFactory, ApplicationInsightsClientFactory>()
                 .RegisterType<IAlertsApi, AlertsApi>();
@@ -63,17 +61,9 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
             {
                 ITracer tracer = childContainer.Resolve<ITracer>();
                 var alertsApi = childContainer.Resolve<IAlertsApi>();
-                var authorizationManagementClient = childContainer.Resolve<IAuthorizationManagementClient>();
 
                 try
                 {
-                    // Check authorization
-                    bool isAuthorized = await authorizationManagementClient.IsAuthorizedAsync(req, cancellationToken);
-                    if (!isAuthorized)
-                    {
-                        return req.CreateErrorResponse(HttpStatusCode.Forbidden, "The client is not authorized to perform this action");
-                    }
-
                     ListAlertsResponse alertsResponse;
 
                     // Extract the url parameters

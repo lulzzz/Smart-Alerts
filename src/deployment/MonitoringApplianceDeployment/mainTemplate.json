@@ -32,7 +32,8 @@
     "functionsLogsStorageAccountId": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('functionsLogsStorageAccountName'))]",
     "storageAccountId": "[concat(resourceGroup().id,'/providers/','Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
     "resourceGroupName": "[resourceGroup().name]",
-    "functionBaseUrl": "[concat('https://', variables('functionsAppName'), '.azurewebsites.net')]"
+    "functionBaseUrl": "[concat('https://', variables('functionsAppName'), '.azurewebsites.net')]",
+    "ruleEngineClientId": "62c7f910-f075-4421-b6a0-47dee29bf7ef"
   },
   "resources": [
     {
@@ -188,6 +189,31 @@
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountId'),'2015-05-01-preview').key1)]",
               "type": "Custom"
             }
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "authsettings",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('functionsAppName'))]",
+            "[resourceId('Microsoft.Web/sites/config', variables('functionsAppName'), 'appsettings')]",
+            "[resourceId('Microsoft.Web/sites/config', variables('functionsAppName'), 'connectionstrings')]",
+            "[concat('Microsoft.Web/Sites/', variables('functionsAppName'), '/Extensions/MSDeploy')]"
+          ],
+          "tags": {
+            "displayName": "authsettings"
+          },
+          "properties": {
+            "enabled": true,
+            "unauthenticatedClientAction": "RedirectToLoginPage",
+            "tokenStoreEnabled": true,
+            "defaultProvider": "AzureActiveDirectory",
+            "clientId": "[variables('ruleEngineClientId')]",
+            "issuer": "https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+            "allowedAudiences": [
+              "00000002-0000-0000-c000-000000000000"
+            ]
           }
         }
       ]

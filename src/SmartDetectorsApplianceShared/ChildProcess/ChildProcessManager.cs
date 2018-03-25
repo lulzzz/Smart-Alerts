@@ -38,7 +38,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ChildPro
         private static readonly JsonSerializerSettings Settings = new JsonSerializerSettings()
         {
             TypeNameHandling = TypeNameHandling.Auto,
-            TypeNameAssemblyFormat = FormatterAssemblyStyle.Full
+            TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
         };
 
         private readonly ITracer tracer;

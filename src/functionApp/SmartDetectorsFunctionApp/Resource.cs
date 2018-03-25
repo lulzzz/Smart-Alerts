@@ -16,7 +16,6 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.Clients;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
-    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp.Authorization;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Models;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
     using Microsoft.Azure.WebJobs;
@@ -42,7 +41,6 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
             ThreadPool.SetMinThreads(100, 100);
 
             Container = DependenciesInjector.GetContainer()
-                .RegisterType<IAuthorizationManagementClient, AuthorizationManagementClient>()
                 .RegisterType<IAzureResourceManagerClient, AzureResourceManagerClient>();
         }
 
@@ -59,18 +57,10 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
             using (IUnityContainer childContainer = Container.CreateChildContainer().WithTracer(log, true))
             {
                 ITracer tracer = childContainer.Resolve<ITracer>();
-                var authorizationManagementClient = childContainer.Resolve<IAuthorizationManagementClient>();
                 var azureResourceManagerClient = childContainer.Resolve<IAzureResourceManagerClient>();
 
                 try
                 {
-                    // Check authorization
-                    bool isAuthorized = await authorizationManagementClient.IsAuthorizedAsync(req, cancellationToken);
-                    if (!isAuthorized)
-                    {
-                        return req.CreateErrorResponse(HttpStatusCode.Forbidden, "The client is not authorized to perform this action");
-                    }
-
                     List<AzureSubscription> subscriptions = (await azureResourceManagerClient.GetAllSubscriptionsAsync(cancellationToken)).ToList();
 
                     var supportedResourceTypes = new[] { ResourceType.ApplicationInsights, ResourceType.LogAnalytics, ResourceType.VirtualMachine, ResourceType.VirtualMachineScaleSet };

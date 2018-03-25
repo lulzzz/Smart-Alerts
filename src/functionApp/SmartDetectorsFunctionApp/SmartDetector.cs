@@ -53,7 +53,6 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
         [FunctionName("GetSmartDetector")]
         public static async Task<HttpResponseMessage> GetAllSmartDetectors([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "smartDetector")] HttpRequestMessage req, TraceWriter log, CancellationToken cancellationToken)
         {
-            // TODO: Only allow calls from Smart-Alert rule engine
             using (IUnityContainer childContainer = Container.CreateChildContainer().WithTracer(log, true))
             {
                 ITracer tracer = childContainer.Resolve<ITracer>();

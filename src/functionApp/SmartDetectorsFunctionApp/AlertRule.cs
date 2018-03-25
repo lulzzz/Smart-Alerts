@@ -17,7 +17,6 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AlertRules;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.AzureStorage;
-    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.FunctionApp.Authorization;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Models;
@@ -44,7 +43,6 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
             ThreadPool.SetMinThreads(100, 100);
 
             Container = DependenciesInjector.GetContainer()
-                .RegisterType<IAuthorizationManagementClient, AuthorizationManagementClient>()
                 .RegisterType<IAlertRuleApi, AlertRuleApi>()
                 .RegisterType<IAlertRuleStore, AlertRuleStore>()
                 .RegisterType<ICloudStorageProviderFactory, CloudStorageProviderFactory>();
@@ -64,19 +62,11 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
             {
                 ITracer tracer = childContainer.Resolve<ITracer>();
                 var alertRuleApi = childContainer.Resolve<IAlertRuleApi>();
-                var authorizationManagementClient = childContainer.Resolve<IAuthorizationManagementClient>();
 
                 try
                 {
                     // Read given parameters from body
                     var alertRuleEntityToAdd = await req.Content.ReadAsAsync<AlertRuleApiEntity>(cancellationToken);
-
-                    // Check authorization
-                    bool isAuthorized = await authorizationManagementClient.IsAuthorizedAsync(req, cancellationToken);
-                    if (!isAuthorized)
-                    {
-                        return req.CreateErrorResponse(HttpStatusCode.Forbidden, "The client is not authorized to perform this action");
-                    }
 
                     await alertRuleApi.AddAlertRuleAsync(alertRuleEntityToAdd, cancellationToken);
 
@@ -111,17 +101,9 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
             {
                 ITracer tracer = childContainer.Resolve<ITracer>();
                 var alertRuleApi = childContainer.Resolve<IAlertRuleApi>();
-                var authorizationManagementClient = childContainer.Resolve<IAuthorizationManagementClient>();
 
                 try
                 {
-                    // Check authorization
-                    bool isAuthorized = await authorizationManagementClient.IsAuthorizedAsync(req, cancellationToken);
-                    if (!isAuthorized)
-                    {
-                        return req.CreateErrorResponse(HttpStatusCode.Forbidden, "The client is not authorized to perform this action");
-                    }
-
                     var alertRules = await alertRuleApi.GetAlertRulesAsync();
 
                     // Convert the alert rules to alert rules entities that the alert rules API entities

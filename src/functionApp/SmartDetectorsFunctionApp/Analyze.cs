@@ -42,7 +42,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
             ThreadPool.SetMinThreads(100, 100);
 
             Container = DependenciesInjector.GetContainer()
-                    .InjectAnalysisDependencies(withChildProcessRunner: true);
+                .InjectAnalysisDependencies(withChildProcessRunner: true);
         }
 
         /// <summary>
@@ -60,7 +60,6 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
             ExecutionContext context,
             CancellationToken cancellationToken)
         {
-            // TODO: Only allow calls from Smart-Alert rule engine
             using (IUnityContainer childContainer = Container.CreateChildContainer().WithTracer(log, true))
             {
                 // Create a tracer for this run (that will also log to the specified TraceWriter)

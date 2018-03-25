@@ -13,7 +13,7 @@
     <DocumentationFile>bin\Release\net461\Microsoft.Azure.Monitoring.SmartDetectors.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="NuProj" Version="0.11.30" />
     <PackageReference Include="NuProj.Common" Version="0.11.30" />
     <PackageReference Include="StyleCop.MSBuild" Version="5.0.0" />
