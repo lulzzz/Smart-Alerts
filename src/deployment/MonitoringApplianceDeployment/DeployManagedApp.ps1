@@ -1,6 +1,5 @@
 Param(
-    [string] [Parameter(Mandatory=$false)] $FunctionAppPackageFilePath,
-	[string] [Parameter(Mandatory=$false)] $SitePackageFilePath
+    [string] [Parameter(Mandatory=$false)] $FunctionAppPackageFilePath
 )
 
 # Login and set Azure subscription context
@@ -39,16 +38,19 @@ if ($FunctionAppPackageFilePath)
 	$functionAppPackageBlob = Set-AzureStorageBlobContent -File $FunctionAppPackageFilePath -Container $containerName -Blob $functionAppBlobName -Context $storageAccount.Context -Force
 }
 
-# Upload new bits of the management site if provided
-if ($SitePackageFilePath)
-{
-	$siteBlobName = 'smartSignalSite.zip'
-	$functionAppPackageBlob = Set-AzureStorageBlobContent -File $SitePackageFilePath -Container $containerName -Blob $siteBlobName -Context $storageAccount.Context -Force
-}
-
 # Create the managed app definition
 $nettaDirectGroupId = (Get-AzureRmADGroup -SearchString "netta direct").Id.ToString()
 $ownerID = (Get-AzureRmRoleDefinition -Name Owner).Id
+
+#New-AzureRmManagedApplicationDefinition `
+#  -Name "SmartDetectorsMonitoringAppliance" `
+#  -ResourceGroupName $resourceGroup `
+#  -DisplayName "Smart Detectors Monitoring Appliance" `
+#  -Location "southcentralus" `
+#  -LockLevel ReadOnly `
+#  -Description "This application will execute and manage the Smart Detectors" `
+#  -Authorization "${nettaDirectGroupId}:$ownerID" `
+#  -PackageFileUri $blob.ICloudBlob.StorageUri.PrimaryUri.AbsoluteUri
 
 Set-AzureRmManagedApplicationDefinition `
   -Id "/subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.Solutions/applicationDefinitions/SmartDetectorsMonitoringAppliance" `

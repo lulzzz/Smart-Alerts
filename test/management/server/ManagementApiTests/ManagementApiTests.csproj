@@ -24,9 +24,4 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="AIClient\AIEndpointResponses\SuccessfulResponse.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

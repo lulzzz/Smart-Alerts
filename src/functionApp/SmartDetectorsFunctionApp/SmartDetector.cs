@@ -38,9 +38,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
             ThreadPool.SetMinThreads(100, 100);
 
             Container = DependenciesInjector.GetContainer()
-                .RegisterType<ISmartDetectorApi, SmartDetectorApi>()
-                .RegisterType<IAlertRuleApi, AlertRuleApi>()
-                .RegisterType<IAlertsApi, AlertsApi>();
+                .RegisterType<ISmartDetectorApi, SmartDetectorApi>();
         }
 
         /// <summary>
