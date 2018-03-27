@@ -26,6 +26,7 @@ namespace SmartDetectorsAnalysisTests
     using Unity;
     using Alert = Microsoft.Azure.Monitoring.SmartDetectors.Alert;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
+    using ResourceType = Microsoft.Azure.Monitoring.SmartDetectors.ResourceType;
 
     [TestClass]
     public class SmartDetectorRunnerTests

@@ -23,6 +23,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Analysis
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
     using Alert = Microsoft.Azure.Monitoring.SmartDetectors.Alert;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
+    using ResourceType = Microsoft.Azure.Monitoring.SmartDetectors.ResourceType;
 
     /// <summary>
     /// An implementation of <see cref="ISmartDetectorRunner"/>, that loads the Smart Detector and runs it

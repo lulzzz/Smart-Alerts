@@ -13,9 +13,9 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Function
     using System.Threading.Tasks;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic;
-    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Azure.WebJobs.Host;

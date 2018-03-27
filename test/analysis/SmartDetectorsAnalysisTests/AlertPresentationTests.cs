@@ -15,6 +15,7 @@ namespace SmartDetectorsAnalysisTests
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Alert = Microsoft.Azure.Monitoring.SmartDetectors.Alert;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
+    using ResourceType = Microsoft.Azure.Monitoring.SmartDetectors.ResourceType;
 
     [TestClass]
     public class AlertPresentationTests

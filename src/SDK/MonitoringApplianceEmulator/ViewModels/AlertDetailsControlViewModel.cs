@@ -18,6 +18,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.Models;
     using Unity.Attributes;
+    using ResourceType = Microsoft.Azure.Monitoring.SmartDetectors.ResourceType;
 
     /// <summary>
     /// The view model class for the <see cref="AlertDetailsControl"/> control.

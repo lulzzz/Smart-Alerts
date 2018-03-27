@@ -8,7 +8,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Manageme
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Responses;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
 
     /// <summary>
     /// This interface represents the /smartDetector API logic.

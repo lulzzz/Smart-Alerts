@@ -11,15 +11,15 @@ namespace ManagementApiTests.EndpointsLogic
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Exceptions;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.EndpointsLogic;
-    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using ResourceType = Microsoft.Azure.Monitoring.SmartDetectors.ResourceType;
 
     [TestClass]
     public class SmartDetectorApiTests

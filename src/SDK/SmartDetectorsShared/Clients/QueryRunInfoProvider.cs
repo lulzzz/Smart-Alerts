@@ -15,6 +15,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.Clients
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
+    using ResourceType = Microsoft.Azure.Monitoring.SmartDetectors.ResourceType;
 
     /// <summary>
     /// An implementation of the <see cref="IQueryRunInfoProvider"/> interface.

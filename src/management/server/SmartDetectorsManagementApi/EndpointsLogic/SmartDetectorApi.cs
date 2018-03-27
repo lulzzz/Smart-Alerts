@@ -12,10 +12,8 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Manageme
     using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Monitoring.SmartDetectors;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance;
-    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Models;
-    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.ManagementApi.Responses;
+    using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.Tools;
 
@@ -55,7 +53,9 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Manageme
                    Id = manifest.Id,
                    Name = manifest.Name,
                    SupportedCadences = new List<int>(manifest.SupportedCadencesInMinutes),
-                   SupportedResourceTypes = new List<ResourceType>(manifest.SupportedResourceTypes),
+
+                   // We need to cast the resource type since the resource type objects are duplicated both in the SDK and in the contracts package so they have different namespaces
+                   SupportedResourceTypes = manifest.SupportedResourceTypes.Select(resourceType => (ResourceType)resourceType).ToList(),
                    Configurations = new List<SmartDetectorConfiguration>()
                 }).ToList();
 

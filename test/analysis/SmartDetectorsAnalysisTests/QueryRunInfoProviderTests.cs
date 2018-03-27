@@ -16,6 +16,7 @@ namespace SmartDetectorsAnalysisTests
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using ResourceType = Microsoft.Azure.Monitoring.SmartDetectors.ResourceType;
 
     [TestClass]
     public class QueryRunInfoProviderTests
