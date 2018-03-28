@@ -1,4 +1,5 @@
 ﻿<UserControl x:Class="Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.Controls.SmartDetectorConfigurationControl"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -18,49 +19,83 @@
             <BooleanToVisibilityConverter/>
         </converters:ConverterChain>
     </UserControl.Resources>
-    <Grid Background="#FFECF0F1" >
+    <Grid Background="{StaticResource TabBackgroundColor}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="370" MinWidth="0.5"/>
+            <ColumnDefinition Width="420" MinWidth="0.5"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Border Grid.Column="0" BorderBrush="#FFA5A5A5" BorderThickness="0,0,0.5,0" Padding="20,20,20,0">
             <StackPanel Orientation="Vertical">
-                <TextBlock Style="{StaticResource SectionHeader}" Text="SETTINGS"/>
-                <TextBlock Style="{StaticResource ControlText}" Text="Smart Detector name" Margin="0,0,0,6"/>
-                <TextBlock Style="{StaticResource SmartDetectorNameTitle}" Text="{Binding SmartDetectorName}" />
-                <TextBlock Style="{StaticResource ControlText}" Text="Analysis period" Margin="0,0,0,10"/>
-                <ComboBox Margin="0,0,0,20" HorizontalAlignment="Left" MinWidth="100"
-                          ItemsSource="{Binding Path=Cadences}" SelectedItem="{Binding Path=SelectedCadence}"
-                          DisplayMemberPath="DisplayName" 
-                          IsEnabled="{Binding Path=Cadences, Converter={StaticResource EmptyListToBooleanConverter}}" />
+                <TextBlock Style="{StaticResource SectionHeader}" Text="RUN SETTINGS"/>
 
-                <TextBlock Style="{StaticResource ControlText}" Text="Subscription" Margin="0,0,0,10" />
-                <ComboBox Margin="0,0,0,20" HorizontalAlignment="Left" MinWidth="160"
-                          ItemsSource="{Binding Path=ReadSubscriptionsTask.Result}"  SelectedItem="{Binding Path=SelectedSubscription}"
-                          DisplayMemberPath="DisplayName" 
-                          IsEnabled="{Binding Path=ReadSubscriptionsTask.Result, Converter={StaticResource EmptyListToBooleanConverter}}" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" MinWidth="0.5"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                <TextBlock Style="{StaticResource ControlText}" Text="Resource group" Margin="0,0,0,10"/>
-                <ComboBox Margin="0,0,0,20" HorizontalAlignment="Left" MinWidth="130"
-                          ItemsSource="{Binding Path=ReadResourceGroupsTask.Result}" SelectedItem="{Binding Path=SelectedResourceGroup}" 
-                          IsEnabled="{Binding Path=ReadResourceGroupsTask.Result, Converter={StaticResource EmptyListToBooleanConverter}}" />
+                    <TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource ControlText}" Text="Smart Detector name" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource SmartDetectorNameTitle}" Text="{Binding SmartDetectorName}" />
 
-                <TextBlock Style="{StaticResource ControlText}" Text="Resource type" Margin="0,0,0,10"/>
-                <ComboBox Margin="0,0,0,20" HorizontalAlignment="Left" MinWidth="130"
-                          ItemsSource="{Binding Path=ReadResourceTypesTask.Result}" SelectedItem="{Binding Path=SelectedResourceType}"
-                          IsEnabled="{Binding Path=ReadResourceTypesTask.Result, Converter={StaticResource EmptyListToBooleanConverter}}" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource ControlText}" Text="Subscription" Margin="0,0,0,10" />
+                    <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,20" HorizontalAlignment="Left" MinWidth="130"
+                            ItemsSource="{Binding Path=ReadSubscriptionsTask.Result}"  SelectedItem="{Binding Path=SelectedSubscription}"
+                            DisplayMemberPath="DisplayName" 
+                            IsEnabled="{Binding Path=ReadSubscriptionsTask.Result, Converter={StaticResource EmptyListToBooleanConverter}}" />
 
-                <TextBlock Style="{StaticResource ControlText}" Text="Resource" Margin="0,0,0,10"/>
-                <ComboBox Margin="0,0,0,20" HorizontalAlignment="Left" MinWidth="130"
-                          ItemsSource="{Binding Path=ReadResourcesTask.Result}" SelectedItem="{Binding Path=SelectedResource}"
-                          IsEnabled="{Binding Path=ReadResourcesTask.Result, Converter={StaticResource EmptyListToBooleanConverter}}" 
-                          DisplayMemberPath="ResourceName" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource ControlText}" Text="Resource group" Margin="0,0,0,10"/>
+                    <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,20" HorizontalAlignment="Left" MinWidth="130"
+                            ItemsSource="{Binding Path=ReadResourceGroupsTask.Result}" SelectedItem="{Binding Path=SelectedResourceGroup}" 
+                            IsEnabled="{Binding Path=ReadResourceGroupsTask.Result, Converter={StaticResource EmptyListToBooleanConverter}}" />
 
-                <Separator Margin="0,0,0,20"/>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource ControlText}" Text="Resource type" Margin="0,0,0,10"/>
+                    <ComboBox  Grid.Row="3" Grid.Column="1" Margin="0,0,0,20" HorizontalAlignment="Left" MinWidth="130"
+                            ItemsSource="{Binding Path=ReadResourceTypesTask.Result}" SelectedItem="{Binding Path=SelectedResourceType}"
+                            IsEnabled="{Binding Path=ReadResourceTypesTask.Result, Converter={StaticResource EmptyListToBooleanConverter}}" />
 
-                <Button Style="{StaticResource RoundedButton}" HorizontalAlignment="Left" Content="Start analysis" Command="{Binding RunSmartDetectorCommand}" 
-                        IsEnabled="{Binding Path=SmartDetectorRunner.IsSmartDetectorRunning, Converter={StaticResource InverseBooleanConverter}}" />
+                    <TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource ControlText}" Text="Resource" Margin="0,0,0,10"/>
+                    <ComboBox Grid.Row="4" Grid.Column="1" Margin="0,0,0,20" HorizontalAlignment="Left" MinWidth="130"
+                            ItemsSource="{Binding Path=ReadResourcesTask.Result}" SelectedItem="{Binding Path=SelectedResource}"
+                            IsEnabled="{Binding Path=ReadResourcesTask.Result, Converter={StaticResource EmptyListToBooleanConverter}}" 
+                            DisplayMemberPath="ResourceName" />
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource ControlText}" Text="Iterative run mode"/>
+                    <ToggleButton Grid.Row="5" Grid.Column="1"
+                            x:Name="IterativeRunModeButton"
+                            IsChecked="{Binding IterativeRunModeEnabled}"
+                            HorizontalAlignment="Left"/>
+                </Grid>
+
+                <!-- collapsible container for iterative run mode -->
+                <Border Padding="10" Background="#f2f2f2" Margin="0,10,0,10"
+                        Visibility="{Binding Path=IsChecked, Mode=OneWay, ElementName=IterativeRunModeButton, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <StackPanel Margin="0,0,0,10"
+                                Background="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Control}, Path=Background}">
+                        <TextBlock Style="{StaticResource ControlText}" Text="Cadence" Margin="0,0,0,10"/>
+                        <ComboBox Margin="0,0,0,20" HorizontalAlignment="Left" MinWidth="100"
+                                  ItemsSource="{Binding Path=Cadences}" SelectedItem="{Binding Path=SelectedCadence}"
+                                  DisplayMemberPath="DisplayName" 
+                                  IsEnabled="{Binding Path=Cadences, Converter={StaticResource EmptyListToBooleanConverter}}" />
+                        <local:TimePickerControl Margin="0,0,0,15" DataContext="{Binding StartTimePickerViewModel}"/>
+                        <local:TimePickerControl DataContext="{Binding EndTimePickerViewModel}" />
+                    </StackPanel>
+                </Border>
+
+                <Separator Margin="0,15,0,20"/>
+
+                <Button HorizontalAlignment="Left" Style="{StaticResource MaterialDesignRaisedButton}"
+                    Content="Run" Command="{Binding RunSmartDetectorCommand}" Margin="0,0,0,20"
+                    IsEnabled="{Binding Path=SmartDetectorRunner.IsSmartDetectorRunning, Converter={StaticResource InverseBooleanConverter}}" 
+                    Width="100" ToolTip="Click to run the detector" />
             </StackPanel>
         </Border>
 

@@ -48,7 +48,7 @@
         </Grid>
 
         <!--This Canvas is needed as a filler for the TabControl's strip-->
-        <Canvas Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Stretch" Background="#FF222E3A" />
+        <Canvas Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Stretch" Background="{StaticResource MidBackgroundColor}" />
         <TabControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" TabStripPlacement="Left" VerticalAlignment="Stretch" Padding="0">
             <TabControl.Resources>
                 <Style TargetType="TabItem">
@@ -64,10 +64,10 @@
                                 </Grid>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
-                                        <Setter TargetName="Panel" Property="Background" Value="#FF706A6A" />
+                                        <Setter TargetName="Panel" Property="Background" Value="{StaticResource LightBackgroundColor}" />
                                     </Trigger>
                                     <Trigger Property="IsSelected" Value="False">
-                                        <Setter TargetName="Panel" Property="Background" Value="#FF222E3A" />
+                                        <Setter TargetName="Panel" Property="Background" Value="{StaticResource MidBackgroundColor}" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -78,7 +78,7 @@
 
             <TabItem IsEnabled="False">
                 <TabItem.Header>
-                    <Separator Visibility="Hidden" Height="25"/>
+                    <Separator Visibility="Hidden" Height="5"/>
                 </TabItem.Header>
             </TabItem>
             <TabItem IsSelected="True">

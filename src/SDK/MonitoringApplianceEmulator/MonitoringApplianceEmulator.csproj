@@ -4,12 +4,13 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net461</TargetFramework>
-    <RootNamespace>Microsoft.Azure.Monitoring.SmartDetectors..MonitoringAppliancEmulator</RootNamespace>
+    <RootNamespace>Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator</RootNamespace>
     <AssemblyName>MonitoringApplianceEmulator</AssemblyName>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <LanguageTargets>$(MSBuildToolsPath)\Microsoft.CSharp.targets</LanguageTargets>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="MaterialDesignThemes" Version="2.4.0.1044" />
     <PackageReference Include="NuProj.Common" Version="0.11.30" />
     <PackageReference Include="Polly" Version="5.7.0" />
     <PackageReference Include="StyleCop.MSBuild" Version="5.0.0" />
@@ -56,6 +57,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\TimePickerControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

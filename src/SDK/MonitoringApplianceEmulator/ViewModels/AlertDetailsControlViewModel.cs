@@ -25,7 +25,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
     /// </summary>
     public class AlertDetailsControlViewModel : ObservableObject
     {
-        private Models.Alert alert;
+        private EmulationAlert alert;
 
         private ObservableCollection<AzureResourceProperty> essentialsSectionProperties;
 
@@ -51,7 +51,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
         /// <param name="alertDetailsControlClosed">The Smart Detector runner gunner.</param>
         [InjectionConstructor]
         public AlertDetailsControlViewModel(
-            Models.Alert alert, 
+            Models.EmulationAlert alert, 
             AlertDetailsControlClosedEventHandler alertDetailsControlClosed)
         {
             this.Alert = alert;
@@ -91,7 +91,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
         /// <summary>
         /// Gets the alert.
         /// </summary>
-        public Models.Alert Alert
+        public Models.EmulationAlert Alert
         {
             get
             {

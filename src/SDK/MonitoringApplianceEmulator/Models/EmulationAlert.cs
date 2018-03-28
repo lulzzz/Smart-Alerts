@@ -1,36 +1,41 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="Alert.cs" company="Microsoft Corporation">
+// <copyright file="EmulationAlert.cs" company="Microsoft Corporation">
 //        Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
 namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.Models
 {
+    using System;
     using Microsoft.Azure.Monitoring.SmartDetectors;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
-    /// Represents alert.
+    /// Wrapper for <see cref="ContractsAlert"/> with additional emulation details.
     /// </summary>
-    public class Alert : ObservableObject
+    public class EmulationAlert : ObservableObject
     {
         private ContractsAlert contractsAlert;
 
         private ResourceIdentifier resourceIdentifier;
 
+        private DateTime emulationIterationDate;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="Alert"/> class
+        /// Initializes a new instance of the <see cref="EmulationAlert"/> class
         /// </summary>
         /// <param name="contractsAlert">The alert presentation object</param>
         /// <param name="resourceIdentifier">The alert's resource identifier</param>
-        public Alert(ContractsAlert contractsAlert, ResourceIdentifier resourceIdentifier)
+        /// <param name="emulationIterationDate">The timestamp of the emulation iteration</param>
+        public EmulationAlert(ContractsAlert contractsAlert, ResourceIdentifier resourceIdentifier, DateTime emulationIterationDate)
         {
             this.ContractsAlert = contractsAlert;
             this.ResourceIdentifier = resourceIdentifier;
+            this.EmulationIterationDate = emulationIterationDate;
         }
 
         /// <summary>
-        /// Gets the alert presentation.
+        /// Gets or sets the alert presentation.
         /// </summary>
         public ContractsAlert ContractsAlert
         {
@@ -39,7 +44,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
                 return this.contractsAlert;
             }
 
-            private set
+            set
             {
                 this.contractsAlert = value;
                 this.OnPropertyChanged();
@@ -47,7 +52,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
         }
 
         /// <summary>
-        /// Gets the alert's resource identifier.
+        /// Gets or sets the alert's resource identifier.
         /// </summary>
         public ResourceIdentifier ResourceIdentifier
         {
@@ -56,9 +61,26 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
                 return this.resourceIdentifier;
             }
 
-            private set
+            set
             {
                 this.resourceIdentifier = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the timestamp of the emulation iteration.
+        /// </summary>
+        public DateTime EmulationIterationDate
+        {
+            get
+            {
+                return this.emulationIterationDate;
+            }
+
+            set
+            {
+                this.emulationIterationDate = value;
                 this.OnPropertyChanged();
             }
         }

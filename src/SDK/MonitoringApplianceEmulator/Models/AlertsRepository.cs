@@ -20,12 +20,12 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
         /// </summary>
         public AlertsRepository()
         {
-            this.Alerts = new ObservableCollection<List<Alert>>();
+            this.Alerts = new ObservableCollection<List<EmulationAlert>>();
         }
 
         /// <summary>
         /// Gets the collection of Alerts in the repository.
         /// </summary>
-        public ObservableCollection<List<Alert>> Alerts { get; }
+        public ObservableCollection<List<EmulationAlert>> Alerts { get; }
     }
 }

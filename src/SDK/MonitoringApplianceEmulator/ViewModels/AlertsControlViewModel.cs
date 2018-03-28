@@ -6,6 +6,7 @@
 
 namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.ViewModels
 {
+    using System.Collections.ObjectModel;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.Controls;
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.Models;
     using Unity.Attributes;
@@ -22,7 +23,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
     {
         private SmartDetectorRunner smartDetectorRunner;
 
-        private Alert selectedAlert;
+        private EmulationAlert selectedAlert;
 
         private AlertDetailsControlViewModel alertDetailsControlViewModel;
 
@@ -80,7 +81,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
         /// <summary>
         /// Gets or sets the selected alert.
         /// </summary>
-        public Alert SelectedAlert
+        public EmulationAlert SelectedAlert
         {
             get
             {

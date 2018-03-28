@@ -57,6 +57,12 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
 
         private bool shouldShowStatusControl;
 
+        private bool iterativeRunModeEnabled;
+
+        private TimePickerControlViewModel startTimePickerViewModel;
+
+        private TimePickerControlViewModel endTimePickerViewModel;
+
         #region Ctros
 
         /// <summary>
@@ -95,6 +101,11 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
 
             this.Cadences = new ObservableCollection<SmartDetectorCadence>(cadences);
 
+            // Set selected cadence to be the first one. If non, pick 10 minutes cadence as default
+            this.SelectedCadence = this.Cadences.Any() ? 
+                this.Cadences.First() : 
+                new SmartDetectorCadence(TimeSpan.FromMinutes(10));
+
             // Initialize combo boxes read tasks
             this.ReadSubscriptionsTask = new ObservableTask<ObservableCollection<AzureSubscription>>(
                 this.GetSubscriptionsAsync());
@@ -107,6 +118,11 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
 
             this.ReadResourcesTask = new ObservableTask<ObservableCollection<ResourceIdentifier>>(
                 Task.FromResult(new ObservableCollection<ResourceIdentifier>()));
+
+            this.IterativeRunModeEnabled = false;
+
+            this.StartTimePickerViewModel = new TimePickerControlViewModel("Start time:");
+            this.EndTimePickerViewModel = new TimePickerControlViewModel("End time:");
         }
 
         #endregion
@@ -346,6 +362,57 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether should execute iterative run mode.
+        /// </summary>
+        public bool IterativeRunModeEnabled
+        {
+            get
+            {
+                return this.iterativeRunModeEnabled;
+            }
+
+            set
+            {
+                this.iterativeRunModeEnabled = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Gets the view model of the start time picker.
+        /// </summary>
+        public TimePickerControlViewModel StartTimePickerViewModel
+        {
+            get
+            {
+                return this.startTimePickerViewModel;
+            }
+
+            private set
+            {
+                this.startTimePickerViewModel = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Gets the view model of the end time picker.
+        /// </summary>
+        public TimePickerControlViewModel EndTimePickerViewModel
+        {
+            get
+            {
+                return this.endTimePickerViewModel;
+            }
+
+            private set
+            {
+                this.endTimePickerViewModel = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Commands
@@ -426,10 +493,26 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.V
         {
             this.ShouldShowStatusControl = true;
 
+            DateTime startTimeRange, endTimeRange;
+            if (this.IterativeRunModeEnabled)
+            {
+                startTimeRange = this.StartTimePickerViewModel.GetSelectedDateTime();
+                endTimeRange = this.EndTimePickerViewModel.GetSelectedDateTime();
+            }
+            else
+            {
+                // Due to data arriving latency, substract 20 mins from UTC now
+                startTimeRange = endTimeRange = DateTime.UtcNow.AddMinutes(-20);
+            }
+
             List<ResourceIdentifier> resources = new List<ResourceIdentifier>() { this.selectedResource };
             try
             {
-                await this.smartDetectorRunner.RunAsync(resources, this.selectedCadence.TimeSpan);
+                await this.smartDetectorRunner.RunAsync(
+                    resources,
+                    this.SelectedCadence.TimeSpan,
+                    startTimeRange,
+                    endTimeRange);
             }
             catch (Exception e)
             {

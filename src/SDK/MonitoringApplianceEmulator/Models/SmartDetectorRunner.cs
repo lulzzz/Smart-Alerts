@@ -16,7 +16,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
     using Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts;
     using Microsoft.Azure.Monitoring.SmartDetectors.Package;
     using Microsoft.Azure.Monitoring.SmartDetectors.Presentation;
-    using Microsoft.Azure.Monitoring.SmartDetectors.State;
+    using State;
     using ContractsAlert = Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliance.Contracts.Alert;
 
     /// <summary>
@@ -24,6 +24,10 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
     /// </summary>
     public class SmartDetectorRunner : ObservableObject
     {
+        private readonly IStateRepositoryFactory stateRepositoryFactory;
+
+        private readonly string smartDetectorId;
+
         private readonly ISmartDetector smartDetector;
 
         private readonly IAnalysisServicesFactory analysisServicesFactory;
@@ -32,17 +36,13 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
 
         private readonly SmartDetectorManifest smartDetectorManifes;
 
-        private ObservableCollection<Alert> alerts;
+        private ObservableCollection<EmulationAlert> alerts;
 
         private ITracer tracer;
 
         private bool isSmartDetectorRunning;
 
         private CancellationTokenSource cancellationTokenSource;
-
-        private IStateRepositoryFactory stateRepositoryFactory;
-
-        private string smartDetectorId;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SmartDetectorRunner"/> class.
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
         /// <param name="smartDetectorId">The id of the Smart Detector</param>
         /// <param name="tracer">The tracer.</param>
         public SmartDetectorRunner(
-            ISmartDetector smartDetector, 
+            ISmartDetector smartDetector,
             IAnalysisServicesFactory analysisServicesFactory,
             IQueryRunInfoProvider queryRunInfoProvider,
             SmartDetectorManifest smartDetectorManifes,
@@ -69,22 +69,22 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
             this.smartDetectorManifes = smartDetectorManifes;
             this.Tracer = tracer;
             this.IsSmartDetectorRunning = false;
-            this.Alerts = new ObservableCollection<Alert>();
+            this.Alerts = new ObservableCollection<EmulationAlert>();
             this.stateRepositoryFactory = stateRepositoryFactory;
             this.smartDetectorId = smartDetectorId;
         }
 
         /// <summary>
-        /// Gets the Smart Detector run's alerts.
+        /// Gets or sets the Smart Detector run's alerts.
         /// </summary>
-        public ObservableCollection<Alert> Alerts
+        public ObservableCollection<EmulationAlert> Alerts
         {
             get
             {
                 return this.alerts;
             }
 
-            private set
+            set
             {
                 this.alerts = value;
                 this.OnPropertyChanged();
@@ -128,52 +128,61 @@ namespace Microsoft.Azure.Monitoring.SmartDetectors.MonitoringAppliancEmulator.M
         /// <summary>
         /// Runs the Smart Detector.
         /// </summary>
-        /// <param name="resources">The resources which the Smart Detector should run on.</param>
-        /// <param name="analysisCadence">The analysis cadence.</param>
-        /// <returns>A task that runs the Smart Detector.</returns>
-        public async Task RunAsync(List<ResourceIdentifier> resources, TimeSpan analysisCadence)
+        /// <param name="resources">The resources which the Smart Detector should run on</param>
+        /// <param name="analysisCadence">The analysis cadence</param>
+        /// <param name="startTimeRange">The start time</param>
+        /// <param name="endTimeRange">The end time</param>
+        /// <returns>A task that runs the Smart Detector</returns>
+        public async Task RunAsync(List<ResourceIdentifier> resources, TimeSpan analysisCadence, DateTime startTimeRange, DateTime endTimeRange)
         {
             this.cancellationTokenSource = new CancellationTokenSource();
-            this.Alerts.Clear();
             IStateRepository stateRepository = this.stateRepositoryFactory.Create(this.smartDetectorId);
 
-            var analysisRequest = new AnalysisRequest(resources, DateTime.UtcNow.AddMinutes(-20), analysisCadence, null, this.analysisServicesFactory, stateRepository);
-
+            List<string> resourceIds = resources.Select(resource => resource.ResourceName).ToList();
+            this.Alerts.Clear();
             try
             {
                 // Run Smart Detector
                 this.IsSmartDetectorRunning = true;
 
-                List<SmartDetectors.Alert> alerts = await this.smartDetector.AnalyzeResourcesAsync(
-                    analysisRequest,
-                    this.Tracer,
-                    this.cancellationTokenSource.Token);
-
-                // Create alerts
-                List<Alert> results = new List<Alert>();
-                foreach (var alert in alerts)
+                int totalRunsAmount = (int)((endTimeRange.Subtract(startTimeRange).Ticks / analysisCadence.Ticks) + 1);
+                int currentRunNumber = 1;
+                for (var currentTime = startTimeRange; currentTime <= endTimeRange; currentTime = currentTime.Add(analysisCadence))
                 {
-                    // Create alert presentation 
-                    var resourceIds = resources.Select(resource => resource.ResourceName).ToList();
-                    var smartDetectorSettings = new SmartDetectorSettings();
+                    this.tracer.TraceInformation($"Start analysis, end of time range: {currentTime}");
+
+                    var analysisRequest = new AnalysisRequest(resources, currentTime, analysisCadence, null, this.analysisServicesFactory, stateRepository);
+                    var newAlerts = await this.smartDetector.AnalyzeResourcesAsync(
+                        analysisRequest,
+                        this.Tracer,
+                        this.cancellationTokenSource.Token);
+
                     var smartDetectorExecutionRequest = new SmartDetectorExecutionRequest
                     {
                         ResourceIds = resourceIds,
                         SmartDetectorId = this.smartDetectorManifes.Id,
                         Cadence = analysisCadence,
-                        DataEndTime = DateTime.UtcNow.AddMinutes(-20)
+                        DataEndTime = currentTime
                     };
-                    QueryRunInfo queryRunInfo = await this.queryRunInfoProvider.GetQueryRunInfoAsync(new List<ResourceIdentifier>() { alert.ResourceIdentifier }, this.cancellationTokenSource.Token);
-                    ContractsAlert contractsAlert = alert.CreateContractsAlert(smartDetectorExecutionRequest, this.smartDetectorManifes.Name, queryRunInfo);
 
-                    // Create Azure resource identifier 
-                    ResourceIdentifier resourceIdentifier = ResourceIdentifier.CreateFromResourceId(contractsAlert.ResourceId);
+                    // Show the alerts that were found in this iteration
+                    newAlerts.ForEach(async newAlert =>
+                    {
+                        QueryRunInfo queryRunInfo = await this.queryRunInfoProvider.GetQueryRunInfoAsync(new List<ResourceIdentifier>() { newAlert.ResourceIdentifier }, this.cancellationTokenSource.Token);
+                        ContractsAlert contractsAlert = newAlert.CreateContractsAlert(smartDetectorExecutionRequest, this.smartDetectorManifes.Name, queryRunInfo);
 
-                    results.Add(new Alert(contractsAlert, resourceIdentifier));
+                        // Create Azure resource identifier 
+                        ResourceIdentifier resourceIdentifier = ResourceIdentifier.CreateFromResourceId(contractsAlert.ResourceId);
+
+                        this.Alerts.Add(new EmulationAlert(contractsAlert, resourceIdentifier, currentTime));
+                    });
+
+                    this.tracer.TraceInformation($"completed {currentRunNumber} of {totalRunsAmount} runs");
+                    currentRunNumber++;
                 }
 
-                this.Alerts = new ObservableCollection<Alert>(results);
-                this.tracer.TraceInformation($"Found {this.Alerts.Count} alerts");
+                string separator = "=====================================================================================================";
+                this.tracer.TraceInformation($"Total alerts found: {this.Alerts.Count} {Environment.NewLine} {separator}");
             }
             catch (OperationCanceledException)
             {
