@@ -147,8 +147,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="BuildSystem\DeployedBuildSystem\SmartDetectors.props" />
-    <None Include="BuildSystem\DeployedBuildSystem\SmartDetectors.targets" />
     <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
@@ -177,11 +175,6 @@
        NOTE: The VSIX manifest needs the "This VSIX is installed for all users (requires elevation on install)"
        checkbox to be checked. -->
   <ItemGroup>
-    <VSIXSourceItem Include="BuildSystem\DeployedBuildSystem\**">
-      <InProject>false</InProject>
-      <InstallRoot>MSBuild</InstallRoot>
-      <VSIXSubPath>CustomProjectSystems\SmartDetectors</VSIXSubPath>
-    </VSIXSourceItem>
     <VSIXSourceItem Include="BuildSystem\Rules\**">
       <InProject>false</InProject>
       <InstallRoot>MSBuild</InstallRoot>
@@ -211,10 +204,8 @@
        system installed from the VSIX. -->
   <Target Name="AfterBuild">
     <ItemGroup>
-      <BuildSystemToCopy Include="BuildSystem\DeployedBuildSystem\**\*" />
       <RulesToCopy Include="BuildSystem\Rules\**\*" />
     </ItemGroup>
-    <Copy SourceFiles="@(BuildSystemToCopy)" DestinationFiles="@(BuildSystemToCopy->'$(LocalAppData)\CustomProjectSystems\SmartDetectors\%(RecursiveDir)%(FileName)%(Extension)')" SkipUnchangedFiles="true" />
     <Copy SourceFiles="@(RulesToCopy)" DestinationFiles="@(RulesToCopy->'$(LocalAppData)\CustomProjectSystems\SmartDetectors\Rules\%(RecursiveDir)%(FileName)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
   <Import Project="..\..\..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.33\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets" Condition="Exists('..\..\..\packages\Microsoft.VisualStudio.SDK.VsixSuppression.14.1.33\build\Microsoft.VisualStudio.SDK.VsixSuppression.targets')" />

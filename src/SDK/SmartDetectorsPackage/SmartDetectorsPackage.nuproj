@@ -22,7 +22,7 @@
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>Microsoft.Azure.Monitoring.SmartDetectors</Id>
-    <Version>0.2.2.0</Version>
+    <Version>0.2.3.0</Version>
     <Title>Azure Smart Detectors</Title>
     <Authors>Microsoft</Authors>
     <Owners>Microsoft Corporation</Owners>
@@ -58,6 +58,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="build\net461\Microsoft.Azure.Monitoring.SmartDetectors.targets" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="build\net461\Microsoft.Azure.Monitoring.SmartDetectors.props" />
   </ItemGroup>
   <Import Project="$(NuProjPath)\NuProj.targets" />
 </Project>

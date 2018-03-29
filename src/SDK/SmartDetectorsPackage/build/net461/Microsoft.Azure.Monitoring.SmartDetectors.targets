@@ -6,6 +6,10 @@
     <_SmartDetectorsEmulatorDir Condition=" '$(_SmartDetectorsEmulatorDir)'=='' ">$(MSBuildThisFileDirectory)..\..\tools\$(_SmartDetectorsFramework)\AppEmulator\</_SmartDetectorsEmulatorDir>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectCapability Include="SmartDetectors" />
+  </ItemGroup>
+
   <!--
   ***********************************************************************************************
   Import the Build target
